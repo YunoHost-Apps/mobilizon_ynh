@@ -8,6 +8,8 @@
 
 #Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
 source ../settings/scripts/_common.sh
+source ../settings/scripts/ynh_systemd_action
+source ../settings/scripts/ynh_add_secure_repos__3
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -15,8 +17,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	#### Remove this function if there's nothing to clean before calling the remove script.
-	true
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -31,7 +32,9 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get $app domain)
 path_url=$(ynh_app_setting_get $app path)
 final_path=$(ynh_app_setting_get $app final_path)
+port=$(ynh_app_setting_get $app port)
 db_name=$(ynh_app_setting_get $app db_name)
+db_pwd=$(ynh_app_setting_get $app db_pwd)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -64,20 +67,14 @@ ynh_restore_file "$final_path"
 ynh_print_info "Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create $app
+ynh_system_user_create "$app" "$final_path"
 
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
 
 # Restore permissions on app files
-chown -R root: $final_path
-
-#=================================================
-# RESTORE THE PHP-FPM CONFIGURATION
-#=================================================
-
-ynh_restore_file "/etc/php/7.0/fpm/pool.d/$app.conf"
+chown -R "$app":"$app" "$final_path"
 
 #=================================================
 # SPECIFIC RESTORATION
@@ -89,14 +86,32 @@ ynh_print_info "Reinstalling dependencies..."
 # Define and install dependencies
 ynh_install_app_dependencies $pkg_dependencies
 
-#=================================================
-# RESTORE THE MYSQL DATABASE
-#=================================================
-ynh_print_info "Restoring the MySQL database..."
+ynh_install_nodejs 10
 
-db_pwd=$(ynh_app_setting_get $app mysqlpwd)
-ynh_mysql_setup_db $db_name $db_name $db_pwd
-ynh_mysql_connect_as $db_name $db_pwd $db_name < ./db.sql
+#=================================================
+# REINSTALL EXTRA DEPENDENCIES
+#=================================================
+ynh_print_info "Reinstalling extra dependencies ..."
+
+lsb_name="$(lsb_release --codename --short)"
+ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+
+#=================================================
+# RESTORE THE POSTGRESQL DATABASE
+#=================================================
+ynh_print_info "Restoring the PostgreSQL database..."
+
+ynh_psql_test_if_first_run
+db_user=$db_name
+ynh_psql_create_user "$app" "$db_pwd"
+ynh_psql_execute_as_root "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $db_user;"
+ynh_psql_execute_as_root "\connect $db_name 
+create extension if not exists postgis;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root "\connect $db_name 
+CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_execute_file_as_root ./db.sql "$db_name"
 
 #=================================================
 # RESTORE SYSTEMD
@@ -105,18 +120,13 @@ ynh_print_info "Restoring the systemd configuration..."
 
 ynh_restore_file "/etc/systemd/system/$app.service"
 systemctl enable $app.service
+systemctl daemon-reload
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --log "/var/log/$app/$app.log"
-
-#=================================================
-# RESTORE THE CRON FILE
-#=================================================
-
-ynh_restore_file "/etc/cron.d/$app"
+yunohost service add $app --description "$app daemon for Mobilizon" --log "/var/log/$app/$app.log"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
@@ -129,10 +139,16 @@ ynh_restore_file "/etc/logrotate.d/$app"
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
-ynh_print_info "Reloading nginx web server and php-fpm..."
+ynh_print_info "Reloading nginx web server..."
 
-systemctl reload php7.0-fpm
 systemctl reload nginx
+
+#=================================================
+# START SERVICE
+#=================================================
+
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd
+#--line_match="Running Pleroma.Web.Endpoint"
 
 #=================================================
 # END OF SCRIPT
