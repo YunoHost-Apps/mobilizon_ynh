@@ -82,6 +82,16 @@
                     "fr": "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
                 },
                 "example": "Choose a password"
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "ask": {
+                    "en": "Choose the instance name",
+                    "fr": "Choisissez lle nom de l'instance"
+                },
+                "example": "My Mobilizon",
+                "default": "My Mobilizon"
             }
         ]
     }
