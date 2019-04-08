@@ -7,6 +7,7 @@
 #=================================================
 
 source _common.sh
+source ynh_systemd_action
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -17,7 +18,7 @@ old_domain=$YNH_APP_OLD_DOMAIN
 old_path=$YNH_APP_OLD_PATH
 
 new_domain=$YNH_APP_NEW_DOMAIN
-new_path=$YNH_APP_NEW_PATH
+new_path="/"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -83,8 +84,32 @@ fi
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
-# ...
+# STOP SERVICE
 #=================================================
+
+ynh_systemd_action --action=stop --service_name=$app
+
+#=================================================
+# MODIFY A CONFIG FILE
+#=================================================
+
+ynh_replace_string "$old_domain" "$new_domain" "$final_path/$app/.env"
+ynh_replace_string "$old_domain" "$new_domain" "$final_path/$app/config/prod.secret.exs"
+
+#=================================================
+# START SERVICE
+#=================================================
+
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd
+#--line_match="Running Pleroma.Web.Endpoint"
+
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
+ynh_backup_if_checksum_is_different "$final_path/$app/.env"
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum "$final_path/$app/.env"
 
 #=================================================
 # GENERIC FINALISATION
