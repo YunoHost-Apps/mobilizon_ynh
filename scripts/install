@@ -262,8 +262,7 @@ systemctl reload nginx
 # START SERVICE
 #=================================================
 
-ynh_systemd_action --action=start --service_name=$app --log_path=systemd
-# --line_match="Running Mobilizon.Web.Endpoint"
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
 
 #=================================================
 # END OF SCRIPT
