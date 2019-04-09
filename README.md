@@ -17,7 +17,7 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 ## Documentation
 
- * Official documentation: https://framagit.org/framasoft/mobilizon/wikis/home
+ * Official documentation: https://framasoft.frama.io/mobilizon/
 
 ## YunoHost specific features
 
