@@ -34,7 +34,7 @@ password=$YNH_APP_ARG_PASSWORD
 
 name=$YNH_APP_ARG_NAME
 secret=$(ynh_string_random 30)
-admin_mail=$(ynh_user_get_info $admin 'mail')
+admin_email=$(ynh_user_get_info $admin 'mail')
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -61,7 +61,7 @@ ynh_app_setting_set $app is_public $is_public
 ynh_app_setting_set $app language $language
 ynh_app_setting_set $app name $name
 ynh_app_setting_set $app secret $secret
-ynh_app_setting_set $app admin_mail $admin_mail
+ynh_app_setting_set $app admin_email $admin_email
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -154,7 +154,7 @@ ynh_replace_string "__DB_NAME__" "$db_name"  "$config"
 ynh_replace_string "__DB_USER__" "$db_user"  "$config"
 ynh_replace_string "__DB_PWD__"  "$db_pwd"   "$config"
 ynh_replace_string "__NAME__" "$name"  "$config"
-ynh_replace_string "__ADMIN_EMAIL__" "$admin_mail"  "$config"
+ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "$config"
 
 #=================================================
 # MAKE SETUP
@@ -169,7 +169,7 @@ ynh_replace_string "__DB_NAME__" "$db_name"  "../conf/prod.exs"
 ynh_replace_string "__DB_USER__" "$db_user"  "../conf/prod.exs"
 ynh_replace_string "__DB_PWD__"  "$db_pwd"   "../conf/prod.exs"
 ynh_replace_string "__NAME__" "$name"  "../conf/prod.exs"
-ynh_replace_string "__ADMIN_EMAIL__" "$admin_mail"  "../conf/prod.exs"
+ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "../conf/prod.exs"
 cp ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 # Give permission to the final_path

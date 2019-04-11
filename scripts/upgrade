@@ -138,7 +138,7 @@ ynh_replace_string "__DB_NAME__" "$db_name"  "$config"
 ynh_replace_string "__DB_USER__" "$db_user"  "$config"
 ynh_replace_string "__DB_PWD__"  "$db_pwd"   "$config"
 ynh_replace_string "__NAME__" "$name"  "$config"
-ynh_replace_string "__ADMIN_EMAIL__" "$admin_mail"  "$config"
+ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "$config"
 
 #=================================================
 # MAKE SETUP
@@ -153,7 +153,7 @@ ynh_replace_string "__DB_NAME__" "$db_name"  "../conf/prod.exs"
 ynh_replace_string "__DB_USER__" "$db_user"  "../conf/prod.exs"
 ynh_replace_string "__DB_PWD__"  "$db_pwd"   "../conf/prod.exs"
 ynh_replace_string "__NAME__" "$name"  "../conf/prod.exs"
-ynh_replace_string "__ADMIN_EMAIL__" "$admin_mail"  "../conf/prod.exs"
+ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "../conf/prod.exs"
 cp ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 # Give permission to the final_path
