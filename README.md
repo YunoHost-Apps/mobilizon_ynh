@@ -21,6 +21,10 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 **Shipped version:** 0.1.0-2019-04-11
 
+## Screenshots
+
+![Capture](https://user-images.githubusercontent.com/30271971/56023339-ea65aa00-5d0d-11e9-8b27-0120de231920.PNG)
+
 ## Documentation
 
  * Official documentation: https://framasoft.frama.io/mobilizon/
