@@ -1,5 +1,5 @@
-SOURCE_URL=url of app's source
-SOURCE_SUM=sha256 checksum
+SOURCE_URL=https://framagit.org/framasoft/mobilizon/-/archive/master/6bf903f9d79dc4f24c35d9e21ebe45abbc0924ed.gz
+SOURCE_SUM=074081bd8b688056d7a938d64dfd9da2b7c1d463d4f5bb86a1ddcceec6201cda
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true

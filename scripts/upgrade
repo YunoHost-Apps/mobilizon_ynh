@@ -7,6 +7,8 @@
 #=================================================
 
 source _common.sh
+source ynh_systemd_action
+source ynh_add_secure_repos__3
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -23,6 +25,12 @@ is_public=$(ynh_app_setting_get $app is_public)
 final_path=$(ynh_app_setting_get $app final_path)
 language=$(ynh_app_setting_get $app language)
 db_name=$(ynh_app_setting_get $app db_name)
+db_user=$db_name
+db_pwd=$(ynh_app_setting_get "$app" db_pwd)
+port=$(ynh_app_setting_get "$app" port)
+secret=$(ynh_app_setting_get "$app" secret)
+name=$(ynh_app_setting_get "$app" name)
+admin_email=$(ynh_app_setting_get "$app" admin_email)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -60,21 +68,16 @@ ynh_backup_before_upgrade
 ynh_clean_setup () {
 	# restore it if the upgrade fails
 	ynh_restore_upgradebackup
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
 #=================================================
-# CHECK THE PATH
+# STOP SERVICE
 #=================================================
 
-# Normalize the URL path syntax
-# N.B. : this is for app installations before YunoHost 2.7
-# where this value might be something like /foo/ or foo/
-# instead of /foo ....
-# If nobody installed your app before 2.7, then you may
-# safely remove this line
-path_url=$(ynh_normalize_url_path $path_url)
+ynh_systemd_action --action=stop --service_name=$app
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -84,7 +87,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path"
+ynh_setup_source "$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -101,33 +104,86 @@ ynh_print_info "Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
+ynh_install_nodejs 10
+
+#=================================================
+# INSTALL EXTRA DEPENDENCIES
+#=================================================
+ynh_print_info "Installing extra dependencies ..."
+
+lsb_name="$(lsb_release --codename --short)"
+ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
 ynh_print_info "Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create $app
-
-#=================================================
-# PHP-FPM CONFIGURATION
-#=================================================
-ynh_print_info "Upgrading php-fpm configuration..."
-
-# Create a dedicated php-fpm config
-ynh_add_fpm_config
+ynh_system_user_create "$app" "$final_path"
 
 #=================================================
 # SPECIFIC UPGRADE
 #=================================================
-# ...
+# MODIFY A CONFIG FILE
 #=================================================
 
-### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
-### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
-ynh_backup_if_checksum_is_different "$final_path/CONFIG_FILE"
+config="$final_path/$app/.env"
+cp ../conf/.env "$config"
+
+ynh_replace_string "__DOMAIN__"  "$domain"   "$config"
+ynh_replace_string "__PORT__"  "$port"   "$config"
+ynh_replace_string "__SECRET__"     "$secret"      "$config"
+ynh_replace_string "__DB_NAME__" "$db_name"  "$config"
+ynh_replace_string "__DB_USER__" "$db_user"  "$config"
+ynh_replace_string "__DB_PWD__"  "$db_pwd"   "$config"
+ynh_replace_string "__NAME__" "$name"  "$config"
+ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "$config"
+
+#=================================================
+# MAKE SETUP
+#=================================================
+
+# Temporarly bypass error : WARNING ** (ArgumentError) argument error and  System.get_env doesn't load environment variables
+
+ynh_replace_string "__DOMAIN__"  "$domain"   "../conf/prod.exs"
+ynh_replace_string "__PORT__"  "$port"   "../conf/prod.exs"
+ynh_replace_string "__SECRET__"     "$secret"      "../conf/prod.exs"
+ynh_replace_string "__DB_NAME__" "$db_name"  "../conf/prod.exs"
+ynh_replace_string "__DB_USER__" "$db_user"  "../conf/prod.exs"
+ynh_replace_string "__DB_PWD__"  "$db_pwd"   "../conf/prod.exs"
+ynh_replace_string "__NAME__" "$name"  "../conf/prod.exs"
+ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "../conf/prod.exs"
+cp ../conf/prod.exs "$final_path/$app/config/prod.exs"
+
+# Give permission to the final_path
+chown -R "$app":"$app" "$final_path"
+
+pushd $final_path/$app/js
+    ynh_use_nodejs    
+    sudo -u $app env PATH=$PATH npm install
+    sudo -u $app env PATH=$PATH npm run build
+popd
+
+pushd $final_path/$app
+    source .env
+    sudo -u "$app" MIX_ENV=prod mix local.hex --force
+    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+    sudo -u "$app" MIX_ENV=prod mix deps.get
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
+    sudo -u "$app" MIX_ENV=prod mix phx.digest
+
+    # Add user
+    # sudo -u "$app" MIX_ENV=prod mix mobilizon.user new "$admin" "$admin_email" --password "$password" --moderator --admin -y
+
+	#Generate key pair
+    # sudo -u "$app" MIX_ENV=prod mix web_push.gen.keypair >> "config/prod.secret.exs"
+	# ynh_replace_string "administrator@example.com" "$admin_email" "$final_path/$app/config/prod.secret.exs"
+popd
+
+ynh_backup_if_checksum_is_different "$config"
 # Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum "$final_path/CONFIG_FILE"
+ynh_store_file_checksum "$config"
 
 #=================================================
 # SETUP LOGROTATE
@@ -152,7 +208,7 @@ ynh_add_systemd_config
 #=================================================
 
 # Set permissions on app files
-chown -R root: $final_path
+chown -R "$app":"$app" "$final_path"
 
 #=================================================
 # SETUP SSOWAT
@@ -172,6 +228,12 @@ fi
 ynh_print_info "Reloading nginx web server..."
 
 systemctl reload nginx
+
+#=================================================
+# START SERVICE
+#=================================================
+
+ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
 
 #=================================================
 # END OF SCRIPT
