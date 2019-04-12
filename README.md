@@ -1,8 +1,8 @@
 # Mobilizon for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon)  
+[![Build Status](https://ci-apps-dev.yunohost.org/jenkins/job/mobilizon_ynh%20(yalh76)/badge/icon)](https://ci-apps-dev.yunohost.org/jenkins/job/mobilizon_ynh%20(yalh76)/)  
 [![Install mobilizon with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=mobilizon)
-[![Build Status](https://ci-apps-dev.yunohost.org/jenkins/job/mobilizon_ynh%20(yalh76)/badge/icon)](https://ci-apps-dev.yunohost.org/jenkins/job/mobilizon_ynh%20(yalh76)/)
 
 > *This package allow you to install Mobilizon quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
