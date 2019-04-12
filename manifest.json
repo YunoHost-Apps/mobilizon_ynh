@@ -6,7 +6,7 @@
         "en": "Your federated organization and mobilization platform.",
         "fr": "Votre plateforme fédérée d'organisation et de mobilisation."
     },
-    "version": "0.1~ynh1",
+    "version": "0.1.0-2019-04-12~ynh1",
     "url": "https://joinmobilizon.org/",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -25,20 +25,10 @@
                 "name": "domain",
                 "type": "domain",
                 "ask": {
-                    "en": "Choose a domain name for ynhexample",
-                    "fr": "Choisissez un nom de domaine pour ynhexample"
+                    "en": "Choose a domain name for Mobilizon",
+                    "fr": "Choisissez un nom de domaine pour Mobilizon"
                 },
                 "example": "example.com"
-            },
-            {
-                "name": "path",
-                "type": "path",
-                "ask": {
-                    "en": "Choose a path for ynhexample",
-                    "fr": "Choisissez un chemin pour ynhexample"
-                },
-                "example": "/example",
-                "default": "/example"
             },
             {
                 "name": "admin",
@@ -86,7 +76,7 @@
                 "type": "string",
                 "ask": {
                     "en": "Choose the instance name",
-                    "fr": "Choisissez lle nom de l'instance"
+                    "fr": "Choisissez le nom de l'instance"
                 },
                 "example": "My Mobilizon",
                 "default": "My Mobilizon"
