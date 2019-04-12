@@ -9,9 +9,12 @@ If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to
 
 ## Important
 
- * Mobilizon is in early development, like an Alpha, all functionalities are not available
- * Even if requested during installation: admin, language and password variables are not used
-
+1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
+1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
+1. Even if requested during installation: admin, language and password variables are not used
+1. When your mobilizon instance is installed, you need to register. 
+1. When registered to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
+1. Admin Dashboard is still not implemented
 
 ## Overview
 MobiliZon is your federated organization and mobilization platform. Supported by [Framasoft](https://framasoft.org/en/)
