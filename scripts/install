@@ -7,7 +7,6 @@
 #=================================================
 
 source _common.sh
-source ynh_systemd_action
 source ynh_add_secure_repos__3
 source /usr/share/yunohost/helpers
 
@@ -225,20 +224,11 @@ ynh_store_file_checksum "$config"
 chown -R "$app":"$app" "$final_path"
 
 #=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_print_info "Configuring log rotation..."
-
-# Use logrotate to manage application logfile(s)
-ynh_use_logrotate
-
-#=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-#yunohost service add $app --log "/var/log/$app/APP.log"
 # if using yunohost version 3.2 or more in the 'manifest.json', a description can be added
-yunohost service add $app --description "$app daemon for Mobilizon" --log "/var/log/$app/$app.log"
+yunohost service add $app --description "$app daemon for Mobilizon"
 
 #=================================================
 # SETUP SSOWAT
