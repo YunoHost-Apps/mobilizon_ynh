@@ -174,7 +174,7 @@ ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "../conf/prod.exs"
 cp ../conf/prod.exs "$final_path/$app/config/prod.exs"
 
 # Temprary YARN fix for package material-design-icons 
-cp ..conf/.yarnrc "$final_path/$app/.yarnrc"
+cp ../conf/.yarnrc "$final_path/$app/.yarnrc"
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
