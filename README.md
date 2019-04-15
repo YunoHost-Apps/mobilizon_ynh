@@ -7,15 +7,6 @@
 > *This package allow you to install Mobilizon quickly and simply on a YunoHost server.  
 If you don't have YunoHost, please see [here](https://yunohost.org/#/install) to know how to install and enjoy it.*
 
-## Important
-
-1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
-1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
-1. Even if requested during installation: admin, language and password variables are not used
-1. When your mobilizon instance is installed, you need to register. 
-1. When registered to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
-1. Admin Dashboard is still not implemented
-
 ## Overview
 MobiliZon is your federated organization and mobilization platform. Supported by [Framasoft](https://framasoft.org/en/)
 
@@ -24,6 +15,15 @@ MobiliZon aims to solve existing platform's problems to organize events in a dec
 Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
 
 **Shipped version:** 0.1.0-2019-04-11
+
+## Important
+
+1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
+1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
+1. Even if requested during installation: admin, language and password variables are not used
+1. When your mobilizon instance is installed, you need to register. 
+1. When registered to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
+1. Admin Dashboard is still not implemented
 
 ## Screenshots
 
