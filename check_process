@@ -1,12 +1,11 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"	(DOMAIN)
-		path="/path"	(PATH)
 		admin="john"	(USER)
 		language="fr"
 		is_public=1	(PUBLIC|public=1|private=0)
 		password="pass"
-		port="666"	(PORT)
+		name="My Mobilizon"
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=0
@@ -34,10 +33,5 @@
 	Level 9=0
 	Level 10=0
 ;;; Options
-Email=
-Notification=none
-;;; Upgrade options
-	; commit=CommitHash
-		name=Name and date of the commit.
-		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=pass&port=666&
-
+Email=yalh@yahoo.com
+Notification=all

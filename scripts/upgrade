@@ -7,7 +7,6 @@
 #=================================================
 
 source _common.sh
-source ynh_systemd_action
 source ynh_add_secure_repos__3
 source /usr/share/yunohost/helpers
 
@@ -184,14 +183,6 @@ popd
 ynh_backup_if_checksum_is_different "$config"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum "$config"
-
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_print_info "Upgrading logrotate configuration..."
-
-# Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append
 
 #=================================================
 # SETUP SYSTEMD
