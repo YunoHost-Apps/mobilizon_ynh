@@ -1,7 +1,6 @@
 # Mobilizon for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon)  
-[![Build Status](https://ci-apps-dev.yunohost.org/jenkins/job/mobilizon_ynh%20(yalh76)/badge/icon)](https://ci-apps-dev.yunohost.org/jenkins/job/mobilizon_ynh%20(yalh76)/)  
 [![Install Mobilizon with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=mobilizon)
 
 > *This package allow you to install Mobilizon quickly and simply on a YunoHost server.  
@@ -14,16 +13,26 @@ MobiliZon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
 
-**Shipped version:** 0.1.0-2019-04-11
+**Shipped version:** 0.1.0-2019-04-23
 
 ## Important
 
 1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
 1. Even if requested during installation: admin, language and password variables are not used
+1. Admin Dashboard is still not implemented
 1. When your mobilizon instance is installed, you need to register. 
 1. When registered to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
-1. Admin Dashboard is still not implemented
+
+Example to manually put user with id=1 as administrator:
+```bash
+su -l postgres
+psql
+\c mobilizon
+UPDATE public.users SET role='administrator' where id=1;
+\q
+exit
+```
 
 ## Screenshots
 
