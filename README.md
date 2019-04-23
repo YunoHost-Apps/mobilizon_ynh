@@ -22,6 +22,14 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 1. Even if requested during installation: admin, language and password variables are not used
 1. When your mobilizon instance is installed, you need to register. 
 1. When registered to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
+```bash
+su -l postgres
+psql
+\c mobilizon
+UPDATE public.users SET role='administrator' where id=1;
+\q
+exit
+```
 1. Admin Dashboard is still not implemented
 
 ## Screenshots
