@@ -11,7 +11,7 @@ User=mobilizon
 Environment="MIX_ENV=prod"
 EnvironmentFile=__FINALPATH__/__APP__/.env
 
-WorkingDirectory=__FINALPATH__/__APP__
+WorkingDirectory=__FINALPATH__/__APP__/
 ExecStart=/usr/bin/mix phx.server
 
 ; Some security directives.
