@@ -7,7 +7,7 @@
 #=================================================
 
 source _common.sh
-source ynh_add_secure_repos__3
+source ynh_add_extra_apt_repos__3
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -40,43 +40,43 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_print_info "Validating installation parameters..."
+ynh_print_info --message="Validating installation parameters..."
 
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_print_info "Storing installation settings..."
+ynh_print_info --message="Storing installation settings..."
 
-ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app path $path_url
-ynh_app_setting_set $app admin $admin
-ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set $app language $language
-ynh_app_setting_set $app name $name
-ynh_app_setting_set $app secret $secret
-ynh_app_setting_set $app admin_email $admin_email
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=admin --value=$admin
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+ynh_app_setting_set --app=$app --key=language --value=$language
+ynh_app_setting_set --app=$app --key=name --value=$name
+ynh_app_setting_set --app=$app --key=secret --value=$secret
+ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
 
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_print_info "Configuring firewall..."
+ynh_print_info --message="Configuring firewall..."
 
 # Find a free port
 port=$(ynh_find_port 8095)
-ynh_app_setting_set $app port $port
+ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_print_info "Installing dependencies..."
+ynh_print_info --message="Installing dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
@@ -87,7 +87,7 @@ ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ st
 #=================================================
 # INSTALL EXTRA DEPENDENCIES
 #=================================================
-ynh_print_info "Installing extra dependencies ..."
+ynh_print_info --message="Installing extra dependencies ..."
 
 lsb_name="$(lsb_release --codename --short)"
 ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
@@ -95,36 +95,32 @@ ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.
 #=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
-ynh_print_info "Creating a PostgreSQL database..."
+ynh_print_info --message="Creating a PostgreSQL database..."
 
-db_name=$(ynh_sanitize_dbid $app)
+db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
-db_pwd=$(ynh_string_random 30)
-ynh_app_setting_set "$app" db_name "$db_name"
-ynh_app_setting_set "$app" db_pwd "$db_pwd"
+db_pwd=$(ynh_string_random --length=30)
+ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
 ynh_psql_test_if_first_run
-ynh_psql_create_user "$app" "$db_pwd"
-ynh_psql_execute_as_root "CREATE DATABASE $db_name ENCODING 'UTF8' LC_COLLATE='C' LC_CTYPE='C' template=template0 OWNER $db_user;"
-ynh_psql_execute_as_root "\connect $db_name 
-create extension if not exists postgis;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_execute_as_root "\connect $db_name 
-CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS postgis;" --database=$db_name
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
+ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info "Setting up source files..."
+ynh_print_info --message="Setting up source files..."
 
-ynh_app_setting_set $app final_path $final_path
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source "$final_path/$app"
+ynh_setup_source --dest_dir="$final_path/$app"
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Configuring nginx web server..."
+ynh_print_info --message="Configuring nginx web server..."
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
@@ -134,10 +130,10 @@ ynh_add_nginx_config
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info "Configuring system user..."
+ynh_print_info --message="Configuring system user..."
 
 # Create a system user
-ynh_system_user_create "$app" "$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # SPECIFIC SETUP
@@ -148,14 +144,14 @@ ynh_system_user_create "$app" "$final_path"
 config="$final_path/$app/.env"
 cp ../conf/.env "$config"
 
-ynh_replace_string "__DOMAIN__"  "$domain"   "$config"
-ynh_replace_string "__PORT__"  "$port"   "$config"
-ynh_replace_string "__SECRET__"     "$secret"      "$config"
-ynh_replace_string "__DB_NAME__" "$db_name"  "$config"
-ynh_replace_string "__DB_USER__" "$db_user"  "$config"
-ynh_replace_string "__DB_PWD__"  "$db_pwd"   "$config"
-ynh_replace_string "__NAME__" "$name"  "$config"
-ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "$config"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$config"
+ynh_replace_string --match_string="__SECRET__" --replace_string="$secret" --target_file="$config"
+ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$config"
+ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$config"
+ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$config"
+ynh_replace_string --match_string="__NAME__" --replace_string="$name" --target_file="$config"
+ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$config"
 
 #=================================================
 # MAKE SETUP
@@ -163,18 +159,15 @@ ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "$config"
 
 # Temporarly bypass error : WARNING ** (ArgumentError) argument error and  System.get_env doesn't load environment variables
 
-ynh_replace_string "__DOMAIN__"  "$domain"   "../conf/prod.exs"
-ynh_replace_string "__PORT__"  "$port"   "../conf/prod.exs"
-ynh_replace_string "__SECRET__"     "$secret"      "../conf/prod.exs"
-ynh_replace_string "__DB_NAME__" "$db_name"  "../conf/prod.exs"
-ynh_replace_string "__DB_USER__" "$db_user"  "../conf/prod.exs"
-ynh_replace_string "__DB_PWD__"  "$db_pwd"   "../conf/prod.exs"
-ynh_replace_string "__NAME__" "$name"  "../conf/prod.exs"
-ynh_replace_string "__ADMIN_EMAIL__" "$admin_email"  "../conf/prod.exs"
+ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/prod.exs"
+ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="../conf/prod.exs"
+ynh_replace_string --match_string="__SECRET__" --replace_string="$secret" --target_file="../conf/prod.exs"
+ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="../conf/prod.exs"
+ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="../conf/prod.exs"
+ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="../conf/prod.exs"
+ynh_replace_string --match_string="__NAME__" --replace_string="$name" --target_file="../conf/prod.exs"
+ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="../conf/prod.exs"
 cp ../conf/prod.exs "$final_path/$app/config/prod.exs"
-
-# Temprary YARN fix for package material-design-icons 
-cp ../conf/.yarnrc "$final_path/$app/.yarnrc"
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
@@ -199,7 +192,7 @@ curl http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz --o
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_print_info "Configuring a systemd service..."
+ynh_print_info --message="Configuring a systemd service..."
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
@@ -207,10 +200,10 @@ ynh_add_systemd_config
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
-ynh_print_info "Storing the config file checksum..."
+ynh_print_info --message="Storing the config file checksum..."
 
 # Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum "$config"
+ynh_store_file_checksum --file="$config"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -231,19 +224,19 @@ yunohost service add $app --description "$app daemon for Mobilizon"
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_print_info "Configuring SSOwat..."
+ynh_print_info --message="Configuring SSOwat..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set $app unprotected_uris "/"
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx web server..."
+ynh_print_info --message="Reloading nginx web server..."
 
 systemctl reload nginx
 
@@ -257,4 +250,4 @@ ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Installation of $app completed"
+ynh_print_info --message="Installation of $app completed"
