@@ -73,6 +73,12 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
+# STOP SERVICE
+#=================================================
+
+ynh_systemd_action --action=stop --service_name=$app --log_path=systemd
+
+#=================================================
 # STANDARD UPGRADE STEPS
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
