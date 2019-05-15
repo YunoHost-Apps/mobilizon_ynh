@@ -46,15 +46,15 @@ exit
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/mobilizon%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/mobilizon/)
+* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
+* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/mobilizon/)
 
 ## Links
 
  * Report a bug: https://github.com/YunoHost-Apps/mobilizon_ynh/issues
  * App website: https://joinmobilizon.org/
- * Git website: https://framagit.org/framasoft/mobilizon/
+ * Upstream app repository: https://framagit.org/framasoft/mobilizon/
  * YunoHost website: https://yunohost.org/
 
 ---

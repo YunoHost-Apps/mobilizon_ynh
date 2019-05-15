@@ -31,15 +31,9 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 # Remove a service from the admin panel, added by `yunohost service add`
 if yunohost service status $app >/dev/null 2>&1
 then
-	ynh_print_info --message="Removing $app service"
+	ynh_print_info --message="Removing $app service..."
 	yunohost service remove $app
 fi
-
-#=================================================
-# STOP SERVICE
-#=================================================
-
-ynh_systemd_action --action=stop --service_name=$app
 
 #=================================================
 # STOP AND REMOVE SERVICE
@@ -53,8 +47,6 @@ ynh_remove_systemd_config
 # REMOVE THE POSTGRESQL DATABASE
 #=================================================
 ynh_print_info --message="Removing the PostgreSQL database"
-
-ynh_psql_execute_as_root --sql="SELECT pg_terminate_backend (pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$db_name';" --database=$db_name
 
 # Remove a database if it exists, along with the associated user
 ynh_psql_remove_db --db_user=$db_user --db_name=$db_name
@@ -92,7 +84,7 @@ ynh_print_info --message="Closing a port..."
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	ynh_print_info --message="Closing port $port"
+	ynh_script_progression --message="Closing port $port..."
 	ynh_exec_warn_less yunohost firewall disallow TCP $port
 fi
 
