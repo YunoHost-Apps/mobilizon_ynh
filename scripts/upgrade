@@ -221,14 +221,15 @@ fi
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action=start --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
 ynh_print_info --message="Reloading nginx web server..."
 
-systemctl reload nginxynh_systemd_action --service_name=nginx --action=reload
+ynh_systemd_action --service_name=nginx --action=reload
+
 #=================================================
 # END OF SCRIPT
 #=================================================
