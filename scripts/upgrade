@@ -32,6 +32,12 @@ name=$(ynh_app_setting_get --app=$app --key=name)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
 
 #=================================================
+# CHECK VERSION
+#=================================================
+
+upgrade_type=$(ynh_check_app_version_changed)
+
+#=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_print_info --message="Ensuring downward compatibility..."
@@ -46,13 +52,13 @@ elif [ "$is_public" = "No" ]; then
 fi
 
 # If db_name doesn't exist, create it
-if [ -z $db_name ]; then
+if [ -z "$db_name" ]; then
 	db_name=$(ynh_sanitize_dbid --db_name=$app)
 	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 fi
 
 # If final_path doesn't exist, create it
-if [ -z $final_path ]; then
+if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
@@ -73,20 +79,25 @@ ynh_clean_setup () {
 ynh_abort_if_errors
 
 #=================================================
-# STOP SERVICE
-#=================================================
-
-ynh_systemd_action --action=stop --service_name=$app --log_path=systemd
-
-#=================================================
 # STANDARD UPGRADE STEPS
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_print_info --message="Stopping a systemd service..."
+
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info --message="Upgrading source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path/$app"
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --time --weight=1
+
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path/$app"
+fi
 
 #=================================================
 # NGINX CONFIGURATION
@@ -103,12 +114,7 @@ ynh_print_info --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
-ynh_install_nodejs 10
-
-#=================================================
-# INSTALL EXTRA DEPENDENCIES
-#=================================================
-ynh_print_info --message="Installing extra dependencies ..."
+ynh_install_nodejs --nodejs_version="10"
 
 lsb_name="$(lsb_release --codename --short)"
 ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
@@ -173,7 +179,11 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix phx.digest
 popd
 
-ynh_backup_if_checksum_is_different "$config"
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
+ynh_backup_if_checksum_is_different --file="$config"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
 
@@ -207,17 +217,18 @@ then
 fi
 
 #=================================================
+# START SERVICE
+#=================================================
+ynh_print_info --message="Starting a systemd service..."
+
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
+
+#=================================================
 # RELOAD NGINX
 #=================================================
 ynh_print_info --message="Reloading nginx web server..."
 
-systemctl reload nginx
-
-#=================================================
-# START SERVICE
-#=================================================
-
-ynh_systemd_action --action=start --service_name=$app --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
+ynh_systemd_action --service_name=nginx --action=reload
 
 #=================================================
 # END OF SCRIPT

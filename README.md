@@ -13,7 +13,7 @@ MobiliZon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
 
-**Shipped version:** 0.1.0-2019-04-24
+**Shipped version:** 0.1.0-2019-05-15
 
 ## Important
 
@@ -46,15 +46,15 @@ exit
 
 #### Supported architectures
 
-* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Community%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Community%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/mobilizon%20%28Community%29.svg)](https://ci-stretch.nohost.me/ci/apps/mobilizon/)
+* x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
+* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/mobilizon/)
 
 ## Links
 
  * Report a bug: https://github.com/YunoHost-Apps/mobilizon_ynh/issues
  * App website: https://joinmobilizon.org/
- * Git website: https://framagit.org/framasoft/mobilizon/
+ * Upstream app repository: https://framagit.org/framasoft/mobilizon/
  * YunoHost website: https://yunohost.org/
 
 ---
