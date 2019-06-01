@@ -134,6 +134,7 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 
 config="$final_path/$app/.env"
+ynh_backup_if_checksum_is_different --file="$config"
 cp ../conf/.env "$config"
 
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
@@ -183,7 +184,6 @@ popd
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-ynh_backup_if_checksum_is_different --file="$config"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
 
