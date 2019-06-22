@@ -71,6 +71,7 @@ ynh_print_info --message="Backing up the app before upgrading (may take a while)
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	read -p "key"
 	# restore it if the upgrade fails
 	ynh_restore_upgradebackup
 	ynh_clean_check_starting
@@ -94,9 +95,26 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --time --weight=1
+	
+	# Create a temporary directory
+	tmpdir="$(mktemp -d)"
+	
+	# Backup the config file in the temp dir
+	cp -a "$final_path/$app/.env" "$tmpdir/.env"
+	cp -a "$final_path/$app/config/prod.exs" "$tmpdir/prod.exs"
+	
+	# Remove the app directory securely
+	ynh_secure_remove --file="$final_path/$app"
 
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$final_path/$app"
+	
+	#Copy the admin saved settings from tmp directory to final path
+	cp -a  "$tmpdir/.env" "$final_path/$app/.env"
+	cp -a  "$tmpdir/prod.exs" "$final_path/$app/config/prod.exs"
+	
+	# Remove the tmp directory securely
+	ynh_secure_remove --file="$tmpdir"
 fi
 
 #=================================================
@@ -134,6 +152,7 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 
 config="$final_path/$app/.env"
+ynh_backup_if_checksum_is_different --file="$config"
 cp ../conf/.env "$config"
 
 ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
@@ -183,7 +202,6 @@ popd
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
-ynh_backup_if_checksum_is_different --file="$config"
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
 
