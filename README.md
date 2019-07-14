@@ -15,7 +15,7 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 **Shipped version:** 0.1.0-2019-07-06
 
-## Important
+## Important points to read before installing
 
 1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
