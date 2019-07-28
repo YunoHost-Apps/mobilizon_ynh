@@ -13,9 +13,9 @@ MobiliZon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
 
-**Shipped version:** 0.1.0-2019-07-06
+**Shipped version:** 0.1.0-2019-07-28
 
-## Important
+## Important points to read before installing
 
 1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
@@ -62,7 +62,6 @@ exit
 Developers info
 ----------------
 
-**Only if you want to use a testing branch for coding, instead of merging directly into master.**
 Please do your pull request to the [testing branch](https://github.com/YunoHost-Apps/mobilizon_ynh/tree/testing).
 
 To try the testing branch, please proceed like that.
