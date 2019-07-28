@@ -5,7 +5,7 @@
 #=================================================
 
 # dependencies used by the app
-pkg_dependencies="postgresql postgresql-contrib openssl make git postgis "
+pkg_dependencies="build-essential inotify-tools postgresql postgresql-client postgresql-contrib git curl gnupg openssl postgis make gcc libc-dev argon2 imagemagick"
 extra_pkg_dependencies="elixir esl-erlang"
 
 #=================================================
