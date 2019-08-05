@@ -23,12 +23,11 @@
         "install" : [
             {
                 "name": "warning",
-                "type": "string",
+                "type": "boolean",
                 "ask": {
-                    "text": "\nMobilizon is in early development, a lot of features are not implemented.\n\nFor advanced testing use only.\n\n"
+                    "text": "\nMobilizon is in early development, a lot of features are not implemented.\n\nFor advanced testing use only.\n\nPress Y to install Mobilizon.\n\n"
                 },
-                "choices": ["Understood"],
-                "default": "Understood"
+                "default": false
             },
             {
                 "name": "domain",
