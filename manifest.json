@@ -3,8 +3,8 @@
     "id": "mobilizon",
     "packaging_format": 1,
     "description": {
-        "en": "Your federated organization and mobilization platform.",
-        "fr": "Votre plateforme fédérée d'organisation et de mobilisation."
+        "en": "A decentralized and federated platform to organize events",
+        "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
     },
     "version": "0.1.0-2019-11-22~ynh1",
     "url": "https://joinmobilizon.org/",
