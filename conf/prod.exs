@@ -45,7 +45,7 @@ config :mobilizon, MobilizonWeb.Email.Mailer,
   no_mx_lookups: false
 
 # Do not print debug messages in production
-#config :logger, level: System.get_env("MOBILIZON_LOGLEVEL") |> String.to_atom() || :info
+config :logger, level: System.get_env("MOBILIZON_LOGLEVEL") |> String.to_atom() || :info
 
 config :mobilizon, Mobilizon.Service.Geospatial, service: Mobilizon.Service.Geospatial.Nominatim
 
