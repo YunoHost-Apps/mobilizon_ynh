@@ -95,7 +95,10 @@ fi
 #=================================================
 
 # Remove the log files
-ynh_secure_remove --file="/var/log/$app/"
+ynh_secure_remove --file="/var/log/$app"
+
+# Remove the GeoIP folder
+ynh_secure_remove --file="/usr/share/GeoIP"
 
 #=================================================
 # GENERIC FINALIZATION

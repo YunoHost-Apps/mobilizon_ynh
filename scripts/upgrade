@@ -63,6 +63,10 @@ if [ -z "$final_path" ]; then
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
+ynh_secure_remove --file="$final_path/$app/priv/data/GeoLite2-City.mmdb"
+
+ynh_secure_remove --file="/usr/share/GeoIP"
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
