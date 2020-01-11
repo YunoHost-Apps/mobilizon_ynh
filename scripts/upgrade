@@ -201,9 +201,8 @@ popd
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
-#=ynh_print_info --message="Storing the config file checksum..."
-================================================
-
+#=================================================
+ynh_print_info --message="Storing the config file checksum..."
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
 
