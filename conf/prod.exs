@@ -29,7 +29,7 @@ config :mobilizon, MobilizonWeb.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "localhost",
   hostname: "localhost",
-  port: 25,
+  port: 587,
   # or {:system, "SMTP_USERNAME"}
   username: nil,
   # or {:system, "SMTP_PASSWORD"}
