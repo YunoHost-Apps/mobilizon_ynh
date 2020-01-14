@@ -1,6 +1,5 @@
 ;; Test complet
 	; Manifest
-		warning="Understood"
 		domain="domain.tld"	(DOMAIN)
 		admin="john"	(USER)
 		language="fr"
