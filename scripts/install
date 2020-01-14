@@ -13,6 +13,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
+ynh_print_info --message="Managing script failure..."
 
 ynh_clean_setup () {
 	ynh_clean_check_starting
@@ -23,6 +24,7 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
+ynh_print_info --message="Retrieving arguments from the manifest..."
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
@@ -69,7 +71,7 @@ ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
 #=================================================
 ynh_print_info --message="Configuring firewall..."
 
-# Find a free port
+# Find an available port
 port=$(ynh_find_port --port=8095)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
@@ -141,6 +143,7 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+ynh_print_info --message="Modifying a config file..."
 
 config="$final_path/$app/.env"
 cp ../conf/.env "$config"
@@ -157,6 +160,7 @@ ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_ema
 #=================================================
 # MAKE SETUP
 #=================================================
+ynh_print_info --message="Making setup..."
 
 # Temporarly bypass error : WARNING ** (ArgumentError) argument error and  System.get_env doesn't load environment variables
 
@@ -190,8 +194,6 @@ pushd $final_path/$app
     ynh_replace_string --match_string="#config :logger" --replace_string="config :logger" --target_file="$final_path/$app/config/prod.exs"
 popd
 
-curl http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz --output GeoLite2-City.tar.gz -s && tar zxf GeoLite2-City.tar.gz && mkdir -p /usr/share/GeoIP && mv GeoLite2-City_*/GeoLite2-City.mmdb $final_path/$app/priv/data/GeoLite2-City.mmdb
-
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -213,21 +215,24 @@ ynh_store_file_checksum --file="$config"
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_print_info --message="Securing files and directories..."
 
 # Set permissions to app files
 chown -R "$app":"$app" "$final_path"
 
 #=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
+# INTEGRATE SERVICE IN YUNOHOST
 #=================================================
+ynh_print_info --message="Integrating service in YunoHost..."
 
-# if using yunohost version 3.2 or more in the 'manifest.json', a description can be added
 yunohost service add $app --description "$app daemon for Mobilizon"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
+ynh_print_info --message="Starting a systemd service..."
 
+# Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
 
 #=================================================
