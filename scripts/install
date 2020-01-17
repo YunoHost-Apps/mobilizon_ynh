@@ -184,12 +184,14 @@ pushd $final_path/$app/js
 popd
 
 pushd $final_path/$app
+    ynh_replace_string --match_string="config :logger" --replace_string="#config :logger" --target_file="$final_path/$app/config/prod.exs"
     source .env
     sudo -u "$app" MIX_ENV=prod mix local.hex --force
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
     sudo -u "$app" MIX_ENV=prod mix phx.digest
+    ynh_replace_string --match_string="#config :logger" --replace_string="config :logger" --target_file="$final_path/$app/config/prod.exs"
 popd
 
 #=================================================
