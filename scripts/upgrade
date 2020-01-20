@@ -63,6 +63,10 @@ if [ -z "$final_path" ]; then
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
+ynh_secure_remove --file="$final_path/$app/priv/data/GeoLite2-City.mmdb"
+
+ynh_secure_remove --file="/usr/share/GeoIP"
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -85,7 +89,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_print_info --message="Stopping a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -93,7 +97,7 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-	ynh_script_progression --message="Upgrading source files..." --time --weight=1
+	ynh_print_info --message="Upgrading source files..."
 	
 	# Create a temporary directory
 	tmpdir="$(mktemp -d)"
@@ -149,6 +153,7 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+ynh_print_info --message="Modifying a config file..."
 
 config="$final_path/$app/.env"
 ynh_backup_if_checksum_is_different --file="$config"
@@ -166,6 +171,7 @@ ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_ema
 #=================================================
 # MAKE SETUP
 #=================================================
+ynh_print_info --message="Making setup..."
 
 # Temporarly bypass error : WARNING ** (ArgumentError) argument error and  System.get_env doesn't load environment variables
 
@@ -189,18 +195,20 @@ pushd $final_path/$app/js
 popd
 
 pushd $final_path/$app
+    ynh_replace_string --match_string="config :logger" --replace_string="#config :logger" --target_file="$final_path/$app/config/prod.exs"
     source .env
     sudo -u "$app" MIX_ENV=prod mix local.hex --force
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
     sudo -u "$app" MIX_ENV=prod mix phx.digest
+    ynh_replace_string --match_string="#config :logger" --replace_string="config :logger" --target_file="$final_path/$app/config/prod.exs"
 popd
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
-
+ynh_print_info --message="Storing the config file checksum..."
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
 
@@ -217,6 +225,7 @@ ynh_add_systemd_config
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_print_info --message="Securing files and directories..."
 
 # Set permissions on app files
 chown -R "$app":"$app" "$final_path"
@@ -234,7 +243,7 @@ then
 fi
 
 #=================================================
-# START SERVICE
+# START SYSTEMD SERVICE
 #=================================================
 ynh_print_info --message="Starting a systemd service..."
 

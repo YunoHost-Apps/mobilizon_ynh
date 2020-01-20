@@ -6,7 +6,8 @@ After=network.target postgresql.service
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
-User=mobilizon
+User=__APP__
+Group=__APP__
 
 Environment="MIX_ENV=prod"
 EnvironmentFile=__FINALPATH__/__APP__/.env

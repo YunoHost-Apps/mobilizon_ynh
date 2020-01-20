@@ -22,15 +22,6 @@
     "arguments": {
         "install" : [
             {
-                "name": "warning",
-                "type": "string",
-                "ask": {
-                    "text": "\nMobilizon is in early development, a lot of features are not implemented.\n\nFor advanced testing use only.\n\n"
-                },
-                "choices": ["Understood"],
-                "default": "Understood"
-            },
-            {
                 "name": "domain",
                 "type": "domain",
                 "ask": {

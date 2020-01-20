@@ -22,7 +22,7 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 1. Even if requested during installation: admin, language and password variables are not used
 1. Admin Dashboard is still not implemented
 1. When your mobilizon instance is installed, you need to register. 
-1. When registered to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
+1. When registered, to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
 
 Example to manually put user with id=1 as administrator:
 ```bash
@@ -48,7 +48,6 @@ exit
 
 * x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
-* Jessie x86-64b - [![Build Status](https://ci-stretch.nohost.me/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-stretch.nohost.me/ci/apps/mobilizon/)
 
 ## Links
 
