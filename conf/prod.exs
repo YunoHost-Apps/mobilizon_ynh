@@ -27,9 +27,9 @@ config :mobilizon, Mobilizon.Storage.Repo,
 
 config :mobilizon, MobilizonWeb.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
-  server: "localhost",
-  hostname: "localhost",
-  port: 587,
+  server: "127.0.0.1",
+  hostname: "127.0.0.1",
+  port: 465,
   # or {:system, "SMTP_USERNAME"}
   username: nil,
   # or {:system, "SMTP_PASSWORD"}
@@ -42,7 +42,8 @@ config :mobilizon, MobilizonWeb.Email.Mailer,
   ssl: false,
   retries: 1,
   # can be `true`
-  no_mx_lookups: false
+  no_mx_lookups: false,
+  auth: :never
 
 # Do not print debug messages in production
 #config :logger, level: System.get_env("MOBILIZON_LOGLEVEL") |> String.to_atom() || :info
