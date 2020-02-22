@@ -29,11 +29,11 @@ config :mobilizon, MobilizonWeb.Email.Mailer,
   adapter: Bamboo.SMTPAdapter,
   server: "127.0.0.1",
   hostname: "127.0.0.1",
-  port: 465,
+  port: 25,
   # or {:system, "SMTP_USERNAME"}
-  username: nil,
+  # username: nil,
   # or {:system, "SMTP_PASSWORD"}
-  password: nil,
+  # password: nil,
   # can be `:always` or `:never`
   tls: :if_available,
   # or {":system", ALLOWED_TLS_VERSIONS"} w/ comma seprated values (e.g. "tlsv1.1,tlsv1.2")
