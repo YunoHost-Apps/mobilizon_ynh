@@ -191,8 +191,8 @@ chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app/js
     ynh_use_nodejs    
-    sudo -u $app env PATH=$PATH npm install
-    sudo -u $app env PATH=$PATH npm run build
+    sudo -u $app env PATH=$PATH yarn install
+    sudo -u $app env PATH=$PATH yarn run build
 popd
 
 pushd $final_path/$app
