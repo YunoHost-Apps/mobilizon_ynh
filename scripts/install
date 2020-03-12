@@ -125,8 +125,6 @@ ynh_setup_source --dest_dir="$final_path/$app"
 #=================================================
 ynh_print_info --message="Configuring nginx web server..."
 
-### `ynh_add_nginx_config` will use the file conf/nginx.conf
-
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
