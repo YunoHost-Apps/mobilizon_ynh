@@ -1,6 +1,6 @@
-SOURCE_URL=https://framagit.org/framasoft/mobilizon/-/archive/62ad69c53c1c0789e879ad04787121a27883639e/mobilizon-62ad69c53c1c0789e879ad04787121a27883639e.tar.gz
-SOURCE_SUM=d9db8d987134cae240fbdc4b3fb207328eee168242b809ec3dc66d7bfd17660e
+SOURCE_URL=https://framagit.org/framasoft/mobilizon/-/archive/1.0.0-beta.3/mobilizon-1.0.0-beta.3.tar.gz
+SOURCE_SUM=5bf0f328f19fd182b0a02088bd9d53cd9e9042dde165328d42c9b12149b97c2d
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=0.1.0-2019-12-28.tar.gz
+SOURCE_FILENAME=mobilizon-1.0.0-beta.3.tar.gz
