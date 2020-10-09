@@ -155,6 +155,7 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix deps.get
     sudo -u "$app" MIX_ENV=prod mix compile
     sudo -u "$app" MIX_ENV=prod mix mobilizon.instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name $name --admin-email $admin_email --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
+    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
     sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
 popd
 
@@ -197,7 +198,7 @@ yunohost service add $app --description "$app daemon for Mobilizon"
 ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # SETUP SSOWAT
