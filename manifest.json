@@ -6,7 +6,7 @@
         "en": "A decentralized and federated platform to organize events",
         "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
     },
-    "version": "0.1.0-2019-12-28~ynh1",
+    "version": "1.0.0-rc1~ynh1",
     "url": "https://joinmobilizon.org/",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -74,8 +74,8 @@
                     "en": "Choose the instance name",
                     "fr": "Choisissez le nom de l'instance"
                 },
-                "example": "My Mobilizon",
-                "default": "My Mobilizon"
+                "example": "Mobilizon",
+                "default": "Mobilizon"
             }
         ]
     }

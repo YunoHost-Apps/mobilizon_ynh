@@ -3,17 +3,15 @@ Description=__APP__ Mobilizon Service
 After=network.target postgresql.service
 
 [Service]
+User=__APP__
+WorkingDirectory=__FINALPATH__/__APP__/
+ExecStart=/usr/bin/env mix phx.server
 ExecReload=/bin/kill $MAINPID
 KillMode=process
 Restart=on-failure
-User=__APP__
-Group=__APP__
+Environment=MIX_ENV=prod
 
-Environment="MIX_ENV=prod"
-EnvironmentFile=__FINALPATH__/__APP__/.env
-
-WorkingDirectory=__FINALPATH__/__APP__/
-ExecStart=/usr/bin/mix phx.server
+SyslogIdentifier=mobilizon
 
 ; Some security directives.
 ; Use private /tmp and /var/tmp folders inside a new file system namespace, which are discarded after the process stops.
@@ -24,6 +22,7 @@ ProtectSystem=full
 PrivateDevices=false
 ; Ensures that the service process and all its children can never gain new privileges through execve().
 NoNewPrivileges=true
+
 
 [Install]
 WantedBy=multi-user.target

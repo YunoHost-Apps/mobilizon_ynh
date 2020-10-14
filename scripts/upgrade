@@ -12,7 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info --message="Loading installation settings..."
+ynh_script_progression --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -33,14 +33,14 @@ admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
 #=================================================
 # CHECK VERSION
 #=================================================
-ynh_print_info --message="Checking version..."
+ynh_script_progression --message="Checking version..."
 
 upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_print_info --message="Ensuring downward compatibility..."
+ynh_script_progression --message="Ensuring downward compatibility..."
 
 # Fix is_public as a boolean value
 if [ "$is_public" = "Yes" ]; then
@@ -70,7 +70,7 @@ ynh_secure_remove --file="/usr/share/GeoIP"
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_print_info --message="Backing up the app before upgrading (may take a while)..."
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
@@ -87,7 +87,7 @@ ynh_abort_if_errors
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_print_info --message="Stopping a systemd service..."
+ynh_script_progression --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
 
@@ -97,14 +97,16 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line
 
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
-	ynh_print_info --message="Upgrading source files..."
+	ynh_script_progression --message="Upgrading source files..."
 	
 	# Create a temporary directory
 	tmpdir="$(mktemp -d)"
 	
 	# Backup the config file in the temp dir
-	cp -a "$final_path/$app/.env" "$tmpdir/.env"
-	cp -a "$final_path/$app/config/prod.exs" "$tmpdir/prod.exs"
+	if [ -s "$final_path/$app/config/prod.exs" ]
+	then
+		cp -a "$final_path/$app/config/prod.exs" "$tmpdir/prod.secret.exs"
+	fi
 	
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
@@ -113,8 +115,10 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app"
 	
 	#Copy the admin saved settings from tmp directory to final path
-	cp -a  "$tmpdir/.env" "$final_path/$app/.env"
-	cp -a  "$tmpdir/prod.exs" "$final_path/$app/config/prod.exs"
+	if [ -s "$tmpdir/prod.exs" ]
+	then
+		cp -a  "$tmpdir/prod.exs" "$final_path/$app/config/prod.secret.exs"
+	fi
 	
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
@@ -123,7 +127,7 @@ fi
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info --message="Upgrading nginx web server configuration..."
+ynh_script_progression --message="Upgrading nginx web server configuration..."
 
 # Create a dedicated nginx config
 ynh_add_nginx_config
@@ -131,11 +135,11 @@ ynh_add_nginx_config
 #=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
-ynh_print_info --message="Upgrading dependencies..."
+ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
-ynh_install_nodejs --nodejs_version="10"
+ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
 lsb_name="$(lsb_release --codename --short)"
 ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
@@ -143,7 +147,7 @@ ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_print_info --message="Making sure dedicated system user exists..."
+ynh_script_progression --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
 ynh_system_user_create --username=$app --home_dir=$final_path
@@ -153,37 +157,15 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
-ynh_print_info --message="Modifying a config file..."
+ynh_script_progression --message="Modifying a config file..."
 
-config="$final_path/$app/.env"
+config="$final_path/$app/config/prod.secret.exs"
 ynh_backup_if_checksum_is_different --file="$config"
-cp ../conf/.env "$config"
-
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$config"
-ynh_replace_string --match_string="__SECRET__" --replace_string="$secret" --target_file="$config"
-ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$config"
-ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$config"
-ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$config"
-ynh_replace_string --match_string="__NAME__" --replace_string="$name" --target_file="$config"
-ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$config"
 
 #=================================================
 # MAKE SETUP
 #=================================================
-ynh_print_info --message="Making setup..."
-
-# Temporarly bypass error : WARNING ** (ArgumentError) argument error and  System.get_env doesn't load environment variables
-
-ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="../conf/prod.exs"
-ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="../conf/prod.exs"
-ynh_replace_string --match_string="__SECRET__" --replace_string="$secret" --target_file="../conf/prod.exs"
-ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="../conf/prod.exs"
-ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="../conf/prod.exs"
-ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="../conf/prod.exs"
-ynh_replace_string --match_string="__NAME__" --replace_string="$name" --target_file="../conf/prod.exs"
-ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="../conf/prod.exs"
-cp ../conf/prod.exs "$final_path/$app/config/prod.exs"
+ynh_script_progression --message="Making setup..."
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
@@ -195,27 +177,24 @@ pushd $final_path/$app/js
 popd
 
 pushd $final_path/$app
-    ynh_replace_string --match_string="config :logger" --replace_string="#config :logger" --target_file="$final_path/$app/config/prod.exs"
-    source .env
     sudo -u "$app" MIX_ENV=prod mix local.hex --force
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
+    sudo -u "$app" MIX_ENV=prod mix compile
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
-    sudo -u "$app" MIX_ENV=prod mix phx.digest
-    ynh_replace_string --match_string="#config :logger" --replace_string="config :logger" --target_file="$final_path/$app/config/prod.exs"
 popd
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
-ynh_print_info --message="Storing the config file checksum..."
+ynh_script_progression --message="Storing the config file checksum..."
 # Recalculate and store the checksum of the file for the next upgrade.
 ynh_store_file_checksum --file="$config"
 
 #=================================================
 # SETUP SYSTEMD
 #=================================================
-ynh_print_info --message="Upgrading systemd configuration..."
+ynh_script_progression --message="Upgrading systemd configuration..."
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
@@ -225,7 +204,7 @@ ynh_add_systemd_config
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
-ynh_print_info --message="Securing files and directories..."
+ynh_script_progression --message="Securing files and directories..."
 
 # Set permissions on app files
 chown -R "$app":"$app" "$final_path"
@@ -233,7 +212,7 @@ chown -R "$app":"$app" "$final_path"
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_print_info --message="Upgrading SSOwat configuration..."
+ynh_script_progression --message="Upgrading SSOwat configuration..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
@@ -245,14 +224,14 @@ fi
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_print_info --message="Starting a systemd service..."
+ynh_script_progression --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access MobilizonWeb.Endpoint at"
+ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading nginx web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -260,4 +239,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info --message="Upgrade of $app completed"
+ynh_script_progression --message="Upgrade of $app completed"
