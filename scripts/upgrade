@@ -92,6 +92,23 @@ ynh_script_progression --message="Stopping a systemd service..."
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
 
 #=================================================
+# UPGRADE FROM PREVIOUS VERSION
+#=================================================
+
+if ynh_version_gt "1.0.0-rc1~ynh1" "${previous_version}" ; then
+	ynh_script_progression --message="Upgrade configuration to 1.0.0-rc1~ynh1..."
+
+	config="$final_path/$app/config/prod.secret.exs"
+	ynh_backup_if_checksum_is_different --file="$config"
+
+	# Implement ldap
+	cat "../conf/ldap.exs" >> "$config"
+	
+	# Recalculate and store the checksum of the file for the next upgrade.
+	ynh_store_file_checksum --file="$config"
+fi
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
