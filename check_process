@@ -4,7 +4,7 @@
 		admin="john"	(USER)
 		language="fr"
 		is_public=1	(PUBLIC|public=1|private=0)
-		password="pass"
+		password="password"
 		name="My_Mobilizon"
 	; Checks
 		pkg_linter=1
