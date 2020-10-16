@@ -146,7 +146,7 @@ config="$final_path/$app/config/prod.secret.exs"
 pushd $final_path/$app/js
     ynh_use_nodejs    
     sudo -u $app env PATH=$PATH yarn install
-    sudo -u $app env PATH=$PATH yarn run build
+    sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
 pushd $final_path/$app
