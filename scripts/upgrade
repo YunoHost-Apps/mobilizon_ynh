@@ -178,8 +178,8 @@ popd
 
 pushd $final_path/$app
     ynh_script_progression --message="Building Elixir..."
-    sudo -u "$app" MIX_ENV=prod mix local.hex --force
-    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+    #sudo -u "$app" MIX_ENV=prod mix local.hex --force
+    #sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
     sudo -u "$app" MIX_ENV=prod mix compile
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
