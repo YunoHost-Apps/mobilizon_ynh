@@ -13,7 +13,7 @@ MobiliZon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
 
-**Shipped version:** 1.0.0-rc.2
+**Shipped version:** 1.0.0-rc.4
 
 ## Important points to read before installing
 
