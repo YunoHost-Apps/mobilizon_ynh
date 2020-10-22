@@ -17,22 +17,7 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 ## Important points to read before installing
 
-1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
-1. Even if requested during installation: admin, language and password variables are not used
-1. Admin Dashboard is still not implemented
-1. When your mobilizon instance is installed, you need to register. 
-1. When registered, to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
-
-Example to manually put user with id=1 as administrator:
-```bash
-su -l postgres
-psql
-\c mobilizon
-UPDATE public.users SET role='administrator' where id=1;
-\q
-exit
-```
 
 ## Screenshots
 
