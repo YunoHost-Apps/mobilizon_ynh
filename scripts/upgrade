@@ -38,6 +38,10 @@ ynh_script_progression --message="Checking version..."
 
 upgrade_type=$(ynh_check_app_version_changed)
 
+abort_if_up_to_date
+# previous function is what defines 'version', more precisely the 'previous version'
+previous_version="${version}"
+
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
