@@ -28,7 +28,6 @@ path_url="/"
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 language=$YNH_APP_ARG_LANGUAGE
-password=$YNH_APP_ARG_PASSWORD
 
 admin_email=$(ynh_user_get_info $admin 'mail')
 
@@ -161,8 +160,13 @@ cat "../conf/ldap.exs" >> "$config"
 
 pushd $final_path/$app
     chmod o-rwx $config
+    # Compile *again* because we added ldap conf in between... dunno if the first is relevant
+    sudo -u "$app" MIX_ENV=prod mix compile
     ynh_secure_remove --file="/tmp/setup_db.psql"
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
+
+    # We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
+    password=$(ynh_string_random --length=30)
     sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
 popd
 
