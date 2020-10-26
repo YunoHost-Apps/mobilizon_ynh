@@ -8,7 +8,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   username: "__YNH_USER__",
   password: "__YNH_USER_PASSWORD__",
   # can be `:always` or `:never`
-  tls: :never,
+  tls: :if_available,
   allowed_tls_versions: [:"tlsv1.2"],
   retries: 1,
   # can be `true`
