@@ -6,14 +6,14 @@
         "en": "A decentralized and federated platform to organize events",
         "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
     },
-    "version": "1.0.0-rc1~ynh1",
+    "version": "1.0.0~ynh1",
     "url": "https://joinmobilizon.org/",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "yalh76"
     },
     "requirements": {
-        "yunohost": ">= 3.5"
+        "yunohost": ">= 4.0"
     },
     "multi_instance": true,
     "services": [
@@ -35,7 +35,7 @@
                 "type": "user",
                 "ask": {
                     "en": "Choose an admin user",
-                    "fr": "Choisissez l’administrateur"
+                    "fr": "Choisissez l'administrateur"
                 },
                 "example": "johndoe"
             },

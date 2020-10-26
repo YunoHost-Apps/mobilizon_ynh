@@ -13,26 +13,11 @@ MobiliZon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
 
-**Shipped version:** 1.0.0-rc1
+**Shipped version:** 1.0.0
 
 ## Important points to read before installing
 
-1. **Mobilizon** is in early development, like an Alpha, all functionalities are not available
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
-1. Even if requested during installation: admin, language and password variables are not used
-1. Admin Dashboard is still not implemented
-1. When your mobilizon instance is installed, you need to register. 
-1. When registered, to be admin you have to manually goes in PostgreSQL, database $app, table users, and change the role value to `administrator` instead of `user` (other role available: `moderator`)
-
-Example to manually put user with id=1 as administrator:
-```bash
-su -l postgres
-psql
-\c mobilizon
-UPDATE public.users SET role='administrator' where id=1;
-\q
-exit
-```
 
 ## Screenshots
 
@@ -44,7 +29,7 @@ exit
 
 ## YunoHost specific features
 
-#### Supported architectures
+#### Supported achitectures
 
 * x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
