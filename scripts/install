@@ -28,9 +28,8 @@ path_url="/"
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 language=$YNH_APP_ARG_LANGUAGE
-
 admin_email=$(ynh_user_get_info $admin 'mail')
-
+ynh_user_password=$(ynh_string_random --length=30)
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
@@ -57,6 +56,7 @@ ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=language --value=$language
 ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
+ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -130,6 +130,9 @@ ynh_script_progression --message="Configuring system user..."
 # Create a system user
 ynh_system_user_create --username=$app --home_dir=$final_path
 
+yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
+yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
+
 #=================================================
 # SPECIFIC SETUP
 #=================================================
@@ -157,9 +160,12 @@ pushd $final_path/$app
 popd
 
 cat "../conf/ldap.exs" >> "$config"
+cat "../conf/mail.exs" >> "$config"
 
 pushd $final_path/$app
     chmod o-rwx $config
+    ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
+    ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
     # Compile *again* because we added ldap conf in between... dunno if the first is relevant
     sudo -u "$app" MIX_ENV=prod mix compile
     ynh_secure_remove --file="/tmp/setup_db.psql"

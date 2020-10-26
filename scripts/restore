@@ -34,6 +34,7 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
+ynh_user_password=$(ynh_app_setting_get --app=$app --key=ynh_user_password)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -68,6 +69,9 @@ ynh_script_progression --message="Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create --username=$app --home_dir=$final_path
+
+yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
+yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 #=================================================
 # RESTORE USER RIGHTS

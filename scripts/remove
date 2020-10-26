@@ -107,6 +107,8 @@ ynh_script_progression --message="Removing the dedicated system user..."
 # Delete a system user
 ynh_system_user_delete --username=$app
 
+yunohost user delete ${app}_notifs
+
 #=================================================
 # END OF SCRIPT
 #=================================================
