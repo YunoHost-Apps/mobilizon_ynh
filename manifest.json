@@ -31,15 +31,6 @@
                 "example": "example.com"
             },
             {
-                "name": "admin",
-                "type": "user",
-                "ask": {
-                    "en": "Choose an admin user",
-                    "fr": "Choisissez l'administrateur"
-                },
-                "example": "johndoe"
-            },
-            {
                 "name": "is_public",
                 "type": "boolean",
                 "ask": {
@@ -59,6 +50,15 @@
                 "default": "fr"
             },
             {
+                "name": "admin",
+                "type": "user",
+                "ask": {
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l'administrateur"
+                },
+                "example": "johndoe"
+            },
+            {
                 "name": "password",
                 "type": "password",
                 "ask": {
@@ -66,17 +66,7 @@
                     "fr": "Définissez le mot de passe administrateur"
                 },
                 "example": "Choose a password"
-            },
-            {
-                "name": "name",
-                "type": "string",
-                "ask": {
-                    "en": "Choose the instance name",
-                    "fr": "Choisissez le nom de l'instance"
-                },
-                "example": "Mobilizon",
-                "default": "Mobilizon"
-            }
+           }
         ]
     }
 }

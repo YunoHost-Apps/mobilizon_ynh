@@ -30,7 +30,6 @@ is_public=$YNH_APP_ARG_IS_PUBLIC
 language=$YNH_APP_ARG_LANGUAGE
 password=$YNH_APP_ARG_PASSWORD
 
-name=$YNH_APP_ARG_NAME
 admin_email=$(ynh_user_get_info $admin 'mail')
 
 app=$YNH_APP_INSTANCE_NAME
@@ -56,7 +55,6 @@ ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=language --value=$language
-ynh_app_setting_set --app=$app --key=name --value=$name
 ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
 
 #=================================================
@@ -154,7 +152,7 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
     sudo -u "$app" MIX_ENV=prod mix compile
-    sudo -u "$app" MIX_ENV=prod mix mobilizon.instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name $name --admin-email $admin_email --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
+    sudo -u "$app" MIX_ENV=prod mix mobilizon.instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name "Mobilizon" --admin-email $admin_email --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
 popd
 
 cat "../conf/ldap.exs" >> "$config"

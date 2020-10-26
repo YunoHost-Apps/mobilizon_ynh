@@ -28,7 +28,6 @@ db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 secret=$(ynh_app_setting_get --app=$app --key=secret)
-name=$(ynh_app_setting_get --app=$app --key=name)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
 
 #=================================================
