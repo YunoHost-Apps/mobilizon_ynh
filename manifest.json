@@ -6,7 +6,7 @@
         "en": "A decentralized and federated platform to organize events",
         "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
     },
-    "version": "1.0.0-rc.4~ynh1",
+    "version": "1.0.0~ynh1",
     "url": "https://joinmobilizon.org/",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
