@@ -160,7 +160,7 @@ popd
 cat "../conf/ldap.exs" >> "$config"
 
 pushd $final_path/$app
-    chown o-rwx $config
+    chmod o-rwx $config
     ynh_secure_remove --file="/tmp/setup_db.psql"
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
     sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"

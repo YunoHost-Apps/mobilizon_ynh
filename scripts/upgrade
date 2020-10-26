@@ -176,7 +176,7 @@ ynh_script_progression --message="Modifying a config file..."
 
 config="$final_path/$app/config/prod.secret.exs"
 ynh_backup_if_checksum_is_different --file="$config"
-chown o-rwx $config
+chmod o-rwx $config
 
 #=================================================
 # MAKE SETUP
