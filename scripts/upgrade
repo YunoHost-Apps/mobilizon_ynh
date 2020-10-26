@@ -125,10 +125,7 @@ then
 	tmpdir="$(mktemp -d)"
 	
 	# Backup the config file in the temp dir
-	if [ -s "$final_path/$app/config/prod.exs" ]
-	then
-		cp -a "$final_path/$app/config/prod.exs" "$tmpdir/prod.secret.exs"
-	fi
+    cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
 	
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
@@ -137,10 +134,7 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app"
 	
 	#Copy the admin saved settings from tmp directory to final path
-	if [ -s "$tmpdir/prod.exs" ]
-	then
-		cp -a  "$tmpdir/prod.exs" "$final_path/$app/config/prod.secret.exs"
-	fi
+    cp -a  "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
 	
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
@@ -183,6 +177,7 @@ ynh_script_progression --message="Modifying a config file..."
 
 config="$final_path/$app/config/prod.secret.exs"
 ynh_backup_if_checksum_is_different --file="$config"
+chown o-rwx $config
 
 #=================================================
 # MAKE SETUP
@@ -193,7 +188,7 @@ chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app/js
     ynh_script_progression --message="Building NodeJS..."
-    ynh_use_nodejs    
+    ynh_use_nodejs
     sudo -u $app env PATH=$PATH yarn install
     sudo -u $app env PATH=$PATH yarn run build
 popd
