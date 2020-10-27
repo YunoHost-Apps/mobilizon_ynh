@@ -35,6 +35,7 @@ db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 ynh_user_password=$(ynh_app_setting_get --app=$app --key=ynh_user_password)
+admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
