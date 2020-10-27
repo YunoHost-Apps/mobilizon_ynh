@@ -147,13 +147,13 @@ config="$final_path/$app/config/prod.secret.exs"
 
 pushd $final_path/$app/js
     ynh_use_nodejs
-    ynh_print_info --message="Installing dependencies (this is going to take a while...)"
+    ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
     sudo -u $app env PATH=$PATH yarn install
-    ynh_print_info --message="Building application (this is going to take a while...)"
+    ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
     sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
-ynh_print_info --message="Configuring Mobilizon..."
+ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix local.hex --force
     sudo -u "$app" MIX_ENV=prod mix local.rebar --force
