@@ -99,7 +99,7 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line
 # UPGRADE FROM PREVIOUS VERSION
 #=================================================
 
-if ynh_version_gt "0.1.1" "${previous_version}" ; then
+if ynh_version_gt "1.0.0" "${previous_version}" ; then
 	ynh_script_progression --message="Upgrade configuration to 1.0.0..."
 
     ynh_user_password=$(ynh_string_random --length=30)
@@ -108,8 +108,22 @@ if ynh_version_gt "0.1.1" "${previous_version}" ; then
     yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
     yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
+	# Manage previous .env file
+	ynh_backup_if_checksum_is_different --file="$final_path/$app/.env"
+    ynh_delete_file_checksum --file="$final_path/$app/.env"
+    ynh_secure_remove --file="$final_path/$app/.env"
+
+	# Configure Mobilizon
 	config="$final_path/$app/config/prod.secret.exs"
-	ynh_backup_if_checksum_is_different --file="$config"
+	cp ../conf/prod.secret.exs "$config"
+	ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
+	ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$config"
+	ynh_replace_string --match_string="__SECRET__" --replace_string="$secret" --target_file="$config"
+	ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$config"
+	ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$config"
+	ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$config"
+	ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$config"
+	ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$config"
 
 	# Implement ldap and mail
 	cat "../conf/ldap.exs" >> "$config"
@@ -196,20 +210,20 @@ chmod o-rwx $config
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app/js
-    ynh_script_progression --message="Building NodeJS..."
     ynh_use_nodejs
+    ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
     sudo -u $app env PATH=$PATH yarn install
-    sudo -u $app env PATH=$PATH yarn run build
+    ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
+    sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
+ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
-    ynh_script_progression --message="Building Elixir..."
-    #sudo -u "$app" MIX_ENV=prod mix local.hex --force
-    #sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+    sudo -u "$app" MIX_ENV=prod mix local.hex --force
+    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
     sudo -u "$app" MIX_ENV=prod mix deps.get
     sudo -u "$app" MIX_ENV=prod mix compile
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
-
 popd
 
 #=================================================
