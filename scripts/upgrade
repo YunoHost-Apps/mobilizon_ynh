@@ -99,8 +99,8 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line
 # UPGRADE FROM PREVIOUS VERSION
 #=================================================
 
-if ynh_version_gt "1.0.0" "${previous_version}" ; then
-	ynh_script_progression --message="Upgrade configuration to 1.0.0..."
+if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
+    ynh_script_progression --message="Upgrade configuration to 1.0.0..."
 
     ynh_user_password=$(ynh_string_random --length=30)
     ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
