@@ -18,6 +18,9 @@ Mobilizon is a tool that helps you find, create and organise events. You can als
 ## Important points to read before installing
 
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
+2. To connect as **Mobilizon** administrator, use the email address and password of the user you choose during install
+3. By default registrations are closed
+4. All Yunohost user are allowed to connect
 
 ## Screenshots
 
