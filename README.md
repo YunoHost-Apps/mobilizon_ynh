@@ -11,7 +11,7 @@ MobiliZon is your federated organization and mobilization platform. Supported by
 
 MobiliZon aims to solve existing platform's problems to organize events in a decentralised, libre and privacy friendly way.
 
-Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
+Mobilizon is a tool that helps you find, create and organise events. You can also create a page for your group where the members will be able to organise together.
 
 **Shipped version:** 1.0.0
 
