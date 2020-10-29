@@ -27,6 +27,10 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 * [Official demo](https://demo.mobilizon.org/)
 
+## Configuration
+
+Configuration can be made in the Mobilizon administration panel.
+
 ## Documentation
 
  * Official documentation: https://docs.joinmobilizon.org
