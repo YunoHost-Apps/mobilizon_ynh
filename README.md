@@ -21,7 +21,7 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 ## Screenshots
 
-![Capture](https://user-images.githubusercontent.com/30271971/56023339-ea65aa00-5d0d-11e9-8b27-0120de231920.PNG)
+![Capture](https://joinmobilizon.org/img/fr/event-tree-participation-rose-utopia.jpg)
 
 ## Documentation
 
