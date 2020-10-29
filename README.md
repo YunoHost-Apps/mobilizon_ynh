@@ -33,6 +33,10 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 ## YunoHost specific features
 
+#### Multi-user support
+
+LDAP is supported but HTTP auth is not supported?
+
 #### Supported achitectures
 
 * x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
