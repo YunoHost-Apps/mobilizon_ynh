@@ -11,17 +11,28 @@ MobiliZon is your federated organization and mobilization platform. Supported by
 
 MobiliZon aims to solve existing platform's problems to organize events in a decentralised, libre and privacy friendly way.
 
-Mobilizon is a tool designed to create platforms for managing communities and events. Its purpose is to help as many people as possible to free themselves from Facebook groups and events, from Meetup, etc.
+Mobilizon is a tool that helps you find, create and organise events. You can also create a page for your group where the members will be able to organise together.
 
 **Shipped version:** 1.0.0
 
 ## Important points to read before installing
 
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
+2. To connect as **Mobilizon** administrator, use the email address and password of the user you choose during install
+3. By default registrations are closed
+4. All Yunohost user are allowed to connect
 
 ## Screenshots
 
-![Capture](https://user-images.githubusercontent.com/30271971/56023339-ea65aa00-5d0d-11e9-8b27-0120de231920.PNG)
+![Capture](https://joinmobilizon.org/img/fr/event-tree-participation-rose-utopia.jpg)
+
+## Demo
+
+* [Official demo](https://demo.mobilizon.org/)
+
+## Configuration
+
+Configuration can be made in the Mobilizon administration panel.
 
 ## Documentation
 
@@ -29,7 +40,11 @@ Mobilizon is a tool designed to create platforms for managing communities and ev
 
 ## YunoHost specific features
 
-#### Supported achitectures
+#### Multi-user support
+
+LDAP is supported but HTTP auth is not supported?
+
+#### Supported architectures
 
 * x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
