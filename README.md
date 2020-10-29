@@ -7,9 +7,9 @@
 If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
 
 ## Overview
-MobiliZon is your federated organization and mobilization platform. Supported by [Framasoft](https://framasoft.org/en/)
+Mobilizon is your federated organization and mobilization platform. Supported by [Framasoft](https://framasoft.org/en/)
 
-MobiliZon aims to solve existing platform's problems to organize events in a decentralised, libre and privacy friendly way.
+Mobilizon aims to solve existing platform's problems to organize events in a decentralised, libre and privacy friendly way.
 
 Mobilizon is a tool that helps you find, create and organise events. You can also create a page for your group where the members will be able to organise together.
 
@@ -20,7 +20,7 @@ Mobilizon is a tool that helps you find, create and organise events. You can als
 1. **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
 2. To connect as **Mobilizon** administrator, use the email address and password of the user you choose during install
 3. By default registrations are closed
-4. All Yunohost user are allowed to connect
+4. All YunoHost users are allowed to connect
 
 ## Screenshots
 
