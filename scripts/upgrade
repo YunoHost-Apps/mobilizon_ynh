@@ -227,6 +227,19 @@ pushd $final_path/$app
 popd
 
 #=================================================
+# RUN APP MIGRATIONS
+#=================================================
+
+if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
+
+ynh_script_progression --message="Mobilizon v1.0.3: Refresh remote profiles to save avatars locally"
+pushd $final_path/$app
+    sudo -u "$app" MIX_ENV=prod mix mobilizon.actors.refresh --all
+popd
+
+fi
+
+#=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
 ynh_script_progression --message="Storing the config file checksum..."
