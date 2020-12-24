@@ -178,6 +178,11 @@ ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
+if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
+	ynh_script_progression --message="Mobilizon v1.0.3: Remove previous NodeJS"
+	ynh_remove_nodejs
+fi
+
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
 lsb_name="$(lsb_release --codename --short)"
@@ -225,6 +230,17 @@ pushd $final_path/$app
     sudo -u "$app" MIX_ENV=prod mix compile
     sudo -u "$app" MIX_ENV=prod mix ecto.migrate
 popd
+
+#=================================================
+# RUN APP MIGRATIONS
+#=================================================
+
+if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
+    ynh_script_progression --message="Mobilizon v1.0.3: Refresh remote profiles to save avatars locally"
+    pushd $final_path/$app
+        sudo -u "$app" MIX_ENV=prod mix mobilizon.actors.refresh --all
+    popd
+fi
 
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
