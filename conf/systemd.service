@@ -5,13 +5,33 @@ After=network.target postgresql.service
 [Service]
 User=__APP__
 WorkingDirectory=__FINALPATH__/__APP__/
-ExecStart=/usr/bin/env mix phx.server
-ExecReload=/bin/kill $MAINPID
+ExecStart=__FINALPATH__/__APP__/bin/mobilizon start
+ExecReload=__FINALPATH__/__APP__/bin/mobilizon restart
+ExecStop=__FINALPATH__/__APP__/bin/mobilizon stop
 KillMode=process
 Restart=on-failure
-Environment=MIX_ENV=prod
 
-SyslogIdentifier=mobilizon
+Environment=MIX_ENV=prod
+Environment=PORT=__PORT__
+Environment=MOBILIZON_INSTANCE_PORT=__PORT__
+Environment=MOBILIZON_INSTANCE_HOST=__DOMAIN__
+Environment=MOBILIZON_INSTANCE_SECRET_KEY_BASE=__SECRET__
+Environment=MOBILIZON_INSTANCE_SECRET_KEY=__SECRET_KEY__
+Environment=MOBILIZON_INSTANCE_NAME=Mobilizon
+Environment=MOBILIZON_INSTANCE_EMAIL=__APP__@__DOMAIN__
+Environment=MOBILIZON_REPLY_EMAIL=__APP__@__DOMAIN__
+Environment=MOBILIZON_UPLOADS=/app/uploads
+Environment=MOBILIZON_DATABASE_USERNAME=__DB_USER__
+Environment=MOBILIZON_DATABASE_PASSWORD=__DB_PWD__
+Environment=MOBILIZON_DATABASE_DBNAME=__DB_NAME__
+Environment=MOBILIZON_DATABASE_HOST=localhost
+Environment=MOBILIZON_SMTP_SERVER=127.0.0.1
+Environment=MOBILIZON_SMTP_HOSTNAME=127.0.0.1
+Environment=MOBILIZON_SMTP_PORT=25
+Environment=MOBILIZON_SMTP_USERNAME=__YNH_USER__
+Environment=MOBILIZON_SMTP_PASSWORD=__YNH_USER_PASSWORD__
+
+SyslogIdentifier=__APP__
 
 ; Some security directives.
 ; Use private /tmp and /var/tmp folders inside a new file system namespace, which are discarded after the process stops.
