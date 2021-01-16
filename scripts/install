@@ -31,6 +31,9 @@ language=$YNH_APP_ARG_LANGUAGE
 admin_email=$(ynh_user_get_info $admin 'mail')
 ynh_user_password=$(ynh_string_random --length=30)
 app=$YNH_APP_INSTANCE_NAME
+ynh_user="${app}_notifs"
+secret=$(ynh_string_random --length=64)
+secret_key=$(ynh_string_random --length=64)
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -57,6 +60,8 @@ ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=language --value=$language
 ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
 ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
+ynh_app_setting_set --app=$app --key=secret --value=$secret
+ynh_app_setting_set --app=$app --key=secret_key --value=$secret_key
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -66,27 +71,15 @@ ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_passwor
 ynh_script_progression --message="Finding an available port..."
 
 # Find an available port
-port=$(ynh_find_port --port=8095)
+port=$(ynh_find_port --port=4000)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing dependencies..."
+ynh_script_progression --message="Installing dependencies..." --weight=2
 
 ynh_install_app_dependencies $pkg_dependencies
-
-ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
-
-ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key='https://dl.yarnpkg.com/debian/pubkey.gpg'
-
-#=================================================
-# INSTALL EXTRA DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Installing extra dependencies ..."
-
-lsb_name="$(lsb_release --codename --short)"
-ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -108,7 +101,7 @@ ynh_psql_execute_as_root --sql="ALTER USER $db_user PASSWORD '$db_pwd';" --datab
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression --message="Setting up source files..." --weight=2
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
@@ -119,8 +112,10 @@ ynh_setup_source --dest_dir="$final_path/$app"
 #=================================================
 ynh_script_progression --message="Configuring nginx web server..."
 
+app_version=$($final_path/$app/bin/mobilizon version | cut -d " " -f2)
+
 # Create a dedicated nginx config
-ynh_add_nginx_config
+ynh_add_nginx_config "app_version"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -130,7 +125,7 @@ ynh_script_progression --message="Configuring system user..."
 # Create a system user
 ynh_system_user_create --username=$app --home_dir=$final_path
 
-yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
+yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain $domain --password "$ynh_user_password" -q 0
 yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 #=================================================
@@ -138,46 +133,12 @@ yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforwar
 #=================================================
 # MAKE SETUP
 #=================================================
-ynh_script_progression --message="Installing dependencies and building app..." --weight=5
+ynh_script_progression --message="Installing dependencies and building app..." --weight=1
 
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
 
-config="$final_path/$app/config/prod.secret.exs"
-
-pushd $final_path/$app/js
-    ynh_use_nodejs
-    ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
-    sudo -u $app env PATH=$PATH yarn install
-    ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
-    sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
-popd
-
-ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
-pushd $final_path/$app
-    sudo -u "$app" MIX_ENV=prod mix local.hex --force
-    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
-    sudo -u "$app" MIX_ENV=prod mix deps.get
-    sudo -u "$app" MIX_ENV=prod mix compile
-    sudo -u "$app" MIX_ENV=prod mix mobilizon.instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name "Mobilizon" --admin-email "$app@$domain" --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
-popd
-
-cat "../conf/ldap.exs" >> "$config"
-cat "../conf/mail.exs" >> "$config"
-
-pushd $final_path/$app
-    chmod o-rwx $config
-    ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
-    ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
-    # Compile *again* because we added ldap conf in between... dunno if the first is relevant
-    sudo -u "$app" MIX_ENV=prod mix compile
-    ynh_secure_remove --file="/tmp/setup_db.psql"
-    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
-
-    # We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
-    password=$(ynh_string_random --length=30)
-    sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
-popd
+cat "../conf/ldap.exs" >> "$final_path/$app/releases/$app_version/releases.exs"
 
 #=================================================
 # SETUP SYSTEMD
@@ -185,15 +146,7 @@ popd
 ynh_script_progression --message="Configuring a systemd service..."
 
 # Create a dedicated systemd config
-ynh_add_systemd_config
-
-#=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
-ynh_script_progression --message="Storing the config file checksum..."
-
-# Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$config"
+ynh_add_systemd_config --others_var="secret secret_key port domain ynh_user ynh_user_password db_user db_name db_pwd"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -219,6 +172,31 @@ ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# CONFIGURE LDAP CONNECTION
+#=================================================
+ynh_script_progression --message="App: setup ldap connection"
+
+sudo -u "$app" MIX_ENV=prod $final_path/$app/bin/mobilizon_ctl "ecto.migrate"
+
+#=================================================
+# MIGRATE DATABASE
+#=================================================
+ynh_script_progression --message="App: migrate database"
+
+sudo -u "$app" MIX_ENV=prod $final_path/$app/bin/mobilizon_ctl "ecto.migrate"
+
+#=================================================
+# AND CREATE FIRST USER
+#=================================================
+ynh_script_progression --message="App: create initial user"
+
+# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
+password=$(ynh_string_random --length=30)
+sudo -u "$app" MIX_ENV=prod $final_path/$app/bin/mobilizon_ctl "mobilizon.users.new" "$admin_email" --admin --password "$password"
 
 #=================================================
 # SETUP SSOWAT
