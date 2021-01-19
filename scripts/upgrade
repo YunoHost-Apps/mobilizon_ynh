@@ -193,6 +193,6 @@ chmod o-rwx $config
 # MAKE SETUP
 #=================================================
 
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
+mkdir -p /home/yunohost.multimedia/$app
+chown -R "$app":"$app" "$final_path" "/home/yunohost.multimedia/$app"
 

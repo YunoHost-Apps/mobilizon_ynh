@@ -135,8 +135,8 @@ yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforwar
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=1
 
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
+mkdir -p /home/yunohost.multimedia/$app
+chown -R "$app":"$app" "$final_path" "/home/yunohost.multimedia/$app"
 
 cat "../conf/ldap.exs" >> "$final_path/$app/releases/$app_version/releases.exs"
 
