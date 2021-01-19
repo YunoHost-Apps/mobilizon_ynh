@@ -145,16 +145,6 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..."
 
-	# Create a temporary directory
-	tmpdir="$(mktemp -d)"
-
-	# Backup the config file in the temp dir
-    cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
-
-	# Remove the app directory securely
-	ynh_secure_remove --file="$final_path/$app"
-
-	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$final_path/$app"
 fi
 
