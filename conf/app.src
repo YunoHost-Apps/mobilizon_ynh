@@ -1,6 +1,6 @@
-SOURCE_URL=https://framagit.org/oncletom/mobilizon/-/package_files/74/download
-SOURCE_SUM=cf6cd61ecc9c146586e8e8586cb9d58c51dda88da24850df5445f0f4c3bf7e58
+SOURCE_URL=https://framagit.org/oncletom/mobilizon/-/package_files/75/download
+SOURCE_SUM=fbbd105652e1de4a7c95f3531d41b467a89bd358040ca567a6b1f5d2bb879bd7
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=mobilizon_0.0.6_amd64.tar.gz
+SOURCE_FILENAME=mobilizon_amd64.tar.gz

@@ -12,7 +12,6 @@ KillMode=process
 Restart=on-failure
 
 Environment=MIX_ENV=prod
-Environment=PORT=__PORT__
 Environment=MOBILIZON_INSTANCE_PORT=__PORT__
 Environment=MOBILIZON_INSTANCE_HOST=__DOMAIN__
 Environment=MOBILIZON_INSTANCE_SECRET_KEY_BASE=__SECRET__
