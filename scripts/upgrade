@@ -165,6 +165,11 @@ ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
+if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
+	ynh_script_progression --message="Mobilizon v1.0.3: Remove previous NodeJS"
+	ynh_remove_nodejs
+fi
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -191,71 +196,3 @@ chmod o-rwx $config
 # Give permission to the final_path
 chown -R "$app":"$app" "$final_path"
 
-
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Upgrading systemd configuration..."
-
-# Create a dedicated systemd config
-ynh_add_systemd_config --others_var="secret secret_key port domain ynh_user ynh_user_password db_user db_name db_pwd"
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions on app files
-chown -R "$app":"$app" "$final_path"
-
-#=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..."
-
-yunohost service add $app --description "$app daemon for Mobilizon"
-
-#=================================================
-# START SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Starting a systemd service..."
-
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-
-ynh_script_progression --message="App: running database migrations"
-pushd $final_path/$app
-    sudo -u "$app" MIX_ENV=prod $final_path/$app/bin/mobilizon_ctl "ecto.migrate"
-popd
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..."
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
-fi
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading nginx web server..."
-
-ynh_systemd_action --service_name=nginx --action=reload
-
-#=================================================
-# END OF SCRIPT
-#=================================================
-
-ynh_script_progression --message="Upgrade of $app completed"
