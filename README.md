@@ -13,7 +13,7 @@ Mobilizon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool that helps you find, create and organise events. You can also create a page for your group where the members will be able to organise together.
 
-**Shipped version:** 1.0.0
+**Shipped version:** 1.0.3
 
 ## Important points to read before installing
 
