@@ -20,7 +20,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -46,25 +45,9 @@ previous_version="${version}"
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
 
-# Fix is_public as a boolean value
-if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=1
-	is_public=1
-elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=0
-	is_public=0
-fi
-
-# If db_name doesn't exist, create it
-if [ -z "$db_name" ]; then
-	db_name=$(ynh_sanitize_dbid --db_name=$app)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-fi
-
-# If final_path doesn't exist, create it
-if [ -z "$final_path" ]; then
-	final_path=/var/www/$app
-	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+if ! ynh_permission_exists --permission="admin"; then
+	# Create the required permissions
+	ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
 fi
 
 ynh_secure_remove --file="$final_path/$app/priv/data/GeoLite2-City.mmdb"
@@ -100,18 +83,18 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line
 #=================================================
 
 if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
-    ynh_script_progression --message="Upgrade configuration to 1.0.0..."
+	ynh_script_progression --message="Upgrade configuration to 1.0.0..."
 
-    ynh_user_password=$(ynh_string_random --length=30)
-    ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
+	ynh_user_password=$(ynh_string_random --length=30)
+	ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
 
-    yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
-    yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
+	yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
+	yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 	# Manage previous .env file
 	ynh_backup_if_checksum_is_different --file="$final_path/$app/.env"
-    ynh_delete_file_checksum --file="$final_path/$app/.env"
-    ynh_secure_remove --file="$final_path/$app/.env"
+	ynh_delete_file_checksum --file="$final_path/$app/.env"
+	ynh_secure_remove --file="$final_path/$app/.env"
 
 	# Configure Mobilizon
 	config="$final_path/$app/config/prod.secret.exs"
@@ -129,8 +112,8 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 	cat "../conf/ldap.exs" >> "$config"
 	cat "../conf/mail.exs" >> "$config"
 	
-    ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
-    ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
+	ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
+	ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
 
 	# Recalculate and store the checksum of the file for the next upgrade.
 	ynh_store_file_checksum --file="$config"
@@ -148,7 +131,7 @@ then
 	tmpdir="$(mktemp -d)"
 	
 	# Backup the config file in the temp dir
-    cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
+	cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
 	
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
@@ -157,7 +140,7 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app"
 	
 	#Copy the admin saved settings from tmp directory to final path
-    cp -a  "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
+	cp -a "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
 	
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
@@ -215,20 +198,20 @@ chmod o-rwx $config
 chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app/js
-    ynh_use_nodejs
-    ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
-    sudo -u $app env PATH=$PATH yarn install
-    ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
-    sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
+	ynh_use_nodejs
+	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
+	sudo -u $app env PATH=$PATH yarn install
+	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
+	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
-    sudo -u "$app" MIX_ENV=prod mix local.hex --force
-    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
-    sudo -u "$app" MIX_ENV=prod mix deps.get
-    sudo -u "$app" MIX_ENV=prod mix compile
-    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
+	sudo -u "$app" MIX_ENV=prod mix local.hex --force
+	sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+	sudo -u "$app" MIX_ENV=prod mix deps.get
+	sudo -u "$app" MIX_ENV=prod mix compile
+	sudo -u "$app" MIX_ENV=prod mix ecto.migrate
 popd
 
 #=================================================
@@ -236,10 +219,10 @@ popd
 #=================================================
 
 if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
-    ynh_script_progression --message="Mobilizon v1.0.3: Refresh remote profiles to save avatars locally"
-    pushd $final_path/$app
-        sudo -u "$app" MIX_ENV=prod mix mobilizon.actors.refresh --all
-    popd
+	ynh_script_progression --message="Mobilizon v1.0.3: Refresh remote profiles to save avatars locally"
+	pushd $final_path/$app
+		sudo -u "$app" MIX_ENV=prod mix mobilizon.actors.refresh --all
+	popd
 fi
 
 #=================================================
@@ -281,18 +264,6 @@ yunohost service add $app --description "$app daemon for Mobilizon"
 ynh_script_progression --message="Starting a systemd service..."
 
 ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..."
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
-fi
 
 #=================================================
 # RELOAD NGINX
