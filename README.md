@@ -13,7 +13,7 @@ Mobilizon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool that helps you find, create and organise events. You can also create a page for your group where the members will be able to organise together.
 
-**Shipped version:** 1.0.3
+**Shipped version:** 1.0.6-2021-02-23
 
 ## Important points to read before installing
 
@@ -58,8 +58,7 @@ LDAP is supported but HTTP auth is not supported?
 
 ---
 
-Developer info
-----------------
+## Developer info
 
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/mobilizon_ynh/tree/testing).
 
