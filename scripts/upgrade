@@ -98,15 +98,7 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 
 	# Configure Mobilizon
 	config="$final_path/$app/config/prod.secret.exs"
-	cp ../conf/prod.secret.exs "$config"
-	ynh_replace_string --match_string="__DOMAIN__" --replace_string="$domain" --target_file="$config"
-	ynh_replace_string --match_string="__PORT__" --replace_string="$port" --target_file="$config"
-	ynh_replace_string --match_string="__SECRET__" --replace_string="$secret" --target_file="$config"
-	ynh_replace_string --match_string="__DB_NAME__" --replace_string="$db_name" --target_file="$config"
-	ynh_replace_string --match_string="__DB_USER__" --replace_string="$db_user" --target_file="$config"
-	ynh_replace_string --match_string="__DB_PWD__" --replace_string="$db_pwd" --target_file="$config"
-	ynh_replace_string --match_string="__APP__" --replace_string="$app" --target_file="$config"
-	ynh_replace_string --match_string="__ADMIN_EMAIL__" --replace_string="$admin_email" --target_file="$config"
+	ynh_add_config --template="../conf/prod.secret.exs" --destination="$config"
 
 	# Implement ldap and mail
 	cat "../conf/ldap.exs" >> "$config"
