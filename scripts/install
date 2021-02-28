@@ -145,37 +145,37 @@ chown -R "$app":"$app" "$final_path"
 config="$final_path/$app/config/prod.secret.exs"
 
 pushd $final_path/$app/js
-    ynh_use_nodejs
-    ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
-    sudo -u $app env PATH=$PATH yarn install
-    ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
-    sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
+	ynh_use_nodejs
+	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
+	sudo -u $app env PATH=$PATH yarn install
+	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
+	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
-    sudo -u "$app" MIX_ENV=prod mix local.hex --force
-    sudo -u "$app" MIX_ENV=prod mix local.rebar --force
-    sudo -u "$app" MIX_ENV=prod mix deps.get
-    sudo -u "$app" MIX_ENV=prod mix compile
-    sudo -u "$app" MIX_ENV=prod mix mobilizon.instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name "Mobilizon" --admin-email "$app@$domain" --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
+	sudo -u "$app" MIX_ENV=prod mix local.hex --force
+	sudo -u "$app" MIX_ENV=prod mix local.rebar --force
+	sudo -u "$app" MIX_ENV=prod mix deps.get
+	sudo -u "$app" MIX_ENV=prod mix compile
+	sudo -u "$app" MIX_ENV=prod mix mobilizon.instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name "Mobilizon" --admin-email "$app@$domain" --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
 popd
 
 cat "../conf/ldap.exs" >> "$config"
 cat "../conf/mail.exs" >> "$config"
 
 pushd $final_path/$app
-    chmod o-rwx $config
-    ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
-    ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
-    # Compile *again* because we added ldap conf in between... dunno if the first is relevant
-    sudo -u "$app" MIX_ENV=prod mix compile
-    ynh_secure_remove --file="/tmp/setup_db.psql"
-    sudo -u "$app" MIX_ENV=prod mix ecto.migrate
+	chmod o-rwx $config
+	ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
+	ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
+	# Compile *again* because we added ldap conf in between... dunno if the first is relevant
+	sudo -u "$app" MIX_ENV=prod mix compile
+	ynh_secure_remove --file="/tmp/setup_db.psql"
+	sudo -u "$app" MIX_ENV=prod mix ecto.migrate
 
-    # We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
-    password=$(ynh_string_random --length=30)
-    sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
+	# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
+	password=$(ynh_string_random --length=30)
+	sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
 popd
 
 #=================================================
