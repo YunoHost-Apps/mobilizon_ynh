@@ -156,8 +156,8 @@ ynh_script_progression --message="Building Elixir application (this is going to 
 pushd $final_path/$app
 	sudo -u "$app" MIX_ENV=prod mix local.hex --force
 	sudo -u "$app" MIX_ENV=prod mix local.rebar --force
-	sudo -u "$app" MIX_ENV=prod mix deps.get
-	sudo -u "$app" MIX_ENV=prod mix compile
+	ynh_exec_warn_less sudo -u "$app" MIX_ENV=prod mix deps.get
+	ynh_exec_warn_less sudo -u "$app" MIX_ENV=prod mix compile
 	sudo -u "$app" MIX_ENV=prod mix mobilizon.instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name "Mobilizon" --admin-email "$app@$domain" --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
 popd
 
