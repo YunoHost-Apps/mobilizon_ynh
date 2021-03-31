@@ -124,6 +124,9 @@ then
 	
 	# Backup the config file in the temp dir
 	cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
+
+	# Backup upload dir
+	rsync -a "$final_path/uploads" "$tmpdir/."
 	
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
@@ -131,8 +134,11 @@ then
 	# Download, check integrity, uncompress and patch the source from app.src
 	ynh_setup_source --dest_dir="$final_path/$app"
 	
-	#Copy the admin saved settings from tmp directory to final path
+	# Restore the config file
 	cp -a "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
+
+	# Restore upload dir
+	sync -a "$tmpdir/uploads" "$final_path/."
 	
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
