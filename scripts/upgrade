@@ -126,7 +126,7 @@ then
 	cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
 
 	# Backup upload dir
-	rsync -a "$final_path/uploads" "$tmpdir/."
+	rsync -a "$final_path/$app/uploads" "$tmpdir/."
 	
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
@@ -138,7 +138,7 @@ then
 	cp -a "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
 
 	# Restore upload dir
-	sync -a "$tmpdir/uploads" "$final_path/."
+	sync -a "$tmpdir/uploads" "$final_path/$app/."
 	
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
