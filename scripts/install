@@ -138,9 +138,6 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=5
 
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
-
 config="$final_path/$app/config/prod.secret.exs"
 
 pushd $final_path/$app/js
@@ -177,6 +174,8 @@ pushd $final_path/$app
 	sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
 popd
 
+ynh_store_file_checksum --file="$config"
+
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -184,14 +183,6 @@ ynh_script_progression --message="Configuring a systemd service..."
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
-
-#=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
-ynh_script_progression --message="Storing the config file checksum..."
-
-# Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$config"
 
 #=================================================
 # GENERIC FINALIZATION
