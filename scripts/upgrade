@@ -138,7 +138,7 @@ then
 	tmpdir="$(mktemp -d)"
 	
 	# Backup the config file in the temp dir
-	cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
+	cp -af "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
 
 	# Backup upload dir
 	rsync -a "$final_path/$app/uploads" "$tmpdir/."
@@ -150,7 +150,7 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app"
 	
 	# Restore the config file
-	cp -a "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
+	cp -af "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
 
 	# Restore upload dir
 	rsync -a "$tmpdir/uploads" "$final_path/$app/."
