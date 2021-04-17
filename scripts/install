@@ -177,7 +177,7 @@ popd
 ynh_store_file_checksum --file="$config"
 
 chmod 400 "$config"
-chown $app:$app "$config"
+chown $app:www-data "$config"
 
 #=================================================
 # SETUP SYSTEMD
