@@ -45,6 +45,13 @@ previous_version="${version}"
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
 
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
 if ! ynh_permission_exists --permission="admin"; then
 	# Create the required permissions
 	ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
@@ -62,9 +69,9 @@ ynh_script_progression --message="Backing up the app before upgrading (may take 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
-	# restore it if the upgrade fails
-	ynh_restore_upgradebackup
 	ynh_clean_check_starting
+	# Restore it if the upgrade fails
+	ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -112,6 +119,14 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 fi
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..."
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
@@ -123,7 +138,7 @@ then
 	tmpdir="$(mktemp -d)"
 	
 	# Backup the config file in the temp dir
-	cp -a "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
+	cp -af "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
 
 	# Backup upload dir
 	rsync -a "$final_path/$app/uploads" "$tmpdir/."
@@ -135,7 +150,7 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app"
 	
 	# Restore the config file
-	cp -a "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
+	cp -af "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
 
 	# Restore upload dir
 	rsync -a "$tmpdir/uploads" "$final_path/$app/."
@@ -144,12 +159,16 @@ then
 	ynh_secure_remove --file="$tmpdir"
 fi
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:$app "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..."
+ynh_script_progression --message="Upgrading NGINX web server configuration..."
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -159,41 +178,17 @@ ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_install_app_dependencies $pkg_dependencies
 
-if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
-	ynh_script_progression --message="Mobilizon v1.0.3: Remove previous NodeJS"
-	ynh_remove_nodejs
-fi
-
+ynh_remove_nodejs
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
 lsb_name="$(lsb_release --codename --short)"
 ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
 
 #=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir=$final_path
-
-#=================================================
 # SPECIFIC UPGRADE
-#=================================================
-# MODIFY A CONFIG FILE
-#=================================================
-ynh_script_progression --message="Modifying a config file..."
-
-config="$final_path/$app/config/prod.secret.exs"
-ynh_backup_if_checksum_is_different --file="$config"
-chmod o-rwx $config
-
 #=================================================
 # MAKE SETUP
 #=================================================
-
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
 
 pushd $final_path/$app/js
 	ynh_use_nodejs
@@ -224,12 +219,17 @@ if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
 fi
 
 #=================================================
-# STORE THE CONFIG FILE CHECKSUM
+# UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Storing the config file checksum..."
+ynh_script_progression --message="Updating a config file..."
 
-# Recalculate and store the checksum of the file for the next upgrade.
+config="$final_path/$app/config/prod.secret.exs"
+
+ynh_backup_if_checksum_is_different --file="$config"
 ynh_store_file_checksum --file="$config"
+
+chmod 400 "$config"
+chown $app:www-data "$config"
 
 #=================================================
 # SETUP SYSTEMD
@@ -242,19 +242,11 @@ ynh_add_systemd_config
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions on app files
-chown -R "$app":"$app" "$final_path"
-
-#=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --description "$app daemon for Mobilizon"
+yunohost service add $app --description="$app daemon for Mobilizon"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -266,7 +258,7 @@ ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --lin
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 
