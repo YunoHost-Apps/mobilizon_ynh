@@ -28,6 +28,7 @@ db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 secret=$(ynh_app_setting_get --app=$app --key=secret)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # CHECK VERSION
@@ -116,6 +117,40 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 
 	# Recalculate and store the checksum of the file for the next upgrade.
 	ynh_store_file_checksum --file="$config"
+fi
+
+#=================================================
+# CREATE DATADIR FOLDER
+#=================================================
+
+# If datadir doesn't exist, create it
+if [ -z "$datadir" ]; then
+	ynh_script_progression --message="Create datadir folder..."
+
+	# Define app's data directory
+	datadir="/home/yunohost.app/${app}"
+
+	ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+	# Create app folders
+	mkdir -p "$datadir/"
+	mkdir -p "$datadir/uploads/"
+
+	chmod 750 "$datadir"
+	chmod -R o-rwx "$datadir"
+	chown -R $app:$app "$datadir"
+
+	config="$final_path/$app/config/prod.secret.exs"
+
+	ynh_backup_if_checksum_is_different --file="$config"
+
+	ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
+	cat "../conf/uploads.exs" >> "$config"
+	
+	ynh_store_file_checksum --file="$config"
+
+	chmod 400 "$config"
+	chown $app:$app "$config"
 fi
 
 #=================================================
@@ -229,7 +264,7 @@ ynh_backup_if_checksum_is_different --file="$config"
 ynh_store_file_checksum --file="$config"
 
 chmod 400 "$config"
-chown $app:www-data "$config"
+chown $app:$app "$config"
 
 #=================================================
 # SETUP SYSTEMD

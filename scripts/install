@@ -134,6 +134,24 @@ ynh_add_nginx_config
 #=================================================
 # SPECIFIC SETUP
 #=================================================
+# CREATE THE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating the data directory..."
+
+# Define app's data directory
+datadir="/home/yunohost.app/${app}"
+
+ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+# Create app folders
+mkdir -p "$datadir/"
+mkdir -p "$datadir/uploads/"
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
+
+#=================================================
 # MAKE SETUP
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=5
@@ -159,6 +177,8 @@ popd
 
 cat "../conf/ldap.exs" >> "$config"
 cat "../conf/mail.exs" >> "$config"
+ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
+cat "../conf/uploads.exs" >> "$config"
 
 pushd $final_path/$app
 	chmod o-rwx $config
@@ -177,7 +197,7 @@ popd
 ynh_store_file_checksum --file="$config"
 
 chmod 400 "$config"
-chown $app:www-data "$config"
+chown $app:$app "$config"
 
 #=================================================
 # SETUP SYSTEMD
