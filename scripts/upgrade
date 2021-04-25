@@ -120,6 +120,14 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 fi
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..."
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+#=================================================
 # CREATE DATADIR FOLDER
 #=================================================
 
@@ -140,6 +148,8 @@ if [ -z "$datadir" ]; then
 	chmod -R o-rwx "$datadir"
 	chown -R $app:$app "$datadir"
 
+	rsync -a $final_path/$app/uploads/ $datadir/uploads/
+
 	config="$final_path/$app/config/prod.secret.exs"
 
 	ynh_backup_if_checksum_is_different --file="$config"
@@ -151,15 +161,9 @@ if [ -z "$datadir" ]; then
 
 	chmod 400 "$config"
 	chown $app:$app "$config"
+
+	ynh_secure_remove --file="$final_path/$app/uploads"
 fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
