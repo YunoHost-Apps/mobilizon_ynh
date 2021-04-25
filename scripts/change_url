@@ -103,7 +103,7 @@ then
 	mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
 	# Store file checksum for the new config file location
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
-	yunohost user update "${app}_notifs" --mail "${app}_notifs@${$new_domain}" --remove-mailalias "${app}@${old_domain}" --add-mailalias "${app}@${new_domain}"
+	yunohost user update "${app}_notifs" --mail "${app}_notifs@${new_domain}" --remove-mailalias "${app}@${old_domain}" --add-mailalias "${app}@${new_domain}"
 fi
 
 #=================================================
