@@ -148,7 +148,9 @@ if [ -z "$datadir" ]; then
 	chmod -R o-rwx "$datadir"
 	chown -R $app:$app "$datadir"
 
-	rsync -a $final_path/$app/uploads/ $datadir/uploads/
+	if [ -d "$final_path/$app/uploads/" ]; then
+		rsync -a $final_path/$app/uploads/ $datadir/uploads/
+	fi
 
 	config="$final_path/$app/config/prod.secret.exs"
 
