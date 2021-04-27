@@ -148,7 +148,7 @@ if [ -z "$datadir" ]; then
 	chmod -R o-rwx "$datadir"
 	chown -R $app:$app "$datadir"
 
-	if [ -d "$final_path/$app/uploads/" ]; then
+	if [[ -d "$final_path/$app/uploads/" ]]; then
 		rsync -a $final_path/$app/uploads/ $datadir/uploads/
 	fi
 
