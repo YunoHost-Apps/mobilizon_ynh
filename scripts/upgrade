@@ -148,9 +148,7 @@ if [ -z "$datadir" ]; then
 	chmod -R o-rwx "$datadir"
 	chown -R $app:$app "$datadir"
 
-	if [[ -d "$final_path/$app/uploads/" ]]; then
-		rsync -a $final_path/$app/uploads/ $datadir/uploads/
-	fi
+	rsync -a $final_path/$app/uploads/ $datadir/uploads/
 
 	config="$final_path/$app/config/prod.secret.exs"
 
@@ -181,9 +179,6 @@ then
 	# Backup the config file in the temp dir
 	cp -af "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
 
-	# Backup upload dir
-	rsync -a "$final_path/$app/uploads" "$tmpdir/."
-	
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
 
@@ -193,9 +188,6 @@ then
 	# Restore the config file
 	cp -af "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
 
-	# Restore upload dir
-	rsync -a "$tmpdir/uploads" "$final_path/$app/."
-	
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
 fi
