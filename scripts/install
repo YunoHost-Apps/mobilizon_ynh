@@ -166,6 +166,8 @@ pushd $final_path/$app/js
 	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
+ynh_secure_remove --file="$final_path/$app/js"
+
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
 	sudo -u "$app" MIX_ENV=prod mix local.hex --force
@@ -194,12 +196,12 @@ pushd $final_path/$app
 	sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
 popd
 
+ynh_secure_remove --file="$final_path/.cache"
+
 ynh_store_file_checksum --file="$config"
 
 chmod 400 "$config"
 chown $app:$app "$config"
-
-ynh_secure_remove --file="$final_path/.cache"
 
 #=================================================
 # SETUP SYSTEMD
