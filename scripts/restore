@@ -36,6 +36,7 @@ db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 ynh_user_password=$(ynh_app_setting_get --app=$app --key=ynh_user_password)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -80,6 +81,22 @@ chown -R $app:www-data "$final_path"
 
 #=================================================
 # SPECIFIC RESTORATION
+#=================================================
+# RECREATE THE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Recreating the data directory..."
+
+# Use --not_mandatory for the data directory, because if the backup has been made with BACKUP_CORE_ONLY, there's no data into the backup.
+ynh_restore_file --origin_path="$datadir" --not_mandatory
+
+# Create app folders
+mkdir -p "$datadir/"
+mkdir -p "$datadir/uploads/"
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
+
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================

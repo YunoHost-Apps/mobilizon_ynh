@@ -28,8 +28,6 @@
 		upgrade=1	from_commit=cba843be0d7e00d7d7290f0d0da95807711a96d4
 		# 1.1.0~ynh1
 		upgrade=1	from_commit=5780e424cf3217bf9d25e5b24beb51f52b6b777e
-		# 1.1.0~ynh1
-		upgrade=1	from_commit=5780e424cf3217bf9d25e5b24beb51f52b6b777e
 		backup_restore=1
 		multi_instance=1
 		port_already_use=0
@@ -50,7 +48,5 @@ Notification=all
 		name=1.0.6-2021-02-23~ynh1
 	; commit=cba843be0d7e00d7d7290f0d0da95807711a96d4
 		name=1.0.7~ynh1
-	; commit=5780e424cf3217bf9d25e5b24beb51f52b6b777e
-		name=1.1.0~ynh1
 	; commit=5780e424cf3217bf9d25e5b24beb51f52b6b777e
 		name=1.1.0~ynh1

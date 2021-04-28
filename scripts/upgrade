@@ -28,6 +28,7 @@ db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 secret=$(ynh_app_setting_get --app=$app --key=secret)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 
 #=================================================
 # CHECK VERSION
@@ -127,6 +128,44 @@ ynh_script_progression --message="Making sure dedicated system user exists..."
 ynh_system_user_create --username=$app --home_dir="$final_path"
 
 #=================================================
+# CREATE DATADIR FOLDER
+#=================================================
+
+# If datadir doesn't exist, create it
+if [ -z "$datadir" ]; then
+	ynh_script_progression --message="Create datadir folder..."
+
+	# Define app's data directory
+	datadir="/home/yunohost.app/${app}"
+
+	ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+	# Create app folders
+	mkdir -p "$datadir/"
+	mkdir -p "$datadir/uploads/"
+
+	chmod 750 "$datadir"
+	chmod -R o-rwx "$datadir"
+	chown -R $app:$app "$datadir"
+
+	rsync -a $final_path/$app/uploads/ $datadir/uploads/
+
+	config="$final_path/$app/config/prod.secret.exs"
+
+	ynh_backup_if_checksum_is_different --file="$config"
+
+	ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
+	cat "../conf/uploads.exs" >> "$config"
+	
+	ynh_store_file_checksum --file="$config"
+
+	chmod 400 "$config"
+	chown $app:$app "$config"
+
+	ynh_secure_remove --file="$final_path/$app/uploads"
+fi
+
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
@@ -140,9 +179,6 @@ then
 	# Backup the config file in the temp dir
 	cp -af "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
 
-	# Backup upload dir
-	rsync -a "$final_path/$app/uploads" "$tmpdir/."
-	
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
 
@@ -152,9 +188,6 @@ then
 	# Restore the config file
 	cp -af "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
 
-	# Restore upload dir
-	rsync -a "$tmpdir/uploads" "$final_path/$app/."
-	
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
 fi
@@ -196,7 +229,10 @@ pushd $final_path/$app/js
 	sudo -u $app env PATH=$PATH yarn install
 	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
 	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
+	sudo -u $app env PATH=$PATH yarn cache clean --all
 popd
+
+ynh_secure_remove --file="$final_path/$app/js"
 
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
@@ -206,6 +242,8 @@ pushd $final_path/$app
 	ynh_exec_warn_less sudo -u "$app" MIX_ENV=prod mix compile
 	sudo -u "$app" MIX_ENV=prod mix ecto.migrate
 popd
+
+ynh_secure_remove --file="$final_path/.cache"
 
 #=================================================
 # RUN APP MIGRATIONS
@@ -229,7 +267,7 @@ ynh_backup_if_checksum_is_different --file="$config"
 ynh_store_file_checksum --file="$config"
 
 chmod 400 "$config"
-chown $app:www-data "$config"
+chown $app:$app "$config"
 
 #=================================================
 # SETUP SYSTEMD

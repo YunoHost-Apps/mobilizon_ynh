@@ -134,6 +134,24 @@ ynh_add_nginx_config
 #=================================================
 # SPECIFIC SETUP
 #=================================================
+# CREATE THE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating the data directory..."
+
+# Define app's data directory
+datadir="/home/yunohost.app/${app}"
+
+ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+# Create app folders
+mkdir -p "$datadir/"
+mkdir -p "$datadir/uploads/"
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
+
+#=================================================
 # MAKE SETUP
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=5
@@ -148,6 +166,8 @@ pushd $final_path/$app/js
 	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
+ynh_secure_remove --file="$final_path/$app/js"
+
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
 	sudo -u "$app" MIX_ENV=prod mix local.hex --force
@@ -159,6 +179,8 @@ popd
 
 cat "../conf/ldap.exs" >> "$config"
 cat "../conf/mail.exs" >> "$config"
+ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
+cat "../conf/uploads.exs" >> "$config"
 
 pushd $final_path/$app
 	chmod o-rwx $config
@@ -174,10 +196,12 @@ pushd $final_path/$app
 	sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
 popd
 
+ynh_secure_remove --file="$final_path/.cache"
+
 ynh_store_file_checksum --file="$config"
 
 chmod 400 "$config"
-chown $app:www-data "$config"
+chown $app:$app "$config"
 
 #=================================================
 # SETUP SYSTEMD
