@@ -6,7 +6,7 @@
         "en": "A decentralized and federated platform to organize events",
         "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
     },
-    "version": "1.1.0~ynh1",
+    "version": "1.1.1~ynh1",
     "url": "https://joinmobilizon.org/",
     "license": "AGPL-3.0-or-later",
     "maintainer": {
@@ -24,28 +24,16 @@
             {
                 "name": "domain",
                 "type": "domain",
-                "ask": {
-                    "en": "Choose a domain name for Mobilizon",
-                    "fr": "Choisissez un nom de domaine pour Mobilizon"
-                },
                 "example": "example.com"
             },
             {
                 "name": "admin",
                 "type": "user",
-                "ask": {
-                    "en": "Choose an admin user",
-                    "fr": "Choisissez l'administrateur"
-                },
                 "example": "johndoe"
             },
             {
                 "name": "is_public",
                 "type": "boolean",
-                "ask": {
-                    "en": "Is it a public application?",
-                    "fr": "Est-ce une application publique ?"
-                },
                 "default": true
             },
             {

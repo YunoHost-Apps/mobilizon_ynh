@@ -79,13 +79,19 @@ ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
 ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key='https://dl.yarnpkg.com/debian/pubkey.gpg'
 
-#=================================================
-# INSTALL EXTRA DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Installing extra dependencies ..."
-
 lsb_name="$(lsb_release --codename --short)"
 ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..."
+
+# Create a system user
+ynh_system_user_create --username=$app --home_dir="$final_path"
+
+yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
+yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
@@ -113,34 +119,42 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path/$app"
 
+chmod 750 "$final_path"
+chmod -R o-rwx "$final_path"
+chown -R $app:www-data "$final_path"
+
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..."
+ynh_script_progression --message="Configuring NGINX web server..."
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..."
-
-# Create a system user
-ynh_system_user_create --username=$app --home_dir=$final_path
-
-yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
-yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 #=================================================
 # SPECIFIC SETUP
 #=================================================
+# CREATE THE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating the data directory..."
+
+# Define app's data directory
+datadir="/home/yunohost.app/${app}"
+
+ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
+
+# Create app folders
+mkdir -p "$datadir/"
+mkdir -p "$datadir/uploads/"
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
+
+#=================================================
 # MAKE SETUP
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=5
-
-# Give permission to the final_path
-chown -R "$app":"$app" "$final_path"
 
 config="$final_path/$app/config/prod.secret.exs"
 
@@ -151,6 +165,8 @@ pushd $final_path/$app/js
 	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
 	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
+
+ynh_secure_remove --file="$final_path/$app/js"
 
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/$app
@@ -163,6 +179,8 @@ popd
 
 cat "../conf/ldap.exs" >> "$config"
 cat "../conf/mail.exs" >> "$config"
+ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
+cat "../conf/uploads.exs" >> "$config"
 
 pushd $final_path/$app
 	chmod o-rwx $config
@@ -178,6 +196,13 @@ pushd $final_path/$app
 	sudo -u "$app" MIX_ENV=prod mix mobilizon.users.new "$admin_email" --admin --password "$password"
 popd
 
+ynh_secure_remove --file="$final_path/.cache"
+
+ynh_store_file_checksum --file="$config"
+
+chmod 400 "$config"
+chown $app:$app "$config"
+
 #=================================================
 # SETUP SYSTEMD
 #=================================================
@@ -187,29 +212,13 @@ ynh_script_progression --message="Configuring a systemd service..."
 ynh_add_systemd_config
 
 #=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
-ynh_script_progression --message="Storing the config file checksum..."
-
-# Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$config"
-
-#=================================================
 # GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-ynh_script_progression --message="Securing files and directories..."
-
-# Set permissions to app files
-chown -R "$app":"$app" "$final_path"
-
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."
 
-yunohost service add $app --description "$app daemon for Mobilizon"
+yunohost service add $app --description="$app daemon for Mobilizon"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -235,7 +244,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..."
+ynh_script_progression --message="Reloading NGINX web server..."
 
 ynh_systemd_action --service_name=nginx --action=reload
 

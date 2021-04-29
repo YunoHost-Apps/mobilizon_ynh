@@ -13,7 +13,7 @@ Mobilizon aims to solve existing platform's problems to organize events in a dec
 
 Mobilizon is a tool that helps you find, create and organise events. You can also create a page for your group where the members will be able to organise together.
 
-**Shipped version:** 1.1.0
+**Shipped version:** 1.1.1
 
 ## Important points to read before installing
 
@@ -46,8 +46,8 @@ LDAP is supported but HTTP auth is not supported?
 
 #### Supported architectures
 
-* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
-* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
+* x86-64 - [![Build Status](https://ci-apps.yunohost.org/ci/logs/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+* ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/mobilizon.svg)](https://ci-apps-arm.yunohost.org/ci/apps/mobilizon/)
 
 ## Links
 
