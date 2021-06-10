@@ -179,13 +179,13 @@ popd
 
 cat "../conf/ldap.exs" >> "$config"
 cat "../conf/mail.exs" >> "$config"
-ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
+ynh_add_config --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
 cat "../conf/uploads.exs" >> "$config"
 
 pushd $final_path/$app
 	chmod o-rwx $config
-	ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
-	ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
+	ynh_add_config --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
+	ynh_add_config --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
 	# Compile *again* because we added ldap conf in between... dunno if the first is relevant
 	sudo -u "$app" MIX_ENV=prod mix compile
 	ynh_secure_remove --file="/tmp/setup_db.psql"
