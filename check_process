@@ -14,8 +14,6 @@
 		setup_private=1
 		setup_public=1
 		upgrade=1
-		# 1.1.0~ynh1
-		upgrade=1	from_commit=5780e424cf3217bf9d25e5b24beb51f52b6b777e
 		# 1.1.1~ynh1
 		upgrade=1	from_commit=6e69a7aa43954190b05674d41f855afd47bb8a44
 		# 1.1.4~ynh1
@@ -28,8 +26,6 @@
 Email=yalh@yahoo.com
 Notification=all
 ;;; Upgrade options
-	; commit=5780e424cf3217bf9d25e5b24beb51f52b6b777e
-		name=1.1.0~ynh1
 	; commit=6e69a7aa43954190b05674d41f855afd47bb8a44
 		name=1.1.1~ynh1
 	; commit=8a0c25f4c4e883a7381c0ce9dfa14cb3549fa69f
