@@ -79,8 +79,13 @@ ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
 ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key='https://dl.yarnpkg.com/debian/pubkey.gpg'
 
-lsb_name="$(lsb_release --codename --short)"
-ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+if $(dpkg --compare-versions $(cat /etc/debian_version) gt "11.0")
+then
+    ynh_add_app_dependencies --package=$extra_debian_pkg_dependencies
+else
+    lsb_name="$(lsb_release --codename --short)"
+    ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+fi
 
 #=================================================
 # CREATE DEDICATED USER
