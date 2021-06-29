@@ -42,27 +42,6 @@ abort_if_up_to_date
 previous_version="${version}"
 
 #=================================================
-# ENSURE DOWNWARD COMPATIBILITY
-#=================================================
-ynh_script_progression --message="Ensuring downward compatibility..."
-
-# Cleaning legacy permissions
-if ynh_legacy_permissions_exists; then
-	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-if ! ynh_permission_exists --permission="admin"; then
-	# Create the required permissions
-	ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
-fi
-
-ynh_secure_remove --file="$final_path/$app/priv/data/GeoLite2-City.mmdb"
-
-ynh_secure_remove --file="/usr/share/GeoIP"
-
-#=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
 ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
@@ -85,6 +64,27 @@ ynh_abort_if_errors
 ynh_script_progression --message="Stopping a systemd service..."
 
 ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
+
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+ynh_script_progression --message="Ensuring downward compatibility..."
+
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
+if ! ynh_permission_exists --permission="admin"; then
+	# Create the required permissions
+	ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
+fi
+
+ynh_secure_remove --file="$final_path/$app/priv/data/GeoLite2-City.mmdb"
+
+ynh_secure_remove --file="/usr/share/GeoIP"
 
 #=================================================
 # UPGRADE FROM PREVIOUS VERSION
@@ -125,7 +125,7 @@ fi
 ynh_script_progression --message="Making sure dedicated system user exists..."
 
 # Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 #=================================================
 # CREATE DATADIR FOLDER
@@ -259,7 +259,7 @@ fi
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a config file..."
+ynh_script_progression --message="Updating a configuration file..."
 
 config="$final_path/$app/config/prod.secret.exs"
 
