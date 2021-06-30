@@ -79,7 +79,7 @@ ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
 ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key='https://dl.yarnpkg.com/debian/pubkey.gpg'
 
-if $(dpkg --compare-versions $(cat /etc/debian_version) gt "11.0")
+if dpkg --compare-versions $(cat /etc/debian_version) ge 11.0
 then
     ynh_add_app_dependencies --package=$extra_debian_pkg_dependencies
 else
@@ -95,7 +95,7 @@ ynh_script_progression --message="Configuring system user..."
 # Create a system user
 ynh_system_user_create --username=$app --home_dir="$final_path"
 
-yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
+yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 #=================================================

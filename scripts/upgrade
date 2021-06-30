@@ -214,7 +214,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_remove_nodejs
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
-if $(dpkg --compare-versions $(cat /etc/debian_version) gt "11.0")
+if dpkg --compare-versions $(cat /etc/debian_version) ge 11.0
 then
     ynh_add_app_dependencies --package=$extra_debian_pkg_dependencies
 else

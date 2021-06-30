@@ -109,7 +109,7 @@ ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
 ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key='https://dl.yarnpkg.com/debian/pubkey.gpg'
 
-if $(dpkg --compare-versions $(cat /etc/debian_version) gt "11.0")
+if dpkg --compare-versions $(cat /etc/debian_version) ge 11.0
 then
     ynh_add_app_dependencies --package=$extra_debian_pkg_dependencies
 else
