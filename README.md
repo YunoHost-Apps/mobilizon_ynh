@@ -17,7 +17,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 
 A decentralized and federated platform to organize events
 
-**Shipped version:** 1.2.1~ynh1
+**Shipped version:** 1.2.2~ynh1
 
 **Demo:** https://demo.mobilizon.org
 
