@@ -144,6 +144,8 @@ ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 mkdir -p $datadir
 mkdir -p "$datadir/uploads/"
 
+ynh_setup_source --dest_dir="$datadir/geo"
+
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
 chown -R $app:$app "$datadir"
@@ -153,7 +155,7 @@ chown -R $app:$app "$datadir"
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=5
 
-config="$final_path/$app/config/prod.secret.exs"
+config="$final_path/$app/config/runtime.exs"
 
 pushd $final_path/$app/js
 	ynh_use_nodejs
@@ -178,6 +180,13 @@ cat "../conf/ldap.exs" >> "$config"
 cat "../conf/mail.exs" >> "$config"
 ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
 cat "../conf/uploads.exs" >> "$config"
+
+ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/geolix.exs"
+cat "../conf/geolix.exs" >> "$config"
+ynh_setup_source --dest_dir="$datadir/geo"
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
 
 pushd $final_path/$app
 	chmod o-rwx $config

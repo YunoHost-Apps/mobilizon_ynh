@@ -1,0 +1,7 @@
+SOURCE_URL=https://download.db-ip.com/free/dbip-city-lite-2021-07.mmdb.gz
+SOURCE_SUM=646a612147dfeedba438d0752b82bee969ca8c315c0f497ca05192cbcc42a20e
+SOURCE_SUM_PRG=sha256sum
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=dbip-city-lite-2021-07.mmdb.gz
+SOURCE_EXTRACT=true
