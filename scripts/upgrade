@@ -49,6 +49,7 @@ ynh_script_progression --message="Backing up the app before upgrading (may take 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	read -p "key"
 	ynh_clean_check_starting
 	# Restore it if the upgrade fails
 	ynh_restore_upgradebackup
@@ -154,29 +155,6 @@ if [ ! -f "$final_path/$app/config/runtime.exs" ]; then
 	mv "$final_path/$app/config/prod.secret.exs" "$final_path/$app/config/runtime.exs"
 	ynh_replace_string --match_string="server: true," --replace_string="" --target_file="$final_path/$app/config/runtime.exs"
 	ynh_store_file_checksum --file="$final_path/$app/config/runtime.exs"	
-fi
-
-# If geo folder doesn't exist, create it
-if [ -z "$datadir/geo" ]; then
-	ynh_script_progression --message="Create geo folder..."
-
-	ynh_setup_source --dest_dir="$datadir/geo"
-
-	chmod 750 "$datadir"
-	chmod -R o-rwx "$datadir"
-	chown -R $app:$app "$datadir"
-
-	config="$final_path/$app/config/runtime.exs"
-
-	ynh_backup_if_checksum_is_different --file="$config"
-
-	ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/geolix.exs"
-	cat "../conf/geolix.exs" >> "$config"
-	
-	ynh_store_file_checksum --file="$config"
-
-	chmod 400 "$config"
-	chown $app:$app "$config"
 fi
 
 #=================================================
