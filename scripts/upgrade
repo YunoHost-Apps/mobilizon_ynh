@@ -234,13 +234,9 @@ ynh_script_progression --message="Create datadir folder..."
 mkdir -p $datadir
 mkdir -p "$datadir/uploads/"
 
-ynh_setup_source --dest_dir="$datadir/geo" --source_id=geolix
-
 config="$final_path/$app/config/runtime.exs"
 
 ynh_backup_if_checksum_is_different --file="$config"
-
-ynh_replace_string --match_string="$datadir/geo/.*" --replace_string="$datadir/geo/dbip-city-lite-2021-07.mmdb" --target_file=$config
 
 ynh_store_file_checksum --file="$config"
 
