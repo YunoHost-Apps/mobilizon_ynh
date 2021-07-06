@@ -63,7 +63,7 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_script_progression --message="Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
@@ -80,23 +80,21 @@ chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
 
 #=================================================
-# SPECIFIC RESTORATION
+# RESTORE THE DATA DIRECTORY
 #=================================================
-# RECREATE THE DATA DIRECTORY
-#=================================================
-ynh_script_progression --message="Recreating the data directory..."
+ynh_script_progression --message="Restoring the data directory..."
 
-# Use --not_mandatory for the data directory, because if the backup has been made with BACKUP_CORE_ONLY, there's no data into the backup.
 ynh_restore_file --origin_path="$datadir" --not_mandatory
 
-# Create app folders
-mkdir -p "$datadir/"
+mkdir -p $datadir
 mkdir -p "$datadir/uploads/"
 
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
 chown -R $app:$app "$datadir"
 
+#=================================================
+# SPECIFIC RESTORATION
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
