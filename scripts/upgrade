@@ -42,6 +42,31 @@ abort_if_up_to_date
 previous_version="${version}"
 
 #=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	read -p "key"
+	ynh_clean_check_starting
+	# Restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# STANDARD UPGRADE STEPS
+#=================================================
+# STOP SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Stopping a systemd service..."
+
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
+
+#=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
@@ -62,41 +87,13 @@ ynh_secure_remove --file="$final_path/$app/priv/data/GeoLite2-City.mmdb"
 
 ynh_secure_remove --file="/usr/share/GeoIP"
 
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
-
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	ynh_clean_check_starting
-	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
-
-#=================================================
-# STANDARD UPGRADE STEPS
-#=================================================
-# STOP SYSTEMD SERVICE
-#=================================================
-ynh_script_progression --message="Stopping a systemd service..."
-
-ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
-
-#=================================================
-# UPGRADE FROM PREVIOUS VERSION
-#=================================================
-
 if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 	ynh_script_progression --message="Upgrade configuration to 1.0.0..."
 
 	ynh_user_password=$(ynh_string_random --length=30)
 	ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
 
-	yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --mail ${app}_notifs@$domain --password "$ynh_user_password" -q 0
+	yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain $domain --password "$ynh_user_password" -q 0
 	yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 	# Manage previous .env file
@@ -105,8 +102,8 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 	ynh_secure_remove --file="$final_path/$app/.env"
 
 	# Configure Mobilizon
-	config="$final_path/$app/config/prod.secret.exs"
-	ynh_add_config --template="../conf/prod.secret.exs" --destination="$config"
+	config="$final_path/$app/config/runtime.exs"
+	ynh_add_config --template="../conf/runtime.exs" --destination="$config"
 
 	# Implement ldap and mail
 	cat "../conf/ldap.exs" >> "$config"
@@ -118,18 +115,6 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 	# Recalculate and store the checksum of the file for the next upgrade.
 	ynh_store_file_checksum --file="$config"
 fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
-
-#=================================================
-# CREATE DATADIR FOLDER
-#=================================================
 
 # If datadir doesn't exist, create it
 if [ -z "$datadir" ]; then
@@ -150,7 +135,7 @@ if [ -z "$datadir" ]; then
 
 	rsync -a $final_path/$app/uploads/ $datadir/uploads/
 
-	config="$final_path/$app/config/prod.secret.exs"
+	config="$final_path/$app/config/runtime.exs"
 
 	ynh_backup_if_checksum_is_different --file="$config"
 
@@ -165,6 +150,21 @@ if [ -z "$datadir" ]; then
 	ynh_secure_remove --file="$final_path/$app/uploads"
 fi
 
+if [ ! -f "$final_path/$app/config/runtime.exs" ]; then
+	ynh_delete_file_checksum --file="$final_path/$app/config/prod.secret.exs"
+	mv "$final_path/$app/config/prod.secret.exs" "$final_path/$app/config/runtime.exs"
+	ynh_replace_string --match_string="server: true," --replace_string="" --target_file="$final_path/$app/config/runtime.exs"
+	ynh_store_file_checksum --file="$final_path/$app/config/runtime.exs"	
+fi
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Making sure dedicated system user exists..."
+
+# Create a dedicated user (if not existing)
+ynh_system_user_create --username=$app --home_dir=$final_path
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -177,7 +177,7 @@ then
 	tmpdir="$(mktemp -d)"
 	
 	# Backup the config file in the temp dir
-	cp -af "$final_path/$app/config/prod.secret.exs" "$tmpdir/prod.secret.exs"
+	cp -af "$final_path/$app/config/runtime.exs" "$tmpdir/runtime.exs"
 
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/$app"
@@ -186,7 +186,7 @@ then
 	ynh_setup_source --dest_dir="$final_path/$app"
 	
 	# Restore the config file
-	cp -af "$tmpdir/prod.secret.exs" "$final_path/$app/config/prod.secret.exs"
+	cp -af "$tmpdir/runtime.exs" "$final_path/$app/config/runtime.exs"
 
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
@@ -225,6 +225,25 @@ fi
 
 #=================================================
 # SPECIFIC UPGRADE
+#=================================================
+# CREATE DATADIR FOLDER
+#=================================================
+
+ynh_script_progression --message="Create datadir folder..."
+
+mkdir -p $datadir
+mkdir -p "$datadir/uploads/"
+
+config="$final_path/$app/config/runtime.exs"
+
+ynh_backup_if_checksum_is_different --file="$config"
+
+ynh_store_file_checksum --file="$config"
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
+
 #=================================================
 # MAKE SETUP
 #=================================================
@@ -265,9 +284,9 @@ fi
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a config file..."
+ynh_script_progression --message="Updating a configuration file..."
 
-config="$final_path/$app/config/prod.secret.exs"
+config="$final_path/$app/config/runtime.exs"
 
 ynh_backup_if_checksum_is_different --file="$config"
 ynh_store_file_checksum --file="$config"

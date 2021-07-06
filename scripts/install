@@ -93,7 +93,7 @@ fi
 ynh_script_progression --message="Configuring system user..."
 
 # Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username=$app --home_dir=$final_path
 
 yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
@@ -139,17 +139,14 @@ ynh_add_nginx_config
 #=================================================
 # SPECIFIC SETUP
 #=================================================
-# CREATE THE DATA DIRECTORY
+# CREATE DATA DIRECTORY
 #=================================================
-ynh_script_progression --message="Creating the data directory..."
+ynh_script_progression --message="Creating a data directory..."
 
-# Define app's data directory
-datadir="/home/yunohost.app/${app}"
+datadir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=datadir --value=$datadir
 
-ynh_app_setting_set --app=$app --key=datadir --value="$datadir"
-
-# Create app folders
-mkdir -p "$datadir/"
+mkdir -p $datadir
 mkdir -p "$datadir/uploads/"
 
 chmod 750 "$datadir"
@@ -161,7 +158,7 @@ chown -R $app:$app "$datadir"
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=5
 
-config="$final_path/$app/config/prod.secret.exs"
+config="$final_path/$app/config/runtime.exs"
 
 pushd $final_path/$app/js
 	ynh_use_nodejs
@@ -186,6 +183,10 @@ cat "../conf/ldap.exs" >> "$config"
 cat "../conf/mail.exs" >> "$config"
 ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
 cat "../conf/uploads.exs" >> "$config"
+
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:$app "$datadir"
 
 pushd $final_path/$app
 	chmod o-rwx $config

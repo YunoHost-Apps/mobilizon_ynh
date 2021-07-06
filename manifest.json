@@ -6,8 +6,15 @@
         "en": "A decentralized and federated platform to organize events",
         "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
     },
-    "version": "1.1.4~ynh1",
+    "version": "1.2.2~ynh1",
     "url": "https://joinmobilizon.org/",
+    "upstream": {
+        "license": "AGPL-3.0-or-later",
+        "website": "https://joinmobilizon.org/",
+        "demo": "https://demo.mobilizon.org",
+        "userdoc": "https://docs.joinmobilizon.org",
+        "code": "https://framagit.org/framasoft/mobilizon/"
+    },
     "license": "AGPL-3.0-or-later",
     "maintainer": {
         "name": "yalh76"
