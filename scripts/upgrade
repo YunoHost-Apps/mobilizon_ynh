@@ -77,9 +77,14 @@ if ynh_legacy_permissions_exists; then
 	ynh_app_setting_delete --app=$app --key=is_public
 fi
 
-if ! ynh_permission_exists --permission="admin"; then
+if ynh_permission_exists --permission="admin"; then
 	# Create the required permissions
-	ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
+	ynh_permission_delete --permission="admin"
+fi
+
+# Create a permission if needed
+if ! ynh_permission_exists --permission="api"; then
+	ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --show_tile="false" --protected="true"
 fi
 
 ynh_secure_remove --file="$final_path/$app/priv/data/GeoLite2-City.mmdb"
