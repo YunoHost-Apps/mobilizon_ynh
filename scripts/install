@@ -122,7 +122,7 @@ ynh_script_progression --message="Setting up source files..."
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path/$app"
+ynh_setup_source --dest_dir="$final_path/live"
 
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
@@ -158,9 +158,9 @@ chown -R $app:$app "$datadir"
 #=================================================
 ynh_script_progression --message="Installing dependencies and building app..." --weight=5
 
-config="$final_path/$app/config/runtime.exs"
+config="$final_path/live/config/runtime.exs"
 
-pushd $final_path/$app/js
+pushd $final_path/live/js
 	ynh_use_nodejs
 	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
 	sudo -u $app env PATH=$PATH yarn install
@@ -168,10 +168,10 @@ pushd $final_path/$app/js
 	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
-ynh_secure_remove --file="$final_path/$app/js"
+ynh_secure_remove --file="$final_path/live/js"
 
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
-pushd $final_path/$app
+pushd $final_path/live
 	sudo -u "$app" MIX_ENV=prod mix local.hex --force
 	sudo -u "$app" MIX_ENV=prod mix local.rebar --force
 	ynh_exec_warn_less sudo -u "$app" MIX_ENV=prod mix deps.get
@@ -188,7 +188,7 @@ chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
 chown -R $app:$app "$datadir"
 
-pushd $final_path/$app
+pushd $final_path/live
 	chmod o-rwx $config
 	ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
 	ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"

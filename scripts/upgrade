@@ -156,6 +156,13 @@ if [ ! -f "$final_path/$app/config/runtime.exs" ]; then
 	ynh_store_file_checksum --file="$final_path/$app/config/runtime.exs"	
 fi
 
+if ynh_version_gt "1.2.3~ynh1" "${previous_version}" ; then
+	ynh_script_progression --message="Upgrade to 1.2.3~ynh1..."
+	ynh_delete_file_checksum --file="$final_path/$app/config/runtime.exs"
+	mv "$final_path/$app/" "$final_path/live/"
+	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
+fi
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -176,16 +183,16 @@ then
 	tmpdir="$(mktemp -d)"
 	
 	# Backup the config file in the temp dir
-	cp -af "$final_path/$app/config/runtime.exs" "$tmpdir/runtime.exs"
+	cp -af "$final_path/live/config/runtime.exs" "$tmpdir/runtime.exs"
 
 	# Remove the app directory securely
-	ynh_secure_remove --file="$final_path/$app"
+	ynh_secure_remove --file="$final_path/live"
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path/$app"
+	ynh_setup_source --dest_dir="$final_path/live"
 	
 	# Restore the config file
-	cp -af "$tmpdir/runtime.exs" "$final_path/$app/config/runtime.exs"
+	cp -af "$tmpdir/runtime.exs" "$final_path/live/config/runtime.exs"
 
 	# Remove the tmp directory securely
 	ynh_secure_remove --file="$tmpdir"
@@ -233,7 +240,7 @@ ynh_script_progression --message="Create datadir folder..."
 mkdir -p $datadir
 mkdir -p "$datadir/uploads/"
 
-config="$final_path/$app/config/runtime.exs"
+config="$final_path/live/config/runtime.exs"
 
 ynh_backup_if_checksum_is_different --file="$config"
 
@@ -247,7 +254,7 @@ chown -R $app:$app "$datadir"
 # MAKE SETUP
 #=================================================
 
-pushd $final_path/$app/js
+pushd $final_path/live/js
 	ynh_use_nodejs
 	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
 	sudo -u $app env PATH=$PATH yarn install
@@ -256,10 +263,10 @@ pushd $final_path/$app/js
 	sudo -u $app env PATH=$PATH yarn cache clean --all
 popd
 
-ynh_secure_remove --file="$final_path/$app/js"
+ynh_secure_remove --file="$final_path/live/js"
 
 ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
-pushd $final_path/$app
+pushd $final_path/live
 	sudo -u "$app" MIX_ENV=prod mix local.hex --force
 	sudo -u "$app" MIX_ENV=prod mix local.rebar --force
 	ynh_exec_warn_less sudo -u "$app" MIX_ENV=prod mix deps.get
@@ -275,7 +282,7 @@ ynh_secure_remove --file="$final_path/.cache"
 
 if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
 	ynh_script_progression --message="Mobilizon v1.0.3: Refresh remote profiles to save avatars locally"
-	pushd $final_path/$app
+	pushd $final_path/live
 		sudo -u "$app" MIX_ENV=prod mix mobilizon.actors.refresh --all
 	popd
 fi
@@ -285,7 +292,7 @@ fi
 #=================================================
 ynh_script_progression --message="Updating a configuration file..."
 
-config="$final_path/$app/config/runtime.exs"
+config="$final_path/live/config/runtime.exs"
 
 ynh_backup_if_checksum_is_different --file="$config"
 ynh_store_file_checksum --file="$config"
