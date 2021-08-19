@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Une plateforme décentralisée et fédérée pour organiser des événements
 
-**Version incluse :** 1.2.3~ynh1
+**Version incluse :** 1.3.0~ynh1
 
 **Démo :** https://demo.mobilizon.org
 
