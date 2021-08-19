@@ -35,6 +35,7 @@ A decentralized and federated platform to organize events
 
 * Other infos that people should be aware of, such as:
     * Configuration can be made in the Mobilizon administration panel.
+
 ## Documentation and resources
 
 * Official app website: https://joinmobilizon.org/
