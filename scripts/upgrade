@@ -154,17 +154,18 @@ if [ -z "$datadir" ]; then
 	ynh_secure_remove --file="$final_path/$app/uploads"
 fi
 
-if [ ! -f "$final_path/$app/config/runtime.exs" ]; then
-	ynh_delete_file_checksum --file="$final_path/$app/config/prod.secret.exs"
-	mv "$final_path/$app/config/prod.secret.exs" "$final_path/$app/config/runtime.exs"
-	ynh_replace_string --match_string="server: true," --replace_string="" --target_file="$final_path/$app/config/runtime.exs"
-	ynh_store_file_checksum --file="$final_path/$app/config/runtime.exs"	
-fi
-
 if ynh_version_gt "1.2.3~ynh1" "${previous_version}" ; then
 	ynh_script_progression --message="Upgrade to 1.2.3~ynh1..."
 	ynh_delete_file_checksum --file="$final_path/$app/config/runtime.exs"
 	mv "$final_path/$app/" "$final_path/live/"
+	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
+fi
+
+if [ ! -f "$final_path/live/config/runtime.exs" ]; then
+	ynh_delete_file_checksum --file="$final_path/$app/config/prod.secret.exs"
+	ynh_delete_file_checksum --file="$final_path/live/config/prod.secret.exs"
+	mv "$final_path/live/config/prod.secret.exs" "$final_path/live/config/runtime.exs"
+	ynh_replace_string --match_string="server: true," --replace_string="" --target_file="$final_path/live/config/runtime.exs"
 	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
 fi
 
