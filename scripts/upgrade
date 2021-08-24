@@ -221,7 +221,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..."
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
@@ -263,9 +263,9 @@ chown -R $app:$app "$datadir"
 pushd $final_path/live/js
 	ynh_use_nodejs
 	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
-	sudo -u $app env PATH=$PATH yarn install
+	ynh_exec_warn_less sudo -u $app env PATH=$PATH yarn install
 	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
-	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
+	ynh_exec_warn_less sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 	sudo -u $app env PATH=$PATH yarn cache clean --all
 popd
 
