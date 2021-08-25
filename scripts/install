@@ -73,7 +73,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 #=================================================
 ynh_script_progression --message="Installing dependencies..."
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
@@ -163,9 +163,9 @@ config="$final_path/live/config/runtime.exs"
 pushd $final_path/live/js
 	ynh_use_nodejs
 	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
-	sudo -u $app env PATH=$PATH yarn install
+	ynh_exec_warn_less sudo -u $app env PATH=$PATH yarn install
 	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
-	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
+	ynh_exec_warn_less sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 popd
 
 ynh_secure_remove --file="$final_path/live/js"

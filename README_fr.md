@@ -13,7 +13,7 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 Une plateforme décentralisée et fédérée pour organiser des événements
 
-**Version incluse :** 1.2.3~ynh1
+**Version incluse :** 1.3.2~ynh1
 
 **Démo :** https://demo.mobilizon.org
 
@@ -31,6 +31,7 @@ Une plateforme décentralisée et fédérée pour organiser des événements
 
 * Other infos that people should be aware of, such as:
     * Configuration can be made in the Mobilizon administration panel.
+
 ## Documentations et ressources
 
 * Site officiel de l'app : https://joinmobilizon.org/

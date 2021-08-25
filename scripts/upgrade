@@ -154,17 +154,18 @@ if [ -z "$datadir" ]; then
 	ynh_secure_remove --file="$final_path/$app/uploads"
 fi
 
-if [ ! -f "$final_path/$app/config/runtime.exs" ]; then
-	ynh_delete_file_checksum --file="$final_path/$app/config/prod.secret.exs"
-	mv "$final_path/$app/config/prod.secret.exs" "$final_path/$app/config/runtime.exs"
-	ynh_replace_string --match_string="server: true," --replace_string="" --target_file="$final_path/$app/config/runtime.exs"
-	ynh_store_file_checksum --file="$final_path/$app/config/runtime.exs"	
-fi
-
 if ynh_version_gt "1.2.3~ynh1" "${previous_version}" ; then
 	ynh_script_progression --message="Upgrade to 1.2.3~ynh1..."
 	ynh_delete_file_checksum --file="$final_path/$app/config/runtime.exs"
 	mv "$final_path/$app/" "$final_path/live/"
+	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
+fi
+
+if [ ! -f "$final_path/live/config/runtime.exs" ]; then
+	ynh_delete_file_checksum --file="$final_path/$app/config/prod.secret.exs"
+	ynh_delete_file_checksum --file="$final_path/live/config/prod.secret.exs"
+	mv "$final_path/live/config/prod.secret.exs" "$final_path/live/config/runtime.exs"
+	ynh_replace_string --match_string="server: true," --replace_string="" --target_file="$final_path/live/config/runtime.exs"
 	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
 fi
 
@@ -220,7 +221,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..."
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
 
@@ -262,9 +263,9 @@ chown -R $app:$app "$datadir"
 pushd $final_path/live/js
 	ynh_use_nodejs
 	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
-	sudo -u $app env PATH=$PATH yarn install
+	ynh_exec_warn_less sudo -u $app env PATH=$PATH yarn install
 	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
-	sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
+	ynh_exec_warn_less sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
 	sudo -u $app env PATH=$PATH yarn cache clean --all
 popd
 
