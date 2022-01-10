@@ -11,9 +11,15 @@ Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour
 
 ## Vue d'ensemble
 
-Une plateforme décentralisée et fédérée pour organiser des événements
+A decentralized and federated platform to organize events
 
-**Version incluse :** 1.3.2~ynh1
+- Mobilizon is a tool that helps you find, create and organize events.
+
+- You can also create a page for your group where the members will be able to get organized together.
+
+
+
+**Version incluse :** 2.0.2~ynh1
 
 **Démo :** https://demo.mobilizon.org
 
@@ -23,14 +29,12 @@ Une plateforme décentralisée et fédérée pour organiser des événements
 
 ## Avertissements / informations importantes
 
-* Any known limitations, constrains or stuff not working, such as (but not limited to):
-    * **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
-    * To connect as **Mobilizon** administrator, use the email address and password of the user you choose during install
-    * By default registrations are closed
-    * All YunoHost users are allowed to connect
+* **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
+* To connect as **Mobilizon** administrator, use the email address and password of the user you choose during install
+* By default registrations are closed
+* All YunoHost users are allowed to connect
 
-* Other infos that people should be aware of, such as:
-    * Configuration can be made in the Mobilizon administration panel.
+* Configuration can be made in the Mobilizon administration panel.
 
 ## Documentations et ressources
 

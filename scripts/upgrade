@@ -29,6 +29,7 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 secret=$(ynh_app_setting_get --app=$app --key=secret)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+architecture=$YNH_ARCH
 
 #=================================================
 # CHECK VERSION
@@ -111,10 +112,9 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 
 	# Implement ldap and mail
 	cat "../conf/ldap.exs" >> "$config"
+	ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="../conf/mail.exs"
+	ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="../conf/mail.exs"
 	cat "../conf/mail.exs" >> "$config"
-	
-	ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="$config"
-	ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="$config"
 
 	# Recalculate and store the checksum of the file for the next upgrade.
 	ynh_store_file_checksum --file="$config"
@@ -161,12 +161,20 @@ if ynh_version_gt "1.2.3~ynh1" "${previous_version}" ; then
 	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
 fi
 
-if [ ! -f "$final_path/live/config/runtime.exs" ]; then
-	ynh_delete_file_checksum --file="$final_path/$app/config/prod.secret.exs"
-	ynh_delete_file_checksum --file="$final_path/live/config/prod.secret.exs"
-	mv "$final_path/live/config/prod.secret.exs" "$final_path/live/config/runtime.exs"
-	ynh_replace_string --match_string="server: true," --replace_string="" --target_file="$final_path/live/config/runtime.exs"
-	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
+ynh_remove_nodejs
+
+if ynh_version_gt "2.0.2~ynh1" "${previous_version}" ; then
+	mkdir -p /etc/$app
+	if [ -f "$final_path/live/config/prod.secret.exs" ]; then
+		ynh_delete_file_checksum --file="$final_path/live/config/prod.secret.exs"
+		mv -f "$final_path/live/config/prod.secret.exs" "/etc/$app/config.exs"
+	fi
+	if [ -f "$final_path/live/config/runtime.exs" ]; then
+		ynh_delete_file_checksum --file="$final_path/live/config/runtime.exs"
+		mv -f "$final_path/live/config/runtime.exs" "/etc/$app/config.exs"
+	fi
+	chown -R $app:$app /etc/$app
+	ynh_store_file_checksum --file="/etc/$app/config.exs"
 fi
 
 #=================================================
@@ -184,24 +192,12 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..."
-	
-	# Create a temporary directory
-	tmpdir="$(mktemp -d)"
-	
-	# Backup the config file in the temp dir
-	cp -af "$final_path/live/config/runtime.exs" "$tmpdir/runtime.exs"
 
 	# Remove the app directory securely
 	ynh_secure_remove --file="$final_path/live"
 
 	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$final_path/live"
-	
-	# Restore the config file
-	cp -af "$tmpdir/runtime.exs" "$final_path/live/config/runtime.exs"
-
-	# Remove the tmp directory securely
-	ynh_secure_remove --file="$tmpdir"
+	ynh_setup_source --dest_dir="$final_path/live" --source_id=$architecture
 fi
 
 chmod 750 "$final_path"
@@ -222,18 +218,6 @@ ynh_add_nginx_config
 ynh_script_progression --message="Upgrading dependencies..."
 
 ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
-
-ynh_install_nodejs --nodejs_version=$NODEJS_VERSION
-
-ynh_install_extra_app_dependencies --repo="deb https://dl.yarnpkg.com/debian/ stable main" --package="yarn" --key='https://dl.yarnpkg.com/debian/pubkey.gpg'
-
-if dpkg --compare-versions $(cat /etc/debian_version) ge 11.0
-then
-    ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian buster contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
-else
-    lsb_name="$(lsb_release --codename --short)"
-    ynh_install_extra_app_dependencies --repo="deb http://packages.erlang-solutions.com/debian $lsb_name contrib" --package="$extra_pkg_dependencies" --key='https://packages.erlang-solutions.com/debian/erlang_solutions.asc'
-fi
 
 #=================================================
 # SPECIFIC UPGRADE
@@ -259,46 +243,18 @@ chown -R $app:$app "$datadir"
 #=================================================
 # MAKE SETUP
 #=================================================
+ynh_script_progression --message="Making setup..."
 
-pushd $final_path/live/js
-	ynh_use_nodejs
-	ynh_script_progression --message="Installing NodeJS dependencies (this is going to take a while...)"
-	ynh_exec_warn_less sudo -u $app env PATH=$PATH yarn install
-	ynh_script_progression --message="Building NodeJS application (this is going to take a while...)"
-	ynh_exec_warn_less sudo -u $app env PATH=$PATH NODE_BUILD_MEMORY=1024 yarn run build
-	sudo -u $app env PATH=$PATH yarn cache clean --all
-popd
-
-ynh_secure_remove --file="$final_path/live/js"
-
-ynh_script_progression --message="Building Elixir application (this is going to take a while...)"
 pushd $final_path/live
-	sudo -u "$app" MIX_ENV=prod mix local.hex --force
-	sudo -u "$app" MIX_ENV=prod mix local.rebar --force
-	ynh_exec_warn_less sudo -u "$app" MIX_ENV=prod mix deps.get
-	ynh_exec_warn_less sudo -u "$app" MIX_ENV=prod mix compile
-	sudo -u "$app" MIX_ENV=prod mix ecto.migrate
+	ynh_exec_as $app ./bin/mobilizon_ctl migrate
 popd
-
-ynh_secure_remove --file="$final_path/.cache"
-
-#=================================================
-# RUN APP MIGRATIONS
-#=================================================
-
-if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
-	ynh_script_progression --message="Mobilizon v1.0.3: Refresh remote profiles to save avatars locally"
-	pushd $final_path/live
-		sudo -u "$app" MIX_ENV=prod mix mobilizon.actors.refresh --all
-	popd
-fi
 
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
 ynh_script_progression --message="Updating a configuration file..."
 
-config="$final_path/live/config/runtime.exs"
+config="/etc/$app/config.exs"
 
 ynh_backup_if_checksum_is_different --file="$config"
 ynh_store_file_checksum --file="$config"
