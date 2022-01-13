@@ -113,7 +113,7 @@ fi
 #=================================================
 ynh_script_progression --message="Modifying a config file..."
 
-config="$final_path/live/config/runtime.exs"
+config="/etc/$app/config.exs"
 ynh_backup_if_checksum_is_different --file="$config"
 
 ynh_replace_string --match_string="$old_domain" --replace_string="$new_domain" --target_file="$config"
