@@ -2,7 +2,6 @@
 	; Manifest
 		domain="domain.tld"
 		admin="john"
-		language="fr"
 		is_public=1
 		password="password"
 		name="My_Mobilizon"
