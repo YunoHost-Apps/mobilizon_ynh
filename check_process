@@ -1,9 +1,9 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"
-		admin="john"
-		language="fr"
 		is_public=1
+		language="fr"
+		admin="john"
 		password="password"
 		name="My_Mobilizon"
 	; Checks

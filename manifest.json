@@ -6,7 +6,7 @@
         "en": "A decentralized and federated platform to organize events",
         "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
     },
-    "version": "2.0.2~ynh1",
+    "version": "2.0.2~ynh2",
     "url": "https://joinmobilizon.org/",
     "upstream": {
         "license": "AGPL-3.0-or-later",
@@ -27,14 +27,10 @@
         "nginx"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"
-            },
-            {
-                "name": "admin",
-                "type": "user"
             },
             {
                 "name": "is_public",
@@ -50,6 +46,10 @@
                 },
                 "choices": ["fr", "en"],
                 "default": "fr"
+            },
+            {
+                "name": "admin",
+                "type": "user"
             }
         ]
     }
