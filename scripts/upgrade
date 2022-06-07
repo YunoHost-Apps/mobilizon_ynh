@@ -161,8 +161,6 @@ if ynh_version_gt "1.2.3~ynh1" "${previous_version}" ; then
 	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
 fi
 
-ynh_remove_nodejs
-
 if ynh_version_gt "2.0.2~ynh1" "${previous_version}" ; then
 	mkdir -p /etc/$app
 	if [ -f "$final_path/live/config/prod.secret.exs" ]; then
