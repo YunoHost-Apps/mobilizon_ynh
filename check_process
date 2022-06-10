@@ -17,13 +17,13 @@
 		# 1.1.3~ynh1
 		# upgrade=1	from_commit=87d34001dd0b77aed4fa7be2911bc04f58b069ee
 		# 1.1.4~ynh1
-		upgrade=1	from_commit=215b20b0d35178a2c3405a7e3239eba81e22c060
+		# upgrade=1	from_commit=215b20b0d35178a2c3405a7e3239eba81e22c060
 		# 1.2.2~ynh1
-		upgrade=1	from_commit=b63c7833f80de56bbc4a255ddda3b865a5637afc
+		# upgrade=1	from_commit=b63c7833f80de56bbc4a255ddda3b865a5637afc
 		# 1.2.3~ynh1
-		upgrade=1	from_commit=42d479d2cc5bcdc40806ac01802d8eac9df5b2ea
+		# upgrade=1	from_commit=42d479d2cc5bcdc40806ac01802d8eac9df5b2ea
 		# 1.3.2~ynh1
-		upgrade=1	from_commit=e3c0b208c0b76a55e8df2a3947f57bb762b017d4
+		# upgrade=1	from_commit=e3c0b208c0b76a55e8df2a3947f57bb762b017d4
 		# 2.0.2~ynh1
 		upgrade=1	from_commit=0159fc6123536cdf2929b4617d89753283f6946d
 		backup_restore=1
