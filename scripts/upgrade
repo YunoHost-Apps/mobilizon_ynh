@@ -19,9 +19,9 @@ app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
+language=$(ynh_app_setting_get --app=$app --key=language)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
 db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
@@ -161,8 +161,6 @@ if ynh_version_gt "1.2.3~ynh1" "${previous_version}" ; then
 	ynh_store_file_checksum --file="$final_path/live/config/runtime.exs"	
 fi
 
-ynh_remove_nodejs
-
 if ynh_version_gt "2.0.2~ynh1" "${previous_version}" ; then
 	mkdir -p /etc/$app
 	if [ -f "$final_path/live/config/prod.secret.exs" ]; then
@@ -224,7 +222,6 @@ ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # CREATE DATADIR FOLDER
 #=================================================
-
 ynh_script_progression --message="Create datadir folder..."
 
 mkdir -p $datadir
