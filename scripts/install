@@ -28,11 +28,12 @@ path_url="/"
 is_public=$YNH_APP_ARG_IS_PUBLIC
 language=$YNH_APP_ARG_LANGUAGE
 admin=$YNH_APP_ARG_ADMIN
-admin_email=$(ynh_user_get_info $admin 'mail')
-ynh_user_password=$(ynh_string_random --length=30)
-architecture=$YNH_ARCH
 
 app=$YNH_APP_INSTANCE_NAME
+
+admin_email=$(ynh_user_get_info --username=$admin --key="mail")
+ynh_user_password=$(ynh_string_random --length=30)
+architecture=$YNH_ARCH
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -83,7 +84,7 @@ ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Configuring system user..."
 
 # Create a system user
-ynh_system_user_create --username=$app --home_dir=$final_path
+ynh_system_user_create --username=$app --home_dir="$final_path"
 
 yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
@@ -95,17 +96,16 @@ ynh_script_progression --message="Creating a PostgreSQL database..."
 
 db_name=$(ynh_sanitize_dbid --db_name=$app)
 db_user=$db_name
-db_pwd=$(ynh_string_random --length=30)
 ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
 ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
+ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
 ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS postgis;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
 ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
 ynh_psql_execute_as_root --sql="ALTER USER $db_user PASSWORD '$db_pwd';" --database=$db_name
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE

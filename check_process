@@ -4,7 +4,7 @@
 		is_public=1
 		language="fr"
 		admin="john"
-		password="password"
+		password="1Strong-Password"
 		name="My_Mobilizon"
 	; Checks
 		pkg_linter=1
@@ -26,10 +26,12 @@
 		# upgrade=1	from_commit=e3c0b208c0b76a55e8df2a3947f57bb762b017d4
 		# 2.0.2~ynh1
 		upgrade=1	from_commit=0159fc6123536cdf2929b4617d89753283f6946d
+		# 2.1.0~ynh1
+		upgrade=1	from_commit=f9c1792c86cffd17b72a48160a64ee2083d5ccf6
 		backup_restore=1
 		multi_instance=0
 		port_already_use=0
 		change_url=1
 ;;; Options
-Email=yalh@yahoo.com
-Notification=all
+Email=
+Notification=none
