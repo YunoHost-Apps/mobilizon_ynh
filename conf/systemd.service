@@ -3,13 +3,15 @@ Description=__APP__ Mobilizon Service
 After=network.target postgresql.service
 
 [Service]
+Type=simple
 User=__APP__
+Group=__APP__
+Environment=MIX_ENV=prod
 WorkingDirectory=__FINALPATH__/live/
 ExecStart=__FINALPATH__/live/bin/mobilizon start
 ExecStop=__FINALPATH__/live/bin/mobilizon stop
 KillMode=process
 Restart=on-failure
-Environment=MIX_ENV=prod
 
 SyslogIdentifier=mobilizon
 
