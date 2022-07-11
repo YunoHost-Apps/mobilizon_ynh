@@ -32,7 +32,6 @@ path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_user=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=db_pwd)
 port=$(ynh_app_setting_get --app=$app --key=port)
 ynh_user_password=$(ynh_app_setting_get --app=$app --key=ynh_user_password)
 admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
@@ -48,13 +47,6 @@ test ! -d $final_path \
 
 #=================================================
 # STANDARD RESTORATION STEPS
-#=================================================
-# RESTORE THE NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Restoring the NGINX web server configuration..."
-
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
-
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
@@ -102,11 +94,19 @@ ynh_script_progression --message="Reinstalling dependencies..."
 ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
+# RESTORE THE NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Restoring the NGINX web server configuration..."
+
+ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+#=================================================
 # RESTORE THE POSTGRESQL DATABASE
 #=================================================
 ynh_script_progression --message="Restoring the PostgreSQL database..."
 
 ynh_psql_test_if_first_run
+db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
 ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS postgis;" --database=$db_name
