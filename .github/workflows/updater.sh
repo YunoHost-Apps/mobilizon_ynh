@@ -69,7 +69,7 @@ for asset_url in ${assets[@]}; do
         src="arm64"
         ;;
       *"arm"*)
-        src="arm"
+        src="armhf"
         ;;
       *)
         src=""
