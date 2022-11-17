@@ -98,7 +98,7 @@ if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
 	ynh_user_password=$(ynh_string_random --length=30)
 	ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
 
-	yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain $domain --password "$ynh_user_password" -q 0
+	yunohost user create ${app}_notifs -F Mobilizon Notifications --domain $domain --password "$ynh_user_password" -q 0
 	yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 	# Manage previous .env file
