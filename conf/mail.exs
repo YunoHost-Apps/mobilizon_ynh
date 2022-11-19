@@ -2,7 +2,7 @@
 config :mobilizon, Mobilizon.Web.Email.Mailer,
   adapter: Swoosh.Adapters.SMTP,
   relay: "127.0.0.1",
-  hostname: "127.0.0.1",
+  #hostname: "127.0.0.1",
   # usually 25, 465 or 587
   port: 25,
   username: "__YNH_USER__",
@@ -15,4 +15,3 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   no_mx_lookups: false,
   # can be `:always`. If your smtp relay requires authentication set it to `:always`.
   auth: :always
-
