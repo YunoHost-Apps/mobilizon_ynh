@@ -245,11 +245,11 @@ popd
 #=================================================
 #ynh_script_progression --message="Updating a configuration file..."
 
-#config="/etc/$app/config.exs"
+config="/etc/$app/config.exs"
 
 ynh_backup_if_checksum_is_different --file="$config"
-#ynh_replace_string --match_string="adapter: Bamboo.SMTPAdapter," --replace_string="adapter: Swoosh.Adapters.SMTP," --target_file="$config"
-#ynh_replace_string --match_string="server: \"127.0.0.1\"," --replace_string="relay: \"127.0.0.1\"," --target_file="$config"
+ynh_replace_string --match_string="adapter: Swoosh.Adapters.SMTP," --replace_string="adapter: Bamboo.SMTPAdapter," --target_file="$config"
+ynh_replace_string --match_string="relay: \"127.0.0.1\"," --replace_string="server: \"127.0.0.1\"," --target_file="$config"
 ynh_store_file_checksum --file="$config"
 
 chmod 400 "$config"
