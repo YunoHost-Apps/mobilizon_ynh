@@ -86,7 +86,7 @@ ynh_script_progression --message="Configuring system user..."
 # Create a system user
 ynh_system_user_create --username=$app --home_dir="$final_path"
 
-yunohost user create ${app}_notifs -F "Mobilizon Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
+yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
 
 #=================================================
