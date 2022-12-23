@@ -1,5 +1,5 @@
-SOURCE_URL=https://packages.joinmobilizon.org/3.0.1/mobilizon_3.0.1_arm.tar.gz
-SOURCE_SUM=46e99a5ae067c8d656a85cbc8e8fc18603075a1fd9cb25e9477d03014b88c6d3
+SOURCE_URL=https://packages.joinmobilizon.org/3.0.3/mobilizon_3.0.3_arm.tar.gz
+SOURCE_SUM=f59986c63938f7108425e1220db59b2d19f544578cc2e923e5e79c0d8962bbdc
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
