@@ -5,15 +5,15 @@ It shall NOT be edited by hand.
 
 # Mobilizon pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)  
 [![Installer Mobilizon avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
 *[Read this readme in english.](./README.md)*
 
-> *Ce package vous permet d'installer Mobilizon rapidement et simplement sur un serveur YunoHost.
-Si vous n'avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l'installer et en profiter.*
+> *Ce package vous permet d’installer Mobilizon rapidement et simplement sur un serveur YunoHost.
+Si vous n’avez pas YunoHost, regardez [ici](https://yunohost.org/#/install) pour savoir comment l’installer et en profiter.*
 
-## Vue d'ensemble
+## Vue d’ensemble
 
 A decentralized and federated platform to organize events
 
@@ -27,9 +27,9 @@ A decentralized and federated platform to organize events
 
 **Démo :** https://demo.mobilizon.org
 
-## Captures d'écran
+## Captures d’écran
 
-![Capture d'écran de Mobilizon](./doc/screenshots/screenshot1.jpg)
+![Capture d’écran de Mobilizon](./doc/screenshots/screenshot1.jpg)
 
 ## Avertissements / informations importantes
 
@@ -42,9 +42,9 @@ A decentralized and federated platform to organize events
 
 ## Documentations et ressources
 
-* Site officiel de l'app : <https://joinmobilizon.org/>
+* Site officiel de l’app : <https://joinmobilizon.org/>
 * Documentation officielle utilisateur : <https://docs.joinmobilizon.org>
-* Dépôt de code officiel de l'app : <https://framagit.org/framasoft/mobilizon/>
+* Dépôt de code officiel de l’app : <https://framagit.org/framasoft/mobilizon/>
 * Documentation YunoHost pour cette app : <https://yunohost.org/app_mobilizon>
 * Signaler un bug : <https://github.com/YunoHost-Apps/mobilizon_ynh/issues>
 
@@ -60,4 +60,4 @@ ou
 sudo yunohost app upgrade mobilizon -u https://github.com/YunoHost-Apps/mobilizon_ynh/tree/testing --debug
 ```
 
-**Plus d'infos sur le packaging d'applications :** <https://yunohost.org/packaging_apps>
+**Plus d’infos sur le packaging d’applications :** <https://yunohost.org/packaging_apps>
