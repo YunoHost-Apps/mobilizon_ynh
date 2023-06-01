@@ -32,15 +32,6 @@ A decentralized and federated platform to organize events
 
 ![Capture d’écran de Mobilizon](./doc/screenshots/screenshot1.jpg)
 
-## Avertissements / informations importantes
-
-* **Mobilizon** require a dedicated **root domain**, eg. mobilizon.domain.tld
-* To connect as **Mobilizon** administrator, use the email address and password of the user you choose during install
-* By default registrations are closed
-* All YunoHost users are allowed to connect
-
-* Configuration can be made in the Mobilizon administration panel.
-
 ## Documentations et ressources
 
 * Site officiel de l’app : <https://joinmobilizon.org/>
