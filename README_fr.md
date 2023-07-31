@@ -5,7 +5,8 @@ It shall NOT be edited by hand.
 
 # Mobilizon pour YunoHost
 
-[![Niveau d’intégration](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)  
+[![Niveau d’intégration](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+
 [![Installer Mobilizon avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
 *[Read this readme in english.](./README.md)*
@@ -23,7 +24,7 @@ A decentralized and federated platform to organize events
 
 
 
-**Version incluse :** 2.1.0.1~ynh5
+**Version incluse :** 3.1.3~ynh1
 
 **Démo :** https://demo.mobilizon.org
 
