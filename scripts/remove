@@ -42,8 +42,9 @@ fi
 ynh_script_progression --message="Stopping and removing the systemd service..."
 
 # Remove the dedicated systemd config
-ynh_remove_systemd_config
+ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
 pkill -f $app || true
+ynh_remove_systemd_config
 
 #=================================================
 # REMOVE THE POSTGRESQL DATABASE
