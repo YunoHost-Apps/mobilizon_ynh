@@ -3,10 +3,10 @@
     "id": "mobilizon",
     "packaging_format": 1,
     "description": {
-        "en": "A decentralized and federated platform to organize events",
-        "fr": "Une plateforme décentralisée et fédérée pour organiser des événements"
+        "en": "Decentralized and federated platform to organize events",
+        "fr": "Plateforme décentralisée et fédérée pour organiser des événements"
     },
-    "version": "3.1.3~ynh2",
+    "version": "3.2.0~ynh1",
     "url": "https://joinmobilizon.org/",
     "upstream": {
         "license": "AGPL-3.0-or-later",
@@ -20,7 +20,7 @@
         "name": "yalh76"
     },
     "requirements": {
-        "yunohost": ">= 11.0.0"
+        "yunohost": ">= 11.2"
     },
     "multi_instance": false,
     "services": [

@@ -24,7 +24,7 @@ A decentralized and federated platform to organize events
 
 
 
-**Version incluse :** 3.1.3~ynh2
+**Version incluse :** 3.2.0~ynh1
 
 **Démo :** https://demo.mobilizon.org
 
