@@ -24,7 +24,7 @@ A decentralized and federated platform to organize events
 
 
 
-**Shipped version:** 3.2.0~ynh1
+**Shipped version:** 4.0.0~ynh1
 
 **Demo:** https://demo.mobilizon.org
 
@@ -46,7 +46,7 @@ A decentralized and federated platform to organize events
 * Official app website: <https://joinmobilizon.org/>
 * Official user documentation: <https://docs.joinmobilizon.org>
 * Upstream app code repository: <https://framagit.org/framasoft/mobilizon/>
-* YunoHost documentation for this app: <https://yunohost.org/app_mobilizon>
+* YunoHost Store: <https://apps.yunohost.org/app/mobilizon>
 * Report a bug: <https://github.com/YunoHost-Apps/mobilizon_ynh/issues>
 
 ## Developer info
