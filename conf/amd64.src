@@ -1,5 +1,5 @@
-SOURCE_URL=https://packages.joinmobilizon.org/4.0.0/mobilizon_4.0.0_amd64-debian-bullseye.tar.gz
-SOURCE_SUM=a0007f7564c01ea8b0bfc9b3b32742473839b0217aae59dea74eacfd3b1774ac
+SOURCE_URL=https://packages.joinmobilizon.org/4.0.0/mobilizon_4.0.0_amd64-ubuntu-jammy.tar.gz
+SOURCE_SUM=6370e92fbbb2c16928f995d9d8d51e90d4c3c8752a769bf5bc536567a28c5503
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
