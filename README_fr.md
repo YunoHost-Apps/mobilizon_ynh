@@ -37,7 +37,7 @@ A decentralized and federated platform to organize events
 * Site officiel de l’app : <https://joinmobilizon.org/>
 * Documentation officielle utilisateur : <https://docs.joinmobilizon.org>
 * Dépôt de code officiel de l’app : <https://framagit.org/framasoft/mobilizon/>
-* Documentation YunoHost pour cette app : <https://yunohost.org/app_mobilizon>
+* YunoHost Store: <https://apps.yunohost.org/app/mobilizon>
 * Signaler un bug : <https://github.com/YunoHost-Apps/mobilizon_ynh/issues>
 
 ## Informations pour les développeurs
