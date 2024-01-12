@@ -17,11 +17,14 @@ userdoc = "https://docs.joinmobilizon.org"
 code = "https://framagit.org/framasoft/mobilizon/"
 
 [integration]
-yunohost = ">= 11.1.19"
+yunohost = ">= 11.2"
 architectures = "all"
 multi_instance = false
+
 ldap = true
+
 sso = true
+
 disk = "50M"
 ram.build = "50M"
 ram.runtime = "50M"
@@ -29,7 +32,6 @@ ram.runtime = "50M"
 [install]
     [install.domain]
     type = "domain"
-    full_domain = true
 
     [install.init_main_permission]
     type = "group"
@@ -72,7 +74,7 @@ ram.runtime = "50M"
     api.protected = true
 
     [resources.apt]
-    packages = "postgresql postgresql-client postgresql-contrib postgis postgresql-postgis-scripts postgresql-13-postgis-3 argon2 imagemagick webp gifsicle jpegoptim optipng pngquant file"
+    packages = "postgresql, postgresql-client, postgresql-contrib, postgis, postgresql-postgis-scripts, postgresql-13-postgis-3, argon2, imagemagick, webp, gifsicle, jpegoptim, optipng, pngquant, file"
 
     [resources.database]
     type = "postgresql"
