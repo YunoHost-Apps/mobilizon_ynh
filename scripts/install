@@ -189,7 +189,7 @@ pushd $final_path/live
 	password=$(ynh_string_random --length=30)
 	ynh_exec_as $app ./bin/mobilizon_ctl users.new "$admin_email" --admin --password "$password"
 
-	ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd --line_match="Stopped"
+	ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
 popd
 
 #=================================================
