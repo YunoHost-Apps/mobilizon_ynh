@@ -16,7 +16,6 @@ source /usr/share/yunohost/helpers
 admin_email=$(ynh_user_get_info --username="$admin" --key="mail")
 ynh_app_setting_set --app="$app" --key="admin_email" --value="$admin_email"
 
-ynh_user="${app}_notifs"
 ynh_user_password=$(ynh_string_random --length=30)
 ynh_app_setting_set --app="$app" --key="ynh_user_password" --value="$ynh_user_password"
 
