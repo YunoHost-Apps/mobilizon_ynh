@@ -97,7 +97,7 @@ chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
 #=================================================
 ynh_script_progression --message="Migrating app..."
 
-ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" ./bin/mobilizon_ctl migrate
+ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" migrate
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
