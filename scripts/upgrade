@@ -7,55 +7,7 @@
 #=================================================
 
 source _common.sh
-source ynh_package_version
 source /usr/share/yunohost/helpers
-
-#=================================================
-# LOAD SETTINGS
-#=================================================
-#REMOVEME? ynh_script_progression --message="Loading installation settings..."
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
-#REMOVEME? language=$(ynh_app_setting_get --app=$app --key=language)
-#REMOVEME? admin=$(ynh_app_setting_get --app=$app --key=admin)
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
-#REMOVEME? db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-#REMOVEME? db_user=$db_name
-#REMOVEME? db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
-#REMOVEME? port=$(ynh_app_setting_get --app=$app --key=port)
-#REMOVEME? secret=$(ynh_app_setting_get --app=$app --key=secret)
-#REMOVEME? admin_email=$(ynh_app_setting_get --app=$app --key=admin_email)
-#REMOVEME? data_dir=$(ynh_app_setting_get --app=$app --key=data_dir)
-architecture=$YNH_ARCH
-
-#=================================================
-# CHECK VERSION
-#=================================================
-ynh_script_progression --message="Checking version..."
-
-upgrade_type=$(ynh_check_app_version_changed)
-
-abort_if_up_to_date
-# previous function is what defines 'version', more precisely the 'previous version'
-previous_version="${version}"
-
-#=================================================
-# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
-#=================================================
-#REMOVEME? ynh_script_progression --message="Backing up the app before upgrading (may take a while)..."
-
-# Backup the current version of the app
-#REMOVEME? ynh_backup_before_upgrade
-#REMOVEME? ynh_clean_setup () {
-	ynh_clean_check_starting
-	# Restore it if the upgrade fails
-#REMOVEME? 	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -71,220 +23,100 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
 
-# Cleaning legacy permissions
-#REMOVEME? if ynh_legacy_permissions_exists; then
-#REMOVEME? 	ynh_legacy_permissions_delete_all
-
-	ynh_app_setting_delete --app=$app --key=is_public
-fi
-
-#REMOVEME? if ynh_permission_exists --permission="admin"; then
-	# Create the required permissions
-	ynh_permission_delete --permission="admin"
-fi
-
-# Create a permission if needed
-#REMOVEME? if ! ynh_permission_exists --permission="api"; then
-#REMOVEME? 	ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --show_tile="false" --protected="true"
-fi
-
-#REMOVEME? ynh_secure_remove --file="$install_dir/$app/priv/data/GeoLite2-City.mmdb"
-
+# Cleanup
+ynh_secure_remove --file="$install_dir/$app/priv/data/GeoLite2-City.mmdb"
 ynh_secure_remove --file="/usr/share/GeoIP"
 
-if ynh_version_gt "1.0.0~ynh1" "${previous_version}" ; then
-	ynh_script_progression --message="Upgrade configuration to 1.0.0..."
-
-	ynh_user_password=$(ynh_string_random --length=30)
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
-
-	yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain $domain --password "$ynh_user_password" -q 0
-	yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
-
-	# Manage previous .env file
-	ynh_backup_if_checksum_is_different --file="$install_dir/$app/.env"
-	ynh_delete_file_checksum --file="$install_dir/$app/.env"
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/$app/.env"
-
-	# Configure Mobilizon
-	config="$install_dir/$app/config/runtime.exs"
-	ynh_add_config --template="../conf/runtime.exs" --destination="$config"
-
-	# Implement ldap and mail
-	cat "../conf/ldap.exs" >> "$config"
-	ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="../conf/mail.exs"
-	ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="../conf/mail.exs"
-	cat "../conf/mail.exs" >> "$config"
-
-	# Recalculate and store the checksum of the file for the next upgrade.
-	ynh_store_file_checksum --file="$config"
+# Move legacy configuration files
+if [ ! -f "$install_dir/config.exs" ]; then
+    if [ -f "$install_dir/live/config/prod.secret.exs" ]; then
+        ynh_delete_file_checksum --file="$install_dir/live/config/prod.secret.exs"
+        mv -f "$install_dir/live/config/prod.secret.exs" "$install_dir/config.exs"
+    fi
+    if [ -f "$install_dir/live/config/runtime.exs" ]; then
+        ynh_delete_file_checksum --file="$install_dir/live/config/runtime.exs"
+        mv -f "$install_dir/live/config/runtime.exs" "$install_dir/config.exs"
+    fi
+    if [ -f "/etc/$app/config.exs" ]; then
+        ynh_delete_file_checksum --file="/etc/$app/config.exs"
+        mv -f "/etc/$app/config.exs" "$install_dir/config.exs"
+        ynh_secure_remove --file="/etc/$app"
+    fi
+    chown -R "$app:$app" "$install_dir/config.exs"
+    ynh_store_file_checksum --file="$install_dir/config.exs"
+fi
+# Check if previous "if block" did the job
+if [ ! -f "$install_dir/config.exs" ]; then
+    ynh_die --message="Could not find a previous configuration file. Please contact maintainers on the forum."
 fi
 
-# If data_dir doesn't exist, create it
-if [ -z "$data_dir" ]; then
-	ynh_script_progression --message="Create data_dir folder..."
+# Migrate data to data_dir
+# FIXME: could be old, might be nice to remove
+if [ -n "$(ls -A "$install_dir/$app/uploads/")" ]; then
+    ynh_script_progression --message="Moving data directory..."
+    rsync -a "$install_dir/$app/uploads/" "$data_dir/uploads/"
+    ynh_secure_remove "$install_dir/$app/uploads"
 
-	# Define app's data directory
-	data_dir="/home/yunohost.app/${app}"
-
-#REMOVEME? 	ynh_app_setting_set --app=$app --key=data_dir --value="$data_dir"
-
-	# Create app folders
-	mkdir -p "$data_dir/"
-	mkdir -p "$data_dir/uploads/"
-
-	chmod 750 "$data_dir"
-	chmod -R o-rwx "$data_dir"
-	chown -R $app:$app "$data_dir"
-
-	rsync -a $install_dir/$app/uploads/ $data_dir/uploads/
-
-	config="$install_dir/$app/config/runtime.exs"
-
-	ynh_backup_if_checksum_is_different --file="$config"
-
-	ynh_replace_string --match_string="__DATA_DIR__" --replace_string="$data_dir" --target_file="../conf/uploads.exs"
-	cat "../conf/uploads.exs" >> "$config"
-	
-	ynh_store_file_checksum --file="$config"
-
-	chmod 400 "$config"
-	chown $app:$app "$config"
-
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/$app/uploads"
+    if grep "Mobilizon.Web.Upload.Uploader.Local" "$MOBILIZON_CONFIG_PATH" >/dev/null; then
+        ynh_replace_string --target_file="$MOBILIZON_CONFIG_PATH" \
+            --match_string="uploads: \".*/uploads\"" \
+            --replace_string="$data_dir/uploads"
+    else
+        ynh_add_config --template="uploads.exs" --destination="$install_dir/uploads.exs"
+        cat "$install_dir/uploads.exs" >> "$MOBILIZON_CONFIG_PATH"
+        ynh_secure_remove --file="$install_dir/uploads.exs"
+    fi
 fi
-
-if ynh_version_gt "1.2.3~ynh1" "${previous_version}" ; then
-	ynh_script_progression --message="Upgrade to 1.2.3~ynh1..."
-	ynh_delete_file_checksum --file="$install_dir/$app/config/runtime.exs"
-	mv "$install_dir/$app/" "$install_dir/live/"
-	ynh_store_file_checksum --file="$install_dir/live/config/runtime.exs"	
-fi
-
-if ynh_version_gt "2.0.2~ynh1" "${previous_version}" ; then
-	mkdir -p /etc/$app
-	if [ -f "$install_dir/live/config/prod.secret.exs" ]; then
-		ynh_delete_file_checksum --file="$install_dir/live/config/prod.secret.exs"
-		mv -f "$install_dir/live/config/prod.secret.exs" "/etc/$app/config.exs"
-	fi
-	if [ -f "$install_dir/live/config/runtime.exs" ]; then
-		ynh_delete_file_checksum --file="$install_dir/live/config/runtime.exs"
-		mv -f "$install_dir/live/config/runtime.exs" "/etc/$app/config.exs"
-	fi
-	chown -R $app:$app /etc/$app
-	ynh_store_file_checksum --file="/etc/$app/config.exs"
-fi
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Making sure dedicated system user exists..."
-
-# Create a dedicated user (if not existing)
-#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_script_progression --message="Upgrading source files..."
 
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-	ynh_script_progression --message="Upgrading source files..."
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$install_dir/live" --full_replace=1
 
-	# Remove the app directory securely
-#REMOVEME? 	ynh_secure_remove --file="$install_dir/live"
-
-	# Download, check integrity, uncompress and patch the source from app.src
-	ynh_setup_source --dest_dir="$install_dir/live" --source_id=$architecture
-fi
-
-chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
-chown -R $app:www-data "$install_dir"
-
-#=================================================
-# UPGRADE DEPENDENCIES
-#=================================================
-#REMOVEME? ynh_script_progression --message="Upgrading dependencies..."
-
-#REMOVEME? ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Upgrading NGINX web server configuration..."
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config
-
-#=================================================
-# SPECIFIC UPGRADE
-#=================================================
-# CREATE DATA_DIR FOLDER
-#=================================================
-ynh_script_progression --message="Create data_dir folder..."
-
-mkdir -p $data_dir
-mkdir -p "$data_dir/uploads/"
-
-chmod 750 "$data_dir"
-chmod -R o-rwx "$data_dir"
-chown -R $app:$app "$data_dir"
-
-#=================================================
-# MAKE SETUP
-#=================================================
-ynh_script_progression --message="Making setup..."
-
-pushd $install_dir/live
-	ynh_exec_as $app ./bin/mobilizon_ctl migrate
-popd
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
 ynh_script_progression --message="Updating a configuration file..."
 
-config="/etc/$app/config.exs"
-
-ynh_backup_if_checksum_is_different --file="$config"
-ynh_replace_string --match_string="adapter: Bamboo.SMTPAdapter," --replace_string="adapter: Swoosh.Adapters.SMTP," --target_file="$config"
-ynh_replace_string --match_string="server: \"127.0.0.1\"," --replace_string="relay: \"127.0.0.1\"," --target_file="$config"
-ynh_store_file_checksum --file="$config"
+ynh_backup_if_checksum_is_different --file="$MOBILIZON_CONFIG_PATH"
+ynh_replace_string --match_string="adapter: Bamboo.SMTPAdapter," --replace_string="adapter: Swoosh.Adapters.SMTP," --target_file="$MOBILIZON_CONFIG_PATH"
+ynh_replace_string --match_string="server: \"127.0.0.1\"," --replace_string="relay: \"127.0.0.1\"," --target_file="$MOBILIZON_CONFIG_PATH"
+ynh_store_file_checksum --file="$MOBILIZON_CONFIG_PATH"
 
 chmod 400 "$config"
-chown $app:$app "$config"
+chown "$app:$app" "$config"
 
 #=================================================
-# SETUP SYSTEMD
+# MAKE SETUP
 #=================================================
-ynh_script_progression --message="Upgrading systemd configuration..."
+ynh_script_progression --message="Migrating app..."
+
+ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" ./bin/mobilizon_ctl migrate
+
+#=================================================
+# REAPPLY SYSTEM CONFIGURATIONS
+#=================================================
+ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..."
-
-yunohost service add $app --description="$app daemon for Mobilizon"
+yunohost service add "$app" --description="$app daemon for Mobilizon"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."
 
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-#REMOVEME? ynh_script_progression --message="Reloading NGINX web server..."
-
-#REMOVEME? ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT
