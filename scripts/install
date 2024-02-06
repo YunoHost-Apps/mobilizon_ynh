@@ -55,11 +55,12 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression --message="Making setup..."
 
-config_file="$install_dir/config.exs"
+MOBILIZON_CONFIG_PATH="$install_dir/config.exs"
 
 pushd "$install_dir/live"
-	ynh_exec_as "$app" MIX_ENV=prod ./bin/mobilizon_ctl instance gen --force \
-		--output "$config_file" \
+	ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" MIX_ENV=prod \
+		./bin/mobilizon_ctl instance gen --force \
+		--output "$MOBILIZON_CONFIG_PATH" \
 		--output-psql "$install_dir/setub_db.psql" \
 		--domain "$domain" \
 		--instance-name "Mobilizon" \
@@ -76,24 +77,24 @@ ynh_add_config --template="ldap.exs" --destination="$install_dir/ldap.exs"
 ynh_add_config --template="mail.exs" --destination="$install_dir/mail.exs"
 ynh_add_config --template="uploads.exs" --destination="$install_dir/uploads.exs"
 
-cat "$install_dir/ldap.exs" "$install_dir/mail.exs" "$install_dir/uploads.exs" >> "$config_file"
-ynh_store_file_checksum --file="$config_file"
+cat "$install_dir/ldap.exs" "$install_dir/mail.exs" "$install_dir/uploads.exs" >> "$MOBILIZON_CONFIG_PATH"
+ynh_store_file_checksum --file="$MOBILIZON_CONFIG_PATH"
 
 ynh_secure_remove --file="$install_dir/ldap.exs"
 ynh_secure_remove --file="$install_dir/mail.exs"
 ynh_secure_remove --file="$install_dir/uploads.exs"
 
-chmod 400 "$config_file"
-chown "$app:$app" "$config_file"
+chmod 400 "$MOBILIZON_CONFIG_PATH"
+chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
 
 pushd "$install_dir/live"
-	ynh_exec_as "$app" ./bin/mobilizon_ctl migrate
+	ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" ./bin/mobilizon_ctl migrate
 
 	# ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
 
 	# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
 	password=$(ynh_string_random --length=30)
-	ynh_exec_as "$app" ./bin/mobilizon_ctl users.new "$admin_email" --admin --password "$password"
+	ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" ./bin/mobilizon_ctl users.new "$admin_email" --admin --password "$password"
 
 	# ynh_systemd_action --service_name="$app" --action="stop" --log_path=systemd
 popd
