@@ -21,7 +21,7 @@ fi
 
 # Properly kill the service processes
 ynh_systemd_action --service_name="$app" --action="stop" --log_path=systemd
-pkill -f "$app" || true
+pkill -u "$app" || true
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config
