@@ -10,196 +10,106 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
+# INITIALIZE AND STORE SETTINGS
 #=================================================
 
-ynh_clean_setup () {
-	ynh_clean_check_starting
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+admin_email=$(ynh_user_get_info --username="$admin" --key="mail")
+ynh_app_setting_set --app="$app" --key="admin_email" --value="$admin_email"
 
-#=================================================
-# RETRIEVE ARGUMENTS FROM THE MANIFEST
-#=================================================
-
-domain=$YNH_APP_ARG_DOMAIN
-path_url="/"
-is_public=$YNH_APP_ARG_IS_PUBLIC
-language=$YNH_APP_ARG_LANGUAGE
-admin=$YNH_APP_ARG_ADMIN
-
-app=$YNH_APP_INSTANCE_NAME
-
-admin_email=$(ynh_user_get_info --username=$admin --key="mail")
 ynh_user_password=$(ynh_string_random --length=30)
-architecture=$YNH_ARCH
-
-#=================================================
-# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
-#=================================================
-ynh_script_progression --message="Validating installation parameters..."
-
-final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
-
-# Register (book) web path
-ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
-
-[ -n "$admin_email" ] || ynh_die --message="Did not found the email address for the admin user ?"
-
-#=================================================
-# STORE SETTINGS FROM MANIFEST
-#=================================================
-ynh_script_progression --message="Storing installation settings..."
-
-ynh_app_setting_set --app=$app --key=domain --value=$domain
-ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=language --value=$language
-ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=admin_email --value=$admin_email
-ynh_app_setting_set --app=$app --key=ynh_user_password --value=$ynh_user_password
-
-#=================================================
-# STANDARD MODIFICATIONS
-#=================================================
-# FIND AND OPEN A PORT
-#=================================================
-ynh_script_progression --message="Finding an available port..."
-
-# Find an available port
-port=$(ynh_find_port --port=8095)
-ynh_app_setting_set --app=$app --key=port --value=$port
-
-#=================================================
-# INSTALL DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Installing dependencies..."
-
-ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
+ynh_app_setting_set --app="$app" --key="ynh_user_password" --value="$ynh_user_password"
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Configuring system user..."
+ynh_script_progression --message="Configuring yunohost users..."
 
-# Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
-
-yunohost user create ${app}_notifs --firstname "Mobilizon" --lastname "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
-yunohost user update ${app}_notifs --add-mailalias $app@$domain --add-mailforward $admin_email
+yunohost user create "$ynh_user" -F "Mobilizon Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
+yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforward "$admin_email"
 
 #=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Creating a PostgreSQL database..."
+ynh_script_progression --message="Configuring the PostgreSQL database..."
 
-db_name=$(ynh_sanitize_dbid --db_name=$app)
-db_user=$db_name
-ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_psql_test_if_first_run
-ynh_psql_setup_db --db_user=$db_user --db_name=$db_name
-ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH SUPERUSER;" --database="$db_name"
-ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS postgis;" --database=$db_name
-ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;" --database=$db_name
-ynh_psql_execute_as_root --sql="CREATE EXTENSION IF NOT EXISTS unaccent;" --database=$db_name
-ynh_psql_execute_as_root --sql="ALTER USER $db_user WITH NOSUPERUSER;" --database="$db_name"
-ynh_psql_execute_as_root --sql="ALTER USER $db_user PASSWORD '$db_pwd';" --database=$db_name
-db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
+# FIXME: Really superuser ??
+ynh_psql_execute_as_root --database="$db_name" --sql="ALTER USER $db_user WITH SUPERUSER;"
+ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS postgis;"
+ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS unaccent;"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression --message="Setting up source files..."
 
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path/live" --source_id=$architecture
+ynh_setup_source --dest_dir="$install_dir/live"
 
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..."
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config
-
-#=================================================
-# SPECIFIC SETUP
-#=================================================
-# CREATE DATA DIRECTORY
-#=================================================
-ynh_script_progression --message="Creating a data directory..."
-
-datadir=/home/yunohost.app/$app
-ynh_app_setting_set --app=$app --key=datadir --value=$datadir
-
-mkdir -p $datadir
-mkdir -p "$datadir/uploads/"
-
-chmod 750 "$datadir"
-chmod -R o-rwx "$datadir"
-chown -R $app:$app "$datadir"
-
-#=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Configuring a systemd service..."
-
-# Create a dedicated systemd config
-ynh_add_systemd_config
+chmod -R o-rwx "$install_dir"
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # MAKE SETUP
 #=================================================
 ynh_script_progression --message="Making setup..."
 
-mkdir -p /etc/$app
-chown -R $app:$app /etc/$app
-
-config="/etc/$app/config.exs"
-
-pushd $final_path/live
-	ynh_exec_as $app MIX_ENV=prod ./bin/mobilizon_ctl instance gen --force --output $config --output-psql /tmp/setup_db.psql --domain $domain --instance-name "Mobilizon" --admin-email "$app@$domain" --dbhost localhost --dbname $db_name --dbuser $db_user --dbpass $db_pwd --listen-port $port
-	ynh_secure_remove --file="/tmp/setup_db.psql"
+pushd "$install_dir/live"
+    ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" MIX_ENV=prod \
+        ./bin/mobilizon_ctl instance gen --force \
+        --output "$MOBILIZON_CONFIG_PATH" \
+        --output-psql "$install_dir/setub_db.psql" \
+        --domain "$domain" \
+        --instance-name "Mobilizon" \
+        --admin-email "$app@$domain" \
+        --dbhost localhost \
+        --dbname "$db_name" \
+        --dbuser "$db_user" \
+        --dbpass "$db_pwd" \
+        --listen-port "$port"
+    ynh_secure_remove --file="$install_dir/setup_db.psql"
 popd
 
-cat "../conf/ldap.exs" >> "$config"
-ynh_replace_string --match_string="__YNH_USER__" --replace_string="${app}_notifs" --target_file="../conf/mail.exs"
-ynh_replace_string --match_string="__YNH_USER_PASSWORD__" --replace_string="${ynh_user_password}" --target_file="../conf/mail.exs"
-cat "../conf/mail.exs" >> "$config"
-ynh_replace_string --match_string="__DATADIR__" --replace_string="$datadir" --target_file="../conf/uploads.exs"
-cat "../conf/uploads.exs" >> "$config"
+ynh_add_config --template="ldap.exs" --destination="$install_dir/ldap.exs"
+ynh_add_config --template="mail.exs" --destination="$install_dir/mail.exs"
+ynh_add_config --template="uploads.exs" --destination="$install_dir/uploads.exs"
 
-ynh_store_file_checksum --file="$config"
+cat "$install_dir/ldap.exs" "$install_dir/mail.exs" "$install_dir/uploads.exs" >> "$MOBILIZON_CONFIG_PATH"
+ynh_store_file_checksum --file="$MOBILIZON_CONFIG_PATH"
 
-chmod 400 "$config"
-chown $app:$app "$config"
+ynh_secure_remove --file="$install_dir/ldap.exs"
+ynh_secure_remove --file="$install_dir/mail.exs"
+ynh_secure_remove --file="$install_dir/uploads.exs"
 
-pushd $final_path/live
-	ynh_exec_as $app ./bin/mobilizon_ctl migrate
+chmod 400 "$MOBILIZON_CONFIG_PATH"
+chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
 
-	ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
-
-	# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
-	password=$(ynh_string_random --length=30)
-	ynh_exec_as $app ./bin/mobilizon_ctl users.new "$admin_email" --admin --password "$password"
-
-	ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
-popd
+ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" migrate
 
 #=================================================
-# GENERIC FINALIZATION
+# SYSTEM CONFIGURATION
 #=================================================
-# INTEGRATE SERVICE IN YUNOHOST
-#=================================================
-ynh_script_progression --message="Integrating service in YunoHost..."
+ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
 
-yunohost service add $app --description="$app daemon for Mobilizon"
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
+yunohost service add "$app" --description="$app daemon for Mobilizon"
+
+#=================================================
+# SETUP APPLICATION
+#=================================================
+ynh_script_progression --message="Finalizing installation..." --weight=1
+
+ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
+
+# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
+ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" \
+    users.new "$admin_email" --admin --password "$(ynh_string_random --length=30)"
+
+ynh_systemd_action --service_name="$app" --action="stop" --log_path=systemd
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -207,29 +117,7 @@ yunohost service add $app --description="$app daemon for Mobilizon"
 ynh_script_progression --message="Starting a systemd service..."
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Configuring permissions..."
-
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
-	ynh_permission_update --permission="main" --add="visitors"
-fi
-
-ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --auth_header="false" --show_tile="false" --protected="true"
-
-#=================================================
-# RELOAD NGINX
-#=================================================
-ynh_script_progression --message="Reloading NGINX web server..."
-
-ynh_systemd_action --service_name=nginx --action=reload
+ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT
