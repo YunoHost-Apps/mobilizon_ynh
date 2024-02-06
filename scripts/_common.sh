@@ -4,8 +4,9 @@
 # COMMON VARIABLES
 #=================================================
 
-# dependencies used by the app
-pkg_dependencies="postgresql postgresql-client postgresql-contrib postgis postgresql-postgis-scripts postgresql-postgis argon2 imagemagick webp gifsicle jpegoptim optipng pngquant file"
+ynh_user="${app}_notifs"
+
+MOBILIZON_CONFIG_PATH="$install_dir/config.exs"
 
 #=================================================
 # PERSONAL HELPERS

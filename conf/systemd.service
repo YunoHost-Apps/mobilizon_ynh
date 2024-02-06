@@ -7,9 +7,10 @@ Type=simple
 User=__APP__
 Group=__APP__
 Environment=MIX_ENV=prod
-WorkingDirectory=__FINALPATH__/live/
-ExecStart=__FINALPATH__/live/bin/mobilizon start
-ExecStop=__FINALPATH__/live/bin/mobilizon stop
+Environment=MOBILIZON_CONFIG_PATH="__INSTALL_DIR__/config.exs"
+WorkingDirectory=__INSTALL_DIR__/live/
+ExecStart=__INSTALL_DIR__/live/bin/mobilizon start
+ExecStop=__INSTALL_DIR__/live/bin/mobilizon stop
 KillMode=process
 Restart=on-failure
 

@@ -1,6 +1,0 @@
-SOURCE_URL=https://packages.joinmobilizon.org/4.0.0/mobilizon_4.0.0_arm64-debian-bullseye.tar.gz
-SOURCE_SUM=c63495d8a176e28843d0217c2b273bb5aca84123658286101a962467fc6f045b
-SOURCE_SUM_PRG=sha256sum
-SOURCE_FORMAT=tar.gz
-SOURCE_IN_SUBDIR=true
-SOURCE_FILENAME=
