@@ -52,7 +52,7 @@ fi
 
 # Migrate data to data_dir
 # FIXME: could be old, might be nice to remove
-if [ -n "$(ls -A "$install_dir/$app/uploads/")" ]; then
+if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploads/")" ]; then
     ynh_script_progression --message="Moving data directory..."
     rsync -a "$install_dir/$app/uploads/" "$data_dir/uploads/"
     ynh_secure_remove "$install_dir/$app/uploads"
@@ -89,8 +89,8 @@ ynh_replace_string --match_string="adapter: Bamboo.SMTPAdapter," --replace_strin
 ynh_replace_string --match_string="server: \"127.0.0.1\"," --replace_string="relay: \"127.0.0.1\"," --target_file="$MOBILIZON_CONFIG_PATH"
 ynh_store_file_checksum --file="$MOBILIZON_CONFIG_PATH"
 
-chmod 400 "$config"
-chown "$app:$app" "$config"
+chmod 400 "$MOBILIZON_CONFIG_PATH"
+chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
 
 #=================================================
 # MAKE SETUP
