@@ -54,8 +54,6 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression --message="Making setup..."
 
-MOBILIZON_CONFIG_PATH="$install_dir/config.exs"
-
 pushd "$install_dir/live"
     ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" MIX_ENV=prod \
         ./bin/mobilizon_ctl instance gen --force \
