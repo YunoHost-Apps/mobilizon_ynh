@@ -49,7 +49,7 @@ ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EX
 ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_execute_as_root --database="$db_name" --sql="ALTER USER $db_user WITH NOSUPERUSER;"
 
-ynh_mysql_connect_as --user="$db_user" --password="$db_pwd" --database="$db_name" < ./db.sql
+ynh_psql_execute_file_as_root --database="$db_name" --file="./db.sql"
 
 #=================================================
 # RESTORE SYSTEM CONFIGURATIONS
