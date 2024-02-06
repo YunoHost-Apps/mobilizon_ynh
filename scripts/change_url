@@ -40,8 +40,8 @@ ynh_backup_if_checksum_is_different --file="$install_dir/config.exs"
 ynh_replace_string --match_string="$old_domain" --replace_string="$new_domain" --target_file="$install_dir/config.exs"
 ynh_store_file_checksum --file="$install_dir/config.exs"
 
-chmod 400 "$config"
-chown "$app:$app" "$config"
+chmod 400 "$install_dir/config.exs"
+chown "$app:$app" "$install_dir/config.exs"
 
 #=================================================
 # GENERIC FINALISATION
