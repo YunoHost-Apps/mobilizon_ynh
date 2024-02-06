@@ -87,17 +87,7 @@ ynh_secure_remove --file="$install_dir/uploads.exs"
 chmod 400 "$MOBILIZON_CONFIG_PATH"
 chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
 
-pushd "$install_dir/live"
-	ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" ./bin/mobilizon_ctl migrate
-
-	# ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
-
-	# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
-	password=$(ynh_string_random --length=30)
-	ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" ./bin/mobilizon_ctl users.new "$admin_email" --admin --password "$password"
-
-	# ynh_systemd_action --service_name="$app" --action="stop" --log_path=systemd
-popd
+ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" migrate
 
 #=================================================
 # SYSTEM CONFIGURATION
@@ -110,6 +100,19 @@ ynh_add_nginx_config
 # Create a dedicated systemd config
 ynh_add_systemd_config
 yunohost service add "$app" --description="$app daemon for Mobilizon"
+
+#=================================================
+# SETUP APPLICATION
+#=================================================
+ynh_script_progression --message="Finalizing installation..." --weight=1
+
+ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
+
+# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
+ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" \
+    users.new "$admin_email" --admin --password "$(ynh_string_random --length=30)"
+
+ynh_systemd_action --service_name="$app" --action="stop" --log_path=systemd
 
 #=================================================
 # START SYSTEMD SERVICE
