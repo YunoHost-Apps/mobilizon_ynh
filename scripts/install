@@ -58,19 +58,19 @@ ynh_script_progression --message="Making setup..."
 MOBILIZON_CONFIG_PATH="$install_dir/config.exs"
 
 pushd "$install_dir/live"
-	ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" MIX_ENV=prod \
-		./bin/mobilizon_ctl instance gen --force \
-		--output "$MOBILIZON_CONFIG_PATH" \
-		--output-psql "$install_dir/setub_db.psql" \
-		--domain "$domain" \
-		--instance-name "Mobilizon" \
-		--admin-email "$app@$domain" \
-		--dbhost localhost \
-		--dbname "$db_name" \
-		--dbuser "$db_user" \
-		--dbpass "$db_pwd" \
-		--listen-port "$port"
-	ynh_secure_remove --file="$install_dir/setup_db.psql"
+    ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" MIX_ENV=prod \
+        ./bin/mobilizon_ctl instance gen --force \
+        --output "$MOBILIZON_CONFIG_PATH" \
+        --output-psql "$install_dir/setub_db.psql" \
+        --domain "$domain" \
+        --instance-name "Mobilizon" \
+        --admin-email "$app@$domain" \
+        --dbhost localhost \
+        --dbname "$db_name" \
+        --dbuser "$db_user" \
+        --dbpass "$db_pwd" \
+        --listen-port "$port"
+    ynh_secure_remove --file="$install_dir/setup_db.psql"
 popd
 
 ynh_add_config --template="ldap.exs" --destination="$install_dir/ldap.exs"
