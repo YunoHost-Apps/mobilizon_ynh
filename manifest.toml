@@ -7,7 +7,7 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "4.0.0~ynh2"
+version = "4.0.2~ynh1"
 
 maintainers = ["yalh76"]
 
@@ -49,10 +49,10 @@ ram.runtime = "400M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://packages.joinmobilizon.org/4.0.0/mobilizon_4.0.0_amd64-debian-bullseye.tar.gz"
-    amd64.sha256 = "a0007f7564c01ea8b0bfc9b3b32742473839b0217aae59dea74eacfd3b1774ac"
-    arm64.url = "https://packages.joinmobilizon.org/4.0.0/mobilizon_4.0.0_arm64-debian-bullseye.tar.gz"
-    arm64.sha256 = "c63495d8a176e28843d0217c2b273bb5aca84123658286101a962467fc6f045b"
+    amd64.url = "https://packages.joinmobilizon.org/4.0.2/mobilizon_4.0.2_amd64-debian-bullseye.tar.gz"
+    amd64.sha256 = "6225d2baec63c60409c02dcd10a6c224fd5a2cb6ffeab7a171fbcc00427b77c4"
+    arm64.url = "https://packages.joinmobilizon.org/4.0.2/mobilizon_4.0.2_arm64-debian-bullseye.tar.gz"
+    arm64.sha256 = "679e7067811a07a9895745826b4b9fca3291b46237eed698763ec0c02ed9ac76"
 
     autoupdate.strategy = "latest_gitlab_release"
     autoupdate.asset.amd64 = "mobilizon_.*_amd64-debian-bullseye.tar.gz"
