@@ -9,7 +9,7 @@ It shall NOT be edited by hand.
 
 [![Install Mobilizon with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
-*[Read this README is other languages.](./ALL_README.md)*
+*[Read this README in other languages.](./ALL_README.md)*
 
 > *This package allows you to install Mobilizon quickly and simply on a YunoHost server.*  
 > *If you don't have YunoHost, please consult [the guide](https://yunohost.org/install) to learn how to install it.*
@@ -22,7 +22,7 @@ A decentralized and federated platform to organize events.
 - You can also create a page for your group where the members will be able to get organized together.
 
 
-**Shipped version:** 4.0.2~ynh1
+**Shipped version:** 4.1.0~ynh1
 
 **Demo:** <https://demo.mobilizon.org>
 
