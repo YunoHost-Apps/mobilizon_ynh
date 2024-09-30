@@ -18,8 +18,6 @@ ynh_script_progression "Updating NGINX web server configuration..."
 ynh_config_change_url_nginx
 
 #=================================================
-# SPECIFIC MODIFICATIONS
-#=================================================
 # MODIFY A CONFIG FILE
 #=================================================
 ynh_script_progression "Updating configuration..."
@@ -31,9 +29,6 @@ fi
 ynh_backup_if_checksum_is_different "$install_dir/config.exs"
 ynh_replace --match="$old_domain" --replace="$new_domain" --file="$install_dir/config.exs"
 ynh_store_file_checksum "$install_dir/config.exs"
-
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$install_dir/config.exs"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown "$app:$app" "$install_dir/config.exs"
 
 #=================================================
 # START SYSTEMD SERVICE
