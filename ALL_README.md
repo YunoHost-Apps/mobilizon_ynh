@@ -8,5 +8,4 @@
 - [Baca README dalam bahasa bahasa Indonesia](README_id.md)
 - [Lees de README in het Nederlands](README_nl.md)
 - [Прочитать README на русский](README_ru.md)
-
-EADME](README_zh_Hans.md)
+- [阅读中文（简体）的 README](README_zh_Hans.md)
