@@ -52,12 +52,12 @@ ram.runtime = "400M"
     [resources.sources.main]
     amd64.url = "https://packages.joinmobilizon.org/5.0.1/mobilizon_5.0.1-try-package-bullseye-amd64.tar.gz"
     amd64.sha256 = "9d364dcd85c517f1845872ce69e3d749c0dad971478484c91705e6a1e3902487"
-    arm64.url = "https://packages.joinmobilizon.org/4.1.0/mobilizon_4.1.0_arm64-debian-bullseye.tar.gz"
-    arm64.sha256 = "8642c1ab8e598934e04cea7a4eb70b3ff14b37a6147e7cd9b38fe931a26148c9"
+    arm64.url = "https://packages.joinmobilizon.org/5.0.1/mobilizon_5.0.1-try-package_arm64.tar.gz"
+    arm64.sha256 = "30dec3d7c55c8c51d486893d71801d7a1581dd2833c34a391cf5a816eda150a4"
 
     autoupdate.strategy = "latest_gitlab_release"
     autoupdate.asset.amd64 = "mobilizon_.*-try-package-bullseye-amd64.tar.gz"
-    autoupdate.asset.arm64 = "mobilizon_.*_arm64-debian-bullseye.tar.gz"
+    autoupdate.asset.arm64 = "mobilizon_.*-try-package_arm64.tar.gz"
 
     [resources.system_user]
 
