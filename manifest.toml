@@ -7,9 +7,9 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "4.1.0~ynh1"
+version = "5.0.1~ynh1"
 
-maintainers = ["yalh76"]
+maintainers = []
 
 [upstream]
 license = "AGPL-3.0-or-later"
@@ -50,8 +50,8 @@ ram.runtime = "400M"
 
 [resources]
     [resources.sources.main]
-    amd64.url = "https://packages.joinmobilizon.org/4.1.0/mobilizon_4.1.0_amd64-debian-bullseye.tar.gz"
-    amd64.sha256 = "cb21c27fd9bf701061d6d264e6944114301056fd07fe7c484d93b9d9e4b6d8db"
+    amd64.url = "https://packages.joinmobilizon.org/5.0.1/mobilizon_5.0.1-try-package-bullseye-amd64.tar.gz"
+    amd64.sha256 = "9d364dcd85c517f1845872ce69e3d749c0dad971478484c91705e6a1e3902487"
     arm64.url = "https://packages.joinmobilizon.org/4.1.0/mobilizon_4.1.0_arm64-debian-bullseye.tar.gz"
     arm64.sha256 = "8642c1ab8e598934e04cea7a4eb70b3ff14b37a6147e7cd9b38fe931a26148c9"
 
