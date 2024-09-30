@@ -5,7 +5,7 @@
 
 # YunoHost 上的 Mobilizon
 
-[![集成程度](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![工作状态](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![集成程度](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![工作状态](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![维护状态](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
 
 [![使用 YunoHost 安装 Mobilizon](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
