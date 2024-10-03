@@ -48,7 +48,7 @@ ram.runtime = "400M"
     type = "user"
 
 [resources]
-    [resources.sources.bookworm]
+    [resources.sources.main]
     amd64.url = "https://packages.joinmobilizon.org/4.0.2/mobilizon_4.0.2_amd64-debian-bookworm.tar.gz"
     amd64.sha256 = "832a0e1931776d6f0c344f4148ad6937c696e842bd1e2cb6cf95ccf4be45b4f3"
     
