@@ -48,13 +48,18 @@ ram.runtime = "400M"
     type = "user"
 
 [resources]
-    [resources.sources.main]
+    [resources.sources.bookworm]
+    amd64.url = "https://packages.joinmobilizon.org/4.0.2/mobilizon_4.0.2_amd64-debian-bookworm.tar.gz"
+    amd64.sha256 = "832a0e1931776d6f0c344f4148ad6937c696e842bd1e2cb6cf95ccf4be45b4f3"
+    
+    [resources.sources.bullseye]
     amd64.url = "https://packages.joinmobilizon.org/4.0.2/mobilizon_4.0.2_amd64-debian-bullseye.tar.gz"
     amd64.sha256 = "6225d2baec63c60409c02dcd10a6c224fd5a2cb6ffeab7a171fbcc00427b77c4"
     arm64.url = "https://packages.joinmobilizon.org/4.0.2/mobilizon_4.0.2_arm64-debian-bullseye.tar.gz"
     arm64.sha256 = "679e7067811a07a9895745826b4b9fca3291b46237eed698763ec0c02ed9ac76"
 
     autoupdate.strategy = "latest_gitlab_release"
+    autoupdate.asset.amd64 = "mobilizon_.*_amd64-debian-bookworm.tar.gz"
     autoupdate.asset.amd64 = "mobilizon_.*_amd64-debian-bullseye.tar.gz"
     autoupdate.asset.arm64 = "mobilizon_.*_arm64-debian-bullseye.tar.gz"
 
