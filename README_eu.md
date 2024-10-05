@@ -5,7 +5,7 @@ EZ editatu eskuz.
 
 # Mobilizon YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Integrazio maila](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
 
 [![Instalatu Mobilizon YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
@@ -22,7 +22,7 @@ A decentralized and federated platform to organize events.
 - You can also create a page for your group where the members will be able to get organized together.
 
 
-**Paketatutako bertsioa:** 4.0.2~ynh1
+**Paketatutako bertsioa:** 4.1.0~ynh1
 
 **Demoa:** <https://demo.mobilizon.org>
 

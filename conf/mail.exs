@@ -13,7 +13,7 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
     versions: [:"tlsv1.2",:"tlsv1.3"],
     verify: :verify_peer,
     cacerts: :public_key.cacerts_get(),
-    server_name_indication: 'mobilizon.linux07.fr',
+    server_name_indication: '__DOMAIN__',
     depth: 99
   ],
   ssl: false,

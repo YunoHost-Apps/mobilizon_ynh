@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # Mobilizon for YunoHost
 
-[![Integration level](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![Working status](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Integration level](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Working status](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Maintenance status](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
 
 [![Install Mobilizon with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
@@ -22,7 +22,7 @@ A decentralized and federated platform to organize events.
 - You can also create a page for your group where the members will be able to get organized together.
 
 
-**Shipped version:** 4.0.2~ynh1
+**Shipped version:** 4.1.0~ynh1
 
 **Demo:** <https://demo.mobilizon.org>
 
