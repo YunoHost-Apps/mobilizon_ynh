@@ -5,7 +5,7 @@ No se debe editar a mano.
 
 # Mobilizon para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/mobilizon.svg)](https://dash.yunohost.org/appci/app/mobilizon) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Nivel de integración](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
 
 [![Instalar Mobilizon con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
@@ -40,7 +40,7 @@ A decentralized and federated platform to organize events.
 
 ## Información para desarrolladores
 
-Por favor enviar sus correcciones a la [`branch testing`](https://github.com/YunoHost-Apps/mobilizon_ynh/tree/testing
+Por favor enviar sus correcciones a la [rama `testing`](https://github.com/YunoHost-Apps/mobilizon_ynh/tree/testing).
 
 Para probar la rama `testing`, sigue asÍ:
 
