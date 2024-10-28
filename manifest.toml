@@ -55,8 +55,8 @@ ram.runtime = "400M"
     arm64.sha256 = "679e7067811a07a9895745826b4b9fca3291b46237eed698763ec0c02ed9ac76"
 
     autoupdate.strategy = "latest_gitlab_release"
-    autoupdate.asset.amd64 = "mobilizon_.*_amd64-debian-bullseye.tar.gz"
-    autoupdate.asset.arm64 = "mobilizon_.*_arm64-debian-bullseye.tar.gz"
+    autoupdate.asset.amd64 = "mobilizon_.*-bullseye-amd64.tar.gz"
+    autoupdate.asset.arm64 = "mobilizon_.*-bullseye-arm64.tar.gz"
 
     [resources.system_user]
 
