@@ -29,9 +29,6 @@ ynh_remove_systemd_config
 # Remove the dedicated NGINX config
 ynh_remove_nginx_config
 
-# Remove the log files
-ynh_secure_remove --file="/var/log/$app"
-
 # Remove the notifications user
 yunohost user delete "$ynh_user"
 
