@@ -11,6 +11,5 @@ test_format = 1.0
     # args.password="1Strong-Password"
     # args.name="My_Mobilizon"
 
-    test_upgrade_from.0159fc6123536cdf2929b4617d89753283f6946d.name = "2.0.2~ynh1"
-    test_upgrade_from.2dd97e495207a1b5e58b8ba5f501fe84d1db7623.name = "2.0.2~ynh2"
-    test_upgrade_from.f9c1792c86cffd17b72a48160a64ee2083d5ccf6.name = "2.1.0~ynh1"
+    test_upgrade_from.523a717924c090284820e88fe3e7fcec9433a8d6.name = "4.0.2~ynh1"
+
