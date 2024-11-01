@@ -23,6 +23,10 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
 
+if ynh_app_upgrading_from_version_before 3.1.3~ynh1 && $debian = "bullseye"; then
+ynh_die --message="Please consider first upgrade mobilizon to version 4.0.2~ynh1 with this command: yunohost app upgrade $app -u https://github.com/YunoHost-Apps/mobilizon_ynh/tree/523a717924c090284820e88fe3e7fcec9433a8d6 --debug"
+fi
+
 # Cleanup
 ynh_secure_remove --file="$install_dir/$app/priv/data/GeoLite2-City.mmdb"
 ynh_secure_remove --file="/usr/share/GeoIP"
@@ -75,6 +79,7 @@ ynh_script_progression --message="Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --source_id=$debian --dest_dir="$install_dir/live" --full_replace=1
+fi
 
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
