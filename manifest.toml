@@ -9,7 +9,7 @@ description.fr = "Plateforme décentralisée et fédérée pour organiser des é
 
 version = "4.0.2~ynh2"
 
-maintainers = ["yalh76"]
+maintainers = [ ]
 
 [upstream]
 license = "AGPL-3.0-or-later"
