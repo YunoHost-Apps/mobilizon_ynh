@@ -49,13 +49,13 @@ if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploa
     rsync -a "$install_dir/$app/uploads/" "$data_dir/uploads/"
     ynh_safe_rm "$install_dir/$app/uploads"
 
-    if grep "Mobilizon.Web.Upload.Uploader.Local" "$MOBILIZON_CONFIG_PATH" >/dev/null; then
-        ynh_replace --file="$MOBILIZON_CONFIG_PATH" \
+    if grep "Mobilizon.Web.Upload.Uploader.Local" "$install_dir/config.exs" >/dev/null; then
+        ynh_replace --file="$install_dir/config.exs" \
             --match="uploads: \".*/uploads\"" \
             --replace="$data_dir/uploads"
     else
         ynh_config_add --template="uploads.exs" --destination="$install_dir/uploads.exs"
-        cat "$install_dir/uploads.exs" >> "$MOBILIZON_CONFIG_PATH"
+        cat "$install_dir/uploads.exs" >> "$install_dir/config.exs"
         ynh_safe_rm "$install_dir/uploads.exs"
     fi
 fi
@@ -72,20 +72,20 @@ ynh_setup_source --dest_dir="$install_dir/live" --full_replace
 #=================================================
 ynh_script_progression "Updating configuration..."
 
-ynh_backup_if_checksum_is_different "$MOBILIZON_CONFIG_PATH"
-ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$MOBILIZON_CONFIG_PATH"
-ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$MOBILIZON_CONFIG_PATH"
-ynh_store_file_checksum "$MOBILIZON_CONFIG_PATH"
+ynh_backup_if_checksum_is_different "$install_dir/config.exs"
+ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
+ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
+ynh_store_file_checksum "$install_dir/config.exs"
 
-chmod 400 "$MOBILIZON_CONFIG_PATH"
-chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
+chmod 400 "$install_dir/config.exs"
+chown "$app:$app" "$install_dir/config.exs"
 
 #=================================================
 # MAKE SETUP
 #=================================================
 ynh_script_progression "Migrating app..."
 
-ynh_exec_as_app MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" migrate
+ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" migrate
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
