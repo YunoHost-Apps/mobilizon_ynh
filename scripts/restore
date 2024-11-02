@@ -36,7 +36,7 @@ ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
 ynh_psql_db_shell  <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
-ynh_psql_db_shell " < "./db.sql""
+ynh_psql_db_shell < ./db.sql
 
 #=================================================
 # RESTORE SYSTEM CONFIGURATIONS
