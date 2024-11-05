@@ -53,7 +53,7 @@ ram.runtime = "400M"
     amd64.sha256 = "07cfa89da5eb96475765ceab0e3bc40cebec7d5cbbcdd68d601caefb549eb767"
 
     [resources.sources.bullseye]
-    amd64.url = "https://packages.joinmobilizon.org/4.1.0/mobilizon_5.0.1-try-package-bullseye-amd64.tar.gz"
+    amd64.url = "https://packages.joinmobilizon.org/5.1.0/mobilizon_5.0.1-try-package-bullseye-amd64.tar.gz"
     amd64.sha256 = "9d364dcd85c517f1845872ce69e3d749c0dad971478484c91705e6a1e3902487"
 
 #    autoupdate.strategy = "latest_gitlab_release"
