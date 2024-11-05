@@ -9,7 +9,7 @@ description.fr = "Plateforme décentralisée et fédérée pour organiser des é
 
 version = "4.1.0~ynh1"
 
-maintainers = [ ]
+maintainers = [ rodinux ]
 
 [upstream]
 license = "AGPL-3.0-or-later"
