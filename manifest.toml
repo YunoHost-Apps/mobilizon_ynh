@@ -9,7 +9,7 @@ description.fr = "Plateforme décentralisée et fédérée pour organiser des é
 
 version = "5.0.1~ynh1"
 
-maintainers = []
+maintainers = ["rodinux"]
 
 [upstream]
 license = "AGPL-3.0-or-later"
@@ -22,7 +22,7 @@ fund = "https://soutenir.framasoft.org/"
 [integration]
 yunohost = ">= 11.2.30"
 helpers_version = "2.1"
-architectures = ["amd64", "arm64"]
+architectures = ["amd64"]
 multi_instance = false
 ldap = true
 sso = true
@@ -49,15 +49,18 @@ ram.runtime = "400M"
     type = "user"
 
 [resources]
-    [resources.sources.main]
+
+    [resources.sources.bookworm]
+    amd64.url = "https://packages.joinmobilizon.org/5.0.1/mobilizon_5.0.1-try-package-bookworm-amd64.tar.gz"
+    amd64.sha256 = "07cfa89da5eb96475765ceab0e3bc40cebec7d5cbbcdd68d601caefb549eb767"
+
+    [resources.sources.bullseye]
     amd64.url = "https://packages.joinmobilizon.org/5.0.1/mobilizon_5.0.1-try-package-bullseye-amd64.tar.gz"
     amd64.sha256 = "9d364dcd85c517f1845872ce69e3d749c0dad971478484c91705e6a1e3902487"
-    arm64.url = "https://packages.joinmobilizon.org/5.0.1/mobilizon_5.0.1-try-package_arm64.tar.gz"
-    arm64.sha256 = "30dec3d7c55c8c51d486893d71801d7a1581dd2833c34a391cf5a816eda150a4"
 
-    autoupdate.strategy = "latest_gitlab_release"
-    autoupdate.asset.amd64 = "mobilizon_.*-try-package-bullseye-amd64.tar.gz"
-    autoupdate.asset.arm64 = "mobilizon_.*-try-package_arm64.tar.gz"
+#    autoupdate.strategy = "latest_gitlab_release"
+#    autoupdate.asset.amd64 = "mobilizon_.*-bullseye-amd64.tar.gz"
+#    autoupdate.asset.arm64 = "mobilizon_.*-bullseye-arm64.tar.gz"
 
     [resources.system_user]
 

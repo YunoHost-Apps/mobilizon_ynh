@@ -37,7 +37,7 @@ ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
 #=================================================
 ynh_script_progression "Setting up source files..."
 
-ynh_setup_source --dest_dir="$install_dir/live"
+ynh_setup_source --source_id=$debian --dest_dir="$install_dir/live"
 
 #=================================================
 # MAKE SETUP

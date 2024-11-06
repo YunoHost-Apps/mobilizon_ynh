@@ -22,7 +22,7 @@ A decentralized and federated platform to organize events.
 - You can also create a page for your group where the members will be able to get organized together.
 
 
-**Поставляемая версия:** 4.1.0~ynh1
+**Поставляемая версия:** 5.0.1~ynh1
 
 **Демо-версия:** <https://demo.mobilizon.org>
 
