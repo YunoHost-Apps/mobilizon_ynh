@@ -5,7 +5,9 @@ Ini TIDAK boleh diedit dengan tangan.
 
 # Mobilizon untuk YunoHost
 
-[![Tingkat integrasi](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Status kerja](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Status pemeliharaan](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Tingkat integrasi](https://apps.yunohost.org/badge/integration/mobilizon)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+![Status kerja](https://apps.yunohost.org/badge/state/mobilizon)
+![Status pemeliharaan](https://apps.yunohost.org/badge/maintained/mobilizon)
 
 [![Pasang Mobilizon dengan YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 

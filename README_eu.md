@@ -5,7 +5,9 @@ EZ editatu eskuz.
 
 # Mobilizon YunoHost-erako
 
-[![Integrazio maila](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Funtzionamendu egoera](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Mantentze egoera](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Integrazio maila](https://apps.yunohost.org/badge/integration/mobilizon)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+![Funtzionamendu egoera](https://apps.yunohost.org/badge/state/mobilizon)
+![Mantentze egoera](https://apps.yunohost.org/badge/maintained/mobilizon)
 
 [![Instalatu Mobilizon YunoHost-ekin](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 

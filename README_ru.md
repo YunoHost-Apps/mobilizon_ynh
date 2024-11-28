@@ -5,7 +5,9 @@
 
 # Mobilizon для YunoHost
 
-[![Уровень интеграции](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Состояние работы](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Состояние сопровождения](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Уровень интеграции](https://apps.yunohost.org/badge/integration/mobilizon)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+![Состояние работы](https://apps.yunohost.org/badge/state/mobilizon)
+![Состояние сопровождения](https://apps.yunohost.org/badge/maintained/mobilizon)
 
 [![Установите Mobilizon с YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 

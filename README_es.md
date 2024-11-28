@@ -5,7 +5,9 @@ No se debe editar a mano.
 
 # Mobilizon para Yunohost
 
-[![Nivel de integración](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Estado funcional](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Estado En Mantención](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Nivel de integración](https://apps.yunohost.org/badge/integration/mobilizon)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+![Estado funcional](https://apps.yunohost.org/badge/state/mobilizon)
+![Estado En Mantención](https://apps.yunohost.org/badge/maintained/mobilizon)
 
 [![Instalar Mobilizon con Yunhost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
