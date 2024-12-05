@@ -23,7 +23,7 @@ ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."
 
-if [ "$debian" == "bookworm" ] && ynh_app_upgrading_from_version_before_or_equal_to 4.0.2~ynh1; then
+if [ "$debian" == "bookworm" ] && ynh_compare_current_package_version --comparison le --version 4.0.2~ynh1; then
     ynh_die --message="Please consider first upgrade mobilizon to version 4.1.0~ynh1: sudo yunohost app upgrade $app -u https://github.com/YunoHost-Apps/mobilizon_ynh/tree/5a000a893e6fc753cf7a6f5782bf7de0e55b8154"
 fi
 
