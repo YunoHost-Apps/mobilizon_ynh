@@ -5,7 +5,9 @@ Hij mag NIET handmatig aangepast worden.
 
 # Mobilizon voor Yunohost
 
-[![Integratieniveau](https://dash.yunohost.org/integration/mobilizon.svg)](https://ci-apps.yunohost.org/ci/apps/mobilizon/) ![Mate van functioneren](https://ci-apps.yunohost.org/ci/badges/mobilizon.status.svg) ![Onderhoudsstatus](https://ci-apps.yunohost.org/ci/badges/mobilizon.maintain.svg)
+[![Integratieniveau](https://apps.yunohost.org/badge/integration/mobilizon)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+![Mate van functioneren](https://apps.yunohost.org/badge/state/mobilizon)
+![Onderhoudsstatus](https://apps.yunohost.org/badge/maintained/mobilizon)
 
 [![Mobilizon met Yunohost installeren](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=mobilizon)
 
