@@ -21,7 +21,7 @@ fund = "https://soutenir.framasoft.org/"
 
 [integration]
 yunohost = ">= 11.2"
-architectures = ["amd64"]
+architectures = ["amd64","arm64"]
 multi_instance = false
 ldap = true
 sso = true
@@ -49,11 +49,13 @@ ram.runtime = "400M"
 
 [resources]
     [resources.sources.bookworm]
-    amd64.url = "https://packages.joinmobilizon.org/5.1.0/mobilizon_5.1.0_amd64-debian-bookworm.tar.gz"
-    amd64.sha256 = "9c3c0dcfb5d0eaf37f79029fb024e6075cbaf2ecdc2b53c11770dbc6e28b2aac"
-
+    amd64.url = "https://packages.joinmobilizon.org/5.1.0/mobilizon_5.1.0_debian-bookworm-amd64.tar.gz"
+    amd64.sha256 = "b7c74970abbe26ce54297f7f0c798c705ecd3f419e0b0b241d8a9aa787c1dae6"
+    arm64.url = "https://packages.joinmobilizon.org/5.1.0/mobilizon_5.1.0_debian-bullseye-arm64.tar.gz"
+    arm64.sha256 = "9c3c0dcfb5d0eaf37f79029fb024e6075cbaf2ecdc2b53c11770dbc6e28b2aac"
+    
     [resources.sources.bullseye]
-    amd64.url = "https://packages.joinmobilizon.org/5.1.0/mobilizon_5.1.0_amd64-debian-bullseye.tar.gz"
+    amd64.url = "https://packages.joinmobilizon.org/5.1.0/mobilizon_5.1.0_debian-bullseye-amd64.tar.gz"
     amd64.sha256 = "450b28eef72a38244a7f992b1504391cac7e951bf8159e2534a248e97405e4a0"
 
 #    autoupdate.strategy = "latest_gitlab_release"
