@@ -14,7 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 if [ "$debian" == "bookworm" ] && [ "$arch" != "x86_64" ]; then
-  ynh_die --message="Sorry, there is no arm builds packages for this version, only a debian bookworm build arm exist for version 5.1.0"
+  ynh_die --message="Sorry, there is no debian bookworm arm build for this version, only a debian bookworm build arm exist for version 5.1.0"
 fi
 
 admin_email=$(ynh_user_get_info --username="$admin" --key="mail")
