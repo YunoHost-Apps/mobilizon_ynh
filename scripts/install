@@ -13,6 +13,10 @@ source /usr/share/yunohost/helpers
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
+if [ "$debian" == "bookworm" && "$arch" != "x86_64" ]; then
+  ynh_die --message="This version do not have an arm build for bookworm, but perhaps you can wait for future releases"
+fi
+
 admin_email=$(ynh_user_get_info --username="$admin" --key="mail")
 ynh_app_setting_set --app="$app" --key="admin_email" --value="$admin_email"
 
