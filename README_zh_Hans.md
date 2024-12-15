@@ -24,7 +24,7 @@ A decentralized and federated platform to organize events.
 - You can also create a page for your group where the members will be able to get organized together.
 
 
-**分发版本：** 4.1.0~ynh1
+**分发版本：** 5.1.0~ynh1
 
 **演示：** <https://demo.mobilizon.org>
 
