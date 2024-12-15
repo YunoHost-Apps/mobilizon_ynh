@@ -28,7 +28,7 @@ if [ "$debian" == "bookworm" ]; then
     ynh_die --message="Please consider first upgrade Mobilizon to version 4.1.0~ynh1"
     fi
     if [ "$arch" != "x86_64" ]; then
-    ynh_die --message="Sorry, there is no arm builds packages for this version, a debian bookworm build arm exist for version 5.1.0"
+    ynh_die --message="Sorry, there is no arm builds packages for this version, olly a debian bookworm build arm exist for version 5.1.0"
     fi
 fi
 
