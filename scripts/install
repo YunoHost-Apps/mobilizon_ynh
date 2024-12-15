@@ -13,7 +13,7 @@ source /usr/share/yunohost/helpers
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-if [ "$debian" == "bullseye" && "$arch" != "x86_64" ]; then
+if [ "$debian" == "bullseye" ]  && [ "$arch" != "x86_64" ]; then
   ynh_die --message="Sorry, this version do not have an arm build for bullseye, but only for bookworm"
 fi
 
