@@ -13,4 +13,3 @@ config :mobilizon, :ldap,
   require_bind_for_search: false,
   bind_uid: nil,
   bind_password: nil
-
