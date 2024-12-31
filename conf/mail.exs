@@ -9,15 +9,17 @@ config :mobilizon, Mobilizon.Web.Email.Mailer,
   password: "__YNH_USER_PASSWORD__",
   # can be `:always` or `:never`
   tls: :always,
+  # not needed when using STARTTLS
+  ssl: false,
+  allowed_tls_versions: [:"tlsv1.2", :"tlsv1.3"],
   tls_options: [
-    versions: [:"tlsv1.2",:"tlsv1.3"],
     verify: :verify_peer,
+    versions: [:"tlsv1.2", :"tlsv1.3"],
     cacerts: :public_key.cacerts_get(),
     server_name_indication: '__DOMAIN__',
     depth: 99
   ],
-  ssl: false,
-  retries: 1,
+  retries: 2,
   # can be `true`
   no_mx_lookups: false,
   # can be `:always`. If your smtp relay requires authentication set it to `:always`.
