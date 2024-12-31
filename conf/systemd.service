@@ -26,6 +26,5 @@ PrivateDevices=false
 ; Ensures that the service process and all its children can never gain new privileges through execve().
 NoNewPrivileges=true
 
-
 [Install]
 WantedBy=multi-user.target
