@@ -9,8 +9,8 @@ config :mobilizon, :ldap,
   tls: false,
   # tlsopts: [],
   base: "ou=users,dc=yunohost,dc=org",
-  uid:  "uid",
+  uid: "uid",
   require_bind_for_search: false,
+  group: false,
   bind_uid: nil,
   bind_password: nil
-
