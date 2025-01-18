@@ -26,11 +26,10 @@ yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforwar
 #=================================================
 ynh_script_progression "Configuring the PostgreSQL database..."
 
-# FIXME: Really superuser ??
-ynh_psql_db_shell  <<< "ALTER USER $db_user WITH SUPERUSER;"
-ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS postgis;"
-ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_db_shell  <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS postgis;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
