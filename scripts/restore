@@ -8,7 +8,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression "Configuring YunoHost users..."
 
-yunohost user create "$ynh_user" --firstname "Mobilizon" --name "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
+yunohost user create "$ynh_user" --firstname "Mobilizon" --lastname "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforward "$admin_email"
 
 #=================================================
