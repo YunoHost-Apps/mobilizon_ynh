@@ -14,5 +14,5 @@ test_format = 1.0
     #test_upgrade_from.0159fc6123536cdf2929b4617d89753283f6946d.name = "2.0.2~ynh1"
     #test_upgrade_from.2dd97e495207a1b5e58b8ba5f501fe84d1db7623.name = "2.0.2~ynh2"
     #test_upgrade_from.f9c1792c86cffd17b72a48160a64ee2083d5ccf6.name = "2.1.0~ynh1"
+    #test_upgrade_from.5a000a893e6fc753cf7a6f5782bf7de0e55b8154.name = "4.1.0~ynh1"
     test_upgrade_from.d2784908e27f2e3368a876c012d4ebe987096a93.name = "5.1.0~ynh1"
-    test_upgrade_from.5a000a893e6fc753cf7a6f5782bf7de0e55b8154.name = "4.1.0~ynh1"
