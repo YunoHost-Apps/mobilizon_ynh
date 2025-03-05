@@ -50,7 +50,9 @@ pushd "$install_dir/live"
         --output-psql "$install_dir/setub_db.psql" \
         --domain "$domain" \
         --instance-name "Mobilizon" \
-@@ -67,60 +56,57 @@ pushd "$install_dir/live"
+        --admin-email "$app@$domain" \
+        --dbhost localhost \
+        --dbname "$db_name" \
         --dbuser "$db_user" \
         --dbpass "$db_pwd" \
         --listen-port "$port"
