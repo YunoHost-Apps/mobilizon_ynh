@@ -1,89 +1,71 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# STANDARD UPGRADE STEPS
-#=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..."
+ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path=systemd
+ynh_systemctl --service=$app --action="stop" --log_path=systemd
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-ynh_script_progression --message="Ensuring downward compatibility..."
-
-if [ "$debian" == "bookworm" ]; then
-    if ynh_compare_current_package_version --comparison le --version 4.0.2~ynh1; then
-    ynh_die --message="Please consider first upgrade Mobilizon to version 4.1.0~ynh1"
-    fi
-    if [ "$YNH_ARCH" == "arm64" ]; then
-    ynh_die --message="No more arm64 package"
-    fi
-fi
+ynh_script_progression "Ensuring downward compatibility..."
 
 # Cleanup
-ynh_secure_remove --file="$install_dir/$app/priv/data/GeoLite2-City.mmdb"
-ynh_secure_remove --file="/usr/share/GeoIP"
+ynh_safe_rm "$install_dir/$app/priv/data/GeoLite2-City.mmdb"
+ynh_safe_rm "/usr/share/GeoIP"
 
 # Move legacy configuration files
 if [ ! -f "$install_dir/config.exs" ]; then
     if [ -f "$install_dir/live/config/prod.secret.exs" ]; then
-        ynh_delete_file_checksum --file="$install_dir/live/config/prod.secret.exs"
+        ynh_delete_file_checksum "$install_dir/live/config/prod.secret.exs"
         mv -f "$install_dir/live/config/prod.secret.exs" "$install_dir/config.exs"
     fi
     if [ -f "$install_dir/live/config/runtime.exs" ]; then
-        ynh_delete_file_checksum --file="$install_dir/live/config/runtime.exs"
+        ynh_delete_file_checksum "$install_dir/live/config/runtime.exs"
         mv -f "$install_dir/live/config/runtime.exs" "$install_dir/config.exs"
     fi
     if [ -f "/etc/$app/config.exs" ]; then
-        ynh_delete_file_checksum --file="/etc/$app/config.exs"
+        ynh_delete_file_checksum "/etc/$app/config.exs"
         mv -f "/etc/$app/config.exs" "$install_dir/config.exs"
-        ynh_secure_remove --file="/etc/$app"
+        ynh_safe_rm "/etc/$app"
     fi
     chown -R "$app:$app" "$install_dir/config.exs"
-    ynh_store_file_checksum --file="$install_dir/config.exs"
+    ynh_store_file_checksum "$install_dir/config.exs"
 fi
 # Check if previous "if block" did the job
 if [ ! -f "$install_dir/config.exs" ]; then
-    ynh_die --message="Could not find a previous configuration file. Please contact maintainers on the forum."
+    ynh_die "Could not find a previous configuration file. Please contact maintainers on the forum."
 fi
 
 # Migrate data to data_dir
 # FIXME: could be old, might be nice to remove
 if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploads/")" ]; then
-    ynh_script_progression --message="Moving data directory..."
+    ynh_script_progression "Moving data directory..."
     rsync -a "$install_dir/$app/uploads/" "$data_dir/uploads/"
-    ynh_secure_remove "$install_dir/$app/uploads"
+    ynh_safe_rm "$install_dir/$app/uploads"
 
-    if grep "Mobilizon.Web.Upload.Uploader.Local" "$MOBILIZON_CONFIG_PATH" >/dev/null; then
-        ynh_replace_string --target_file="$MOBILIZON_CONFIG_PATH" \
-            --match_string="uploads: \".*/uploads\"" \
-            --replace_string="$data_dir/uploads"
+    if grep "Mobilizon.Web.Upload.Uploader.Local" "$install_dir/config.exs" >/dev/null; then
+        ynh_replace --file="$install_dir/config.exs" \
+            --match="uploads: \".*/uploads\"" \
+            --replace="$data_dir/uploads"
     else
-        ynh_add_config --template="uploads.exs" --destination="$install_dir/uploads.exs"
-        cat "$install_dir/uploads.exs" >> "$MOBILIZON_CONFIG_PATH"
-        ynh_secure_remove --file="$install_dir/uploads.exs"
+        ynh_config_add --template="uploads.exs" --destination="$install_dir/uploads.exs"
+        cat "$install_dir/uploads.exs" >> "$install_dir/config.exs"
+        ynh_safe_rm "$install_dir/uploads.exs"
     fi
 fi
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Upgrading source files..."
+ynh_script_progression "Upgrading source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --source_id=$debian --dest_dir="$install_dir/live" --full_replace=1
+ynh_setup_source --dest_dir="$install_dir/live" --full_replace
 
 chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
@@ -91,44 +73,42 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..."
+ynh_script_progression "Updating configuration..."
 
-ynh_backup_if_checksum_is_different --file="$MOBILIZON_CONFIG_PATH"
-ynh_replace_string --match_string="adapter: Bamboo.SMTPAdapter," --replace_string="adapter: Swoosh.Adapters.SMTP," --target_file="$MOBILIZON_CONFIG_PATH"
-ynh_replace_string --match_string="server: \"127.0.0.1\"," --replace_string="relay: \"127.0.0.1\"," --target_file="$MOBILIZON_CONFIG_PATH"
-ynh_store_file_checksum --file="$MOBILIZON_CONFIG_PATH"
+ynh_backup_if_checksum_is_different "$install_dir/config.exs"
+ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
+ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
+ynh_store_file_checksum "$install_dir/config.exs"
 
-chmod 400 "$MOBILIZON_CONFIG_PATH"
-chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
+chmod 400 "$install_dir/config.exs"
+chown "$app:$app" "$install_dir/config.exs"
 
 #=================================================
 # MAKE SETUP
 #=================================================
-ynh_script_progression --message="Migrating app..."
+ynh_script_progression "Migrating app..."
 
-ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" migrate
+ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" migrate
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
+ynh_script_progression "Upgrading system configurations related to $app..."
 
-# Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
-# Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 yunohost service add "$app" --description="$app daemon for Mobilizon"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed"
+ynh_script_progression "Upgrade of $app completed"
