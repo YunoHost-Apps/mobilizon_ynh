@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC START
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
-
 source _common.sh
 source /usr/share/yunohost/helpers
 
@@ -14,15 +8,15 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 admin_email=$(ynh_user_get_info --username="$admin" --key="mail")
-ynh_app_setting_set --app="$app" --key="admin_email" --value="$admin_email"
+ynh_app_setting_set --key="admin_email" --value="$admin_email"
 
 ynh_user_password=$(ynh_string_random --length=30)
-ynh_app_setting_set --app="$app" --key="ynh_user_password" --value="$ynh_user_password"
+ynh_app_setting_set --key="ynh_user_password" --value="$ynh_user_password"
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Configuring yunohost users..."
+ynh_script_progression "Configuring yunohost users..."
 
 yunohost user create "$ynh_user" -F "Mobilizon Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforward "$admin_email"
@@ -30,34 +24,29 @@ yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforwar
 #=================================================
 # CREATE A POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression --message="Configuring the PostgreSQL database..."
+ynh_script_progression "Configuring the PostgreSQL database..."
 
-# FIXME: Really superuser ??
-ynh_psql_execute_as_root --database="$db_name" --sql="ALTER USER $db_user WITH SUPERUSER;"
-ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS postgis;"
-ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_execute_as_root --database="$db_name" --sql="CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS postgis;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..."
+ynh_script_progression "Setting up source files..."
 
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --source_id=$debian --dest_dir="$install_dir/live"
-
-chmod -R o-rwx "$install_dir"
-chown -R "$app:www-data" "$install_dir"
+ynh_setup_source --dest_dir="$install_dir/live"
 
 #=================================================
 # MAKE SETUP
 #=================================================
-ynh_script_progression --message="Making setup..."
+ynh_script_progression "Making setup..."
 
 pushd "$install_dir/live"
-    ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" MIX_ENV=prod \
+    ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" MIX_ENV=prod \
         ./bin/mobilizon_ctl instance gen --force \
-        --output "$MOBILIZON_CONFIG_PATH" \
+        --output "$install_dir/config.exs" \
         --output-psql "$install_dir/setup_db.psql" \
         --domain "$domain" \
         --instance-name "Mobilizon" \
@@ -67,60 +56,57 @@ pushd "$install_dir/live"
         --dbuser "$db_user" \
         --dbpass "$db_pwd" \
         --listen-port "$port"
-    ynh_secure_remove --file="$install_dir/setup_db.psql"
+    ynh_safe_rm "$install_dir/setup_db.psql"
 popd
 
-ynh_add_config --template="ldap.exs" --destination="$install_dir/ldap.exs"
-ynh_add_config --template="mail.exs" --destination="$install_dir/mail.exs"
-ynh_add_config --template="uploads.exs" --destination="$install_dir/uploads.exs"
+ynh_config_add --template="ldap.exs" --destination="$install_dir/ldap.exs"
+ynh_config_add --template="mail.exs" --destination="$install_dir/mail.exs"
+ynh_config_add --template="uploads.exs" --destination="$install_dir/uploads.exs"
 
-cat "$install_dir/ldap.exs" "$install_dir/mail.exs" "$install_dir/uploads.exs" >> "$MOBILIZON_CONFIG_PATH"
-ynh_store_file_checksum --file="$MOBILIZON_CONFIG_PATH"
+cat "$install_dir/ldap.exs" "$install_dir/mail.exs" "$install_dir/uploads.exs" >> "$install_dir/config.exs"
+ynh_store_file_checksum "$install_dir/config.exs"
 
-ynh_secure_remove --file="$install_dir/ldap.exs"
-ynh_secure_remove --file="$install_dir/mail.exs"
-ynh_secure_remove --file="$install_dir/uploads.exs"
+ynh_safe_rm "$install_dir/ldap.exs"
+ynh_safe_rm "$install_dir/mail.exs"
+ynh_safe_rm "$install_dir/uploads.exs"
 
-chmod 400 "$MOBILIZON_CONFIG_PATH"
-chown "$app:$app" "$MOBILIZON_CONFIG_PATH"
+chmod 400 "$install_dir/config.exs"
+chown "$app:$app" "$install_dir/config.exs"
 
-ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" migrate
+ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" migrate
 
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding system configurations related to $app..." --weight=1
+ynh_script_progression "Adding system configurations related to $app..."
 
-# Create a dedicated NGINX config
-ynh_add_nginx_config
+ynh_config_add_nginx
 
-# Create a dedicated systemd config
-ynh_add_systemd_config
+ynh_config_add_systemd
 yunohost service add "$app" --description="$app daemon for Mobilizon"
 
 #=================================================
 # SETUP APPLICATION
 #=================================================
-ynh_script_progression --message="Finalizing installation..." --weight=1
+ynh_script_progression "Finalizing installation..."
 
-ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
-# We generate a dummy password ... this will actually *not* be used because the admin is supposed to connect via the ldap
-ynh_exec_as "$app" MOBILIZON_CONFIG_PATH="$MOBILIZON_CONFIG_PATH" "$install_dir/live/bin/mobilizon_ctl" \
+# We generate a dummy password... this will actually *not* be used because the admin is supposed to connect via the ldap
+ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" \
     users.new "$admin_email" --admin --password "$(ynh_string_random --length=30)"
 
-ynh_systemd_action --service_name="$app" --action="stop" --log_path=systemd
+ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..."
+ynh_script_progression "Starting $app's systemd service..."
 
-# Start a systemd service
-ynh_systemd_action --service_name="$app" --action="start" --log_path=systemd --line_match="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed"
+ynh_script_progression "Installation of $app completed"
