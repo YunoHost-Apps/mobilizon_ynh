@@ -7,5 +7,3 @@
 ynh_user="${app}_notifs"
 
 MOBILIZON_CONFIG_PATH="$install_dir/config.exs"
-
-

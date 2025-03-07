@@ -47,7 +47,7 @@ pushd "$install_dir/live"
     ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" MIX_ENV=prod \
         ./bin/mobilizon_ctl instance gen --force \
         --output "$install_dir/config.exs" \
-        --output-psql "$install_dir/setub_db.psql" \
+        --output-psql "$install_dir/setup_db.psql" \
         --domain "$domain" \
         --instance-name "Mobilizon" \
         --admin-email "$app@$domain" \
