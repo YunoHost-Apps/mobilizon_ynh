@@ -10,6 +10,8 @@ ynh_script_progression "Stopping $app's systemd service..."
 
 ynh_systemctl --service=$app --action="stop" --log_path=systemd
 
+ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value="false"
+
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
