@@ -5,9 +5,10 @@ source /usr/share/yunohost/helpers
 
 ynh_abort_if_errors
 
+instance_language_rows=$(ynh_psql_db_shell $db_name <<< "SELECT name, value FROM admin_settings WHERE name='instance_languages';")
+
 ynh_app_config_validate() {
-    empty_rows=$(ynh_psql_db_shell $db_name <<< "SELECT name, value FROM admin_settings WHERE name='instances_languages';")
-    if [ -z "${empty_rows:-}" ]; then
+    if [ -z "${instance_language_rows:-}" ]; then
         ynh_die --message="You need first connect with the admin user to your instance and create a profile"
     fi
 
@@ -17,15 +18,15 @@ ynh_app_config_validate() {
 ynh_app_config_apply() {
     _ynh_app_config_apply
 
-    if [ -z "${language}" ]; then
+    if [[ "${changed[language]}" == "true" ]]
+    then
+        ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[\"$language\"]' WHERE name ='instance_languages';"
+        # restart the service
+        ynh_systemctl --service="$app" --action="restart"
+    else
         language="fr"
-    ynh_app_setting_set_default --key="language" --value="$language"
+        ynh_app_setting_set_default --key="language" --value="$language"
     fi
-
-    ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[\"$language\"]' WHERE name ='instance_languages';"
-
-    # restart the service
-    ynh_systemctl --service="$app" --action="restart"
 }
 
 #=================================================
