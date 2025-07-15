@@ -4,12 +4,10 @@ test_format = 1.0
 
 [default]
 
-    # args.domain="domain.tld"
-    # args.is_public=1
-    # args.language="fr"
-    # args.admin="john"
-    # args.password="1Strong-Password"
-    # args.name="My_Mobilizon"
+    args.domain="domain.tld"
+    args.is_public=1
+    args.language="fr"
+    args.admin="john"
 
     test_upgrade_from.d2784908e27f2e3368a876c012d4ebe987096a93.name = "5.1.0~ynh1"
     test_upgrade_from.40ce44563d5165d0bfce245bba561c191d17a0f9.name = "5.1.2~ynh1"

@@ -7,7 +7,7 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "5.1.5~ynh1"
+version = "5.1.5~ynh2"
 
 maintainers = ["rodinux"]
 
