@@ -17,7 +17,7 @@ ynh_app_config_validate() {
 ynh_app_config_apply() {
     _ynh_app_config_apply
 
-    if [ -z $language]
+    if [ -z "${language}" ]; then
         language="fr"
     ynh_app_setting_set_default --key="language" --value="$language"
     fi
