@@ -32,6 +32,8 @@ ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
 ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS postgis;"
 ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
+ynh_psql_db_shell <<< "UPDATE admin_settings SET value = '["${language}"]' WHERE name ='instance_languages';"
+
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
