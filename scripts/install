@@ -101,7 +101,7 @@ ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/li
 ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
 # Add the default language for the instance is broken via the admin settings app, here a workaround
-ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[""$language""]' WHERE name ='instance_languages';"
+ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[\"${language}\"]' WHERE name ='instance_languages';"
 
 #=================================================
 # START SYSTEMD SERVICE
