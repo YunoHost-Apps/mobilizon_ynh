@@ -1,7 +1,5 @@
 [main]
 
-name.fr = "Configuration des Langues utilisées par l'instance"
-
     ############################################################################
     #### ABOUT SECTIONS
     ############################################################################
@@ -12,7 +10,7 @@ name.fr = "Configuration des Langues utilisées par l'instance"
 
     ## (optional) This help properties is a short help displayed on the same line
 
-    optional = false
+    optional = true
 
     [main.config.language]
         ask = "Main languages spoken by you/your moderators"
