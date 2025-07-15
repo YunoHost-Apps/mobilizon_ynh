@@ -1,0 +1,29 @@
+#!/bin/bash
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+ynh_abort_if_errors
+
+ynh_app_config_validate() {
+    if [ -z $(ynh_psql_db_shell $db_name <<< "SELECT name, value FROM admin_settings WHERE name='instances_languages';") ]
+    then
+        ynh_die --message="You need first connect with the admin user to your instance and create a profile"
+    fi
+
+    _ynh_app_config_validate
+}
+
+ynh_app_config_apply() {
+    _ynh_app_config_apply
+
+    ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[\"$language\"]' WHERE name ='instance_languages';"
+
+    # restart the service
+    ynh_systemctl --service="$app" --action="restart"
+}
+
+#=================================================
+# SELECT THE ACTION FOLLOWING THE GIVEN ARGUMENT
+#=================================================
+ynh_app_config_run $1
