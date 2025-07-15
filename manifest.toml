@@ -7,7 +7,7 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "5.1.2~ynh1"
+version = "5.1.5~ynh1"
 
 maintainers = ["rodinux"]
 
@@ -53,10 +53,10 @@ ram.runtime = "400M"
 [resources]
     [resources.sources.main]
     prefetch = false
-    amd64.url = "https://packages.joinmobilizon.org/5.1.2/mobilizon_5.1.2_debian-bookworm_amd64.tar.gz"
-    amd64.sha256 = "69f3252c892b77aef2785cbbdfeada8f294d1674b08812e6cbcdd04b6e3ee449"
-    arm64.url = "https://packages.joinmobilizon.org/5.1.2/mobilizon_5.1.2_debian-bookworm_arm64.tar.gz"
-    arm64.sha256 = "faad20be2f5b759abb07a100b7440687628f063634ad3092baaa1db869b874d1"
+    amd64.url = "https://packages.joinmobilizon.org/5.1.5/mobilizon_5.1.5_debian-bookworm_amd64.tar.gz"
+    amd64.sha256 = "f8072a5f7a94608f7293370403fe4fb62ba00d0d9bd177c5c10477c486e1f76f"
+    arm64.url = "https://packages.joinmobilizon.org/5.1.5/mobilizon_5.1.5_debian-bookworm_arm64.tar.gz"
+    arm64.sha256 = "e91eb99fac0a59c9b6578a37589f4b41d7bd069ea41c23dc11d44f96a1732832"
 
 #    autoupdate.strategy = "latest_gitlab_release"
 #    autoupdate.asset.amd64 = "mobilizon_.*-bullseye-amd64.tar.gz"

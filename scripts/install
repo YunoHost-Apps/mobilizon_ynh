@@ -13,6 +13,8 @@ ynh_app_setting_set --key="admin_email" --value="$admin_email"
 ynh_user_password=$(ynh_string_random --length=30)
 ynh_app_setting_set --key="ynh_user_password" --value="$ynh_user_password"
 
+ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value="false"
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
