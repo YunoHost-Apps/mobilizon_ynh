@@ -18,7 +18,7 @@ ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value="false"
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression "Configuring yunohost users..."
+ynh_script_progression "Configuring YunoHost users..."
 
 yunohost user create "$ynh_user" -F "Mobilizon Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
 yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforward "$admin_email"
@@ -72,9 +72,6 @@ ynh_safe_rm "$install_dir/ldap.exs"
 ynh_safe_rm "$install_dir/mail.exs"
 ynh_safe_rm "$install_dir/uploads.exs"
 
-chmod 400 "$install_dir/config.exs"
-chown "$app:$app" "$install_dir/config.exs"
-
 ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" migrate
 
 #=================================================
@@ -85,6 +82,7 @@ ynh_script_progression "Adding system configurations related to $app..."
 ynh_config_add_nginx
 
 ynh_config_add_systemd
+
 yunohost service add "$app" --description="$app daemon for Mobilizon"
 
 #=================================================
@@ -96,20 +94,20 @@ ynh_script_progression "Finalizing installation..."
 mkdir -p "/var/lib/${app}/sitemap"
 chown -R "$app:$app" "/var/lib/${app}/sitemap"
 
-ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl  --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 # We generate a dummy password... this will actually *not* be used because the admin is supposed to connect via the ldap
 ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" \
     users.new "$admin_email" --admin --password "$(ynh_string_random --length=30)"
 
-ynh_systemctl --service="$app" --action="stop" --log_path=systemd
+ynh_systemctl  --action="stop" --log_path=systemd
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl  --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT

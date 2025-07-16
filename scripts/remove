@@ -13,7 +13,7 @@ if ynh_hide_warnings yunohost service status "$app" >/dev/null; then
 fi
 
 # Properly kill the service processes
-ynh_systemctl --service="$app" --action="stop" --log_path=systemd
+ynh_systemctl  --action="stop" --log_path=systemd
 pkill -u "$app" || true
 
 ynh_config_remove_systemd

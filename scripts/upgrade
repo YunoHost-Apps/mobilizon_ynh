@@ -8,7 +8,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemctl --service=$app --action="stop" --log_path=systemd
+ynh_systemctl  --action="stop" --log_path=systemd
 
 ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value="false"
 
@@ -73,10 +73,7 @@ fi
 #=================================================
 ynh_script_progression "Upgrading source files..."
 
-ynh_setup_source --dest_dir="$install_dir/live" --full_replace
-
-chmod -R o-rwx "$install_dir"
-chown -R "$app:www-data" "$install_dir"
+ynh_setup_source --dest_dir="$install_dir/live" --full_replace --keep="config.exs"
 
 #=================================================
 # UPDATE A CONFIG FILE
@@ -84,12 +81,11 @@ chown -R "$app:www-data" "$install_dir"
 ynh_script_progression "Updating configuration..."
 
 ynh_backup_if_checksum_is_different "$install_dir/config.exs"
+
 ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
 ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
-ynh_store_file_checksum "$install_dir/config.exs"
 
-chmod 400 "$install_dir/config.exs"
-chown "$app:$app" "$install_dir/config.exs"
+ynh_store_file_checksum "$install_dir/config.exs"
 
 #=================================================
 # MAKE SETUP
@@ -106,6 +102,7 @@ ynh_script_progression "Upgrading system configurations related to $app..."
 ynh_config_add_nginx
 
 ynh_config_add_systemd
+
 yunohost service add "$app" --description="$app daemon for Mobilizon"
 
 #=================================================
@@ -113,7 +110,7 @@ yunohost service add "$app" --description="$app daemon for Mobilizon"
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl  --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT

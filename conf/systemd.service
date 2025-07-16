@@ -1,5 +1,5 @@
 [Unit]
-Description=__APP__ Service
+Description=Mobilizon: platform to organize events
 After=network.target postgresql.service
 
 [Service]
