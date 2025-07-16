@@ -8,8 +8,8 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression "Configuring YunoHost users..."
 
-yunohost user create "$ynh_user" --firstname "Mobilizon" name "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
-yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforward "$admin_email"
+#yunohost user create "$ynh_user" --firstname "Mobilizon" name "Notifications" --domain "$domain" --password "$ynh_user_password" -q 0
+#yunohost user update "$ynh_user" --add-mailalias "$app@$domain" --add-mailforward "$admin_email"
 
 #=================================================
 # RESTORE THE APP MAIN DIR
@@ -30,11 +30,11 @@ ynh_restore "$data_dir"
 #=================================================
 ynh_script_progression "Restoring the PostgreSQL database..."
 
-ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
-ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS postgis;"
-ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
-ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
+#ynh_psql_db_shell <<< "ALTER USER $db_user WITH SUPERUSER;"
+#ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS postgis;"
+#ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+#ynh_psql_db_shell <<< "CREATE EXTENSION IF NOT EXISTS unaccent;"
+#ynh_psql_db_shell <<< "ALTER USER $db_user WITH NOSUPERUSER;"
 
 ynh_psql_db_shell < ./db.sql
 
@@ -49,6 +49,7 @@ ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_restore "/etc/systemd/system/$app.service"
 systemctl enable "$app.service" --quiet
+
 yunohost service add "$app" --description="$app daemon for Mobilizon"
 
 #=================================================

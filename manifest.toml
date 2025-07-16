@@ -58,10 +58,6 @@ ram.runtime = "400M"
     arm64.url = "https://packages.joinmobilizon.org/5.1.5/mobilizon_5.1.5_debian-bookworm_arm64.tar.gz"
     arm64.sha256 = "e91eb99fac0a59c9b6578a37589f4b41d7bd069ea41c23dc11d44f96a1732832"
 
-#    autoupdate.strategy = "latest_gitlab_release"
-#    autoupdate.asset.amd64 = "mobilizon_.*-bullseye-amd64.tar.gz"
-#    autoupdate.asset.arm64 = "mobilizon_.*-bullseye-arm64.tar.gz"
-
     [resources.system_user]
 
     [resources.install_dir]

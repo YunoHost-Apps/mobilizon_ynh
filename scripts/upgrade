@@ -75,8 +75,6 @@ ynh_script_progression "Upgrading source files..."
 
 ynh_setup_source --dest_dir="$install_dir/live" --full_replace
 
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod -R o-rwx "$install_dir"
-#REMOVEME? Assuming the install dir is setup using ynh_setup_source, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown -R "$app:www-data" "$install_dir"
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
@@ -86,9 +84,6 @@ ynh_backup_if_checksum_is_different "$install_dir/config.exs"
 ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
 ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
 ynh_store_file_checksum "$install_dir/config.exs"
-
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$install_dir/config.exs"
-#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown "$app:$app" "$install_dir/config.exs"
 
 #=================================================
 # MAKE SETUP
@@ -105,6 +100,7 @@ ynh_script_progression "Upgrading system configurations related to $app..."
 ynh_config_add_nginx
 
 ynh_config_add_systemd
+
 yunohost service add "$app" --description="$app daemon for Mobilizon"
 
 #=================================================
