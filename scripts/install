@@ -72,8 +72,8 @@ ynh_safe_rm "$install_dir/ldap.exs"
 ynh_safe_rm "$install_dir/mail.exs"
 ynh_safe_rm "$install_dir/uploads.exs"
 
-chmod 400 "$install_dir/config.exs"
-chown "$app:$app" "$install_dir/config.exs"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chmod 400 "$install_dir/config.exs"
+#REMOVEME? Assuming the file is setup using ynh_config_add, the proper chmod/chowns are now already applied and it shouldn't be necessary to tweak perms | chown "$app:$app" "$install_dir/config.exs"
 
 ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" migrate
 
@@ -96,20 +96,20 @@ ynh_script_progression "Finalizing installation..."
 mkdir -p "/var/lib/${app}/sitemap"
 chown -R "$app:$app" "/var/lib/${app}/sitemap"
 
-ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl  --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 # We generate a dummy password... this will actually *not* be used because the admin is supposed to connect via the ldap
 ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" \
     users.new "$admin_email" --admin --password "$(ynh_string_random --length=30)"
 
-ynh_systemctl --service="$app" --action="stop" --log_path=systemd
+ynh_systemctl  --action="stop" --log_path=systemd
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl  --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT
