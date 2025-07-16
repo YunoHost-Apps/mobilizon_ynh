@@ -20,6 +20,8 @@ ynh_config_remove_systemd
 
 ynh_config_remove_nginx
 
+ynh_safe_rm "/var/lib/$app/sitemap"
+
 yunohost user delete "$ynh_user"
 
 #=================================================

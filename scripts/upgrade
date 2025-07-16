@@ -62,6 +62,12 @@ if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploa
     fi
 fi
 
+# Need a folder /var/lib/mobilizon
+if [ ! -e "/var/lib/$app/sitemap/" ]; then
+    mkdir -p "/var/lib/${app}/sitemap"
+    chown -R "$app:$app" "/var/lib/${app}/sitemap"
+fi
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
