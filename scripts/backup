@@ -25,7 +25,7 @@ ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_backup "/etc/systemd/system/$app.service"
 
-# ynh_backup "/var/log/$app/"
+ ynh_backup "/var/lib/${app}/sitemap"
 
 #=================================================
 # BACKUP THE POSTGRESQL DATABASE

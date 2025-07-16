@@ -92,6 +92,10 @@ yunohost service add "$app" --description="$app daemon for Mobilizon"
 #=================================================
 ynh_script_progression "Finalizing installation..."
 
+# Need a folder /var/lib/mobilizon
+mkdir -p "/var/lib/${app}/sitemap"
+chown -R "$app:$app" "/var/lib/${app}/sitemap"
+
 ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 # We generate a dummy password... this will actually *not* be used because the admin is supposed to connect via the ldap
