@@ -12,12 +12,16 @@ Decentralized and federated platform to organize events
 
 [![🌐 Official app website](https://img.shields.io/badge/Official_app_website-darkgreen?style=for-the-badge)](https://joinmobilizon.org/)
 [![App Demo](https://img.shields.io/badge/App_Demo-blue?style=for-the-badge)](https://demo.mobilizon.org)
-[![Version: 5.1.5~ynh2](https://img.shields.io/badge/Version-5.1.5~ynh2-rgba(0,150,0,1)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
+[![Version: 5.1.5~ynh2](https://img.shields.io/badge/Version-5.1.5~ynh2-rgb(18,138,11)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/mobilizon/)
 
 <div align="center">
 <a href="https://apps.yunohost.org/app/mobilizon"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_more_info_on_the_appstore.svg"/></a>
 <a href="https://github.com/YunoHost-Apps/mobilizon_ynh/issues"><img height="100px" src="https://github.com/YunoHost/yunohost-artwork/raw/refs/heads/main/badges/neopossum-badges/badge_report_an_issue.svg"/></a>
 </div>
+
+
+## Screenshots
+![Screenshot of Mobilizon](./doc/screenshots/screenshot1.jpg)
 
 ## 📦 Developer info
 
