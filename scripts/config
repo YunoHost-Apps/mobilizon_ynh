@@ -18,7 +18,7 @@ ynh_app_config_validate() {
 ynh_app_config_apply() {
     _ynh_app_config_apply
 
-    if [[ "${changed[language]}" == "true" ]];
+    if [[ "${changed[language]}" == "true" ]]
     then
         ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[\"$language\"]' WHERE name ='instance_languages';"
         # restart the service
