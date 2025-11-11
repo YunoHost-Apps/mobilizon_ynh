@@ -53,7 +53,7 @@ ram.runtime = "400M"
 [resources]
     [resources.sources.main]
     prefetch = false
-    amd64.url = "https://packages.joinmobilizon.org/5.2.0/mobilizon_5.2.0_debian-bookworm_amd64.tar.gz"
+    amd64.url = "https://packages.mobilizon.org/5.2.0/mobilizon_5.2.0_debian-bookworm_amd64.tar.gz"
     amd64.sha256 = "318d70d913433478a8e98507c0fd680ca9d76821763c28bad96373ab935a1f88"
 #    arm64.url = "https://packages.joinmobilizon.org/5.1.5/mobilizon_5.1.5_debian-bookworm_arm64.tar.gz"
 #    arm64.sha256 = "e91eb99fac0a59c9b6578a37589f4b41d7bd069ea41c23dc11d44f96a1732832"
