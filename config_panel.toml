@@ -1,0 +1,21 @@
+version = "1.0"
+
+[main]
+
+    ############################################################################
+    #### ABOUT SECTIONS
+    ############################################################################
+
+    [main.config]
+
+    name = "Configuration languages spoken in this instance"
+
+    ## (optional) This help properties is a short help displayed on the same line
+
+    optional = true
+
+    [main.config.language]
+        ask = "Main languages spoken by you/your moderators"
+        type = "select"
+        choices = ["fr","en", "es", "de"]
+        default = "fr"
