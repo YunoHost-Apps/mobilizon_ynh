@@ -10,7 +10,7 @@ source /usr/share/yunohost/helpers
 YNH_ARCH=$(dpkg --print-architecture)
 
 if [ $YNH_ARCH = "arm64" ]; then
-    ynh_die "Sorry, the project have stop building releases images for this kind architecture"
+    ynh_die "Sorry, the project have stop building releases images for arm64 architecture"
 fi
 
 #=================================================
