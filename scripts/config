@@ -20,7 +20,6 @@ ynh_app_config_apply() {
 
     if [[ "${changed[language]}" == "true" ]]
     then
-        # restart the service
         ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[${language}]' WHERE name = 'instance_languages';"
         # restart the service
         ynh_systemctl --service="$app" --action="restart"
