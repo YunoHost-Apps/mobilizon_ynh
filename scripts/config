@@ -22,7 +22,9 @@ ynh_app_config_apply() {
     then
         # restart the service
         ynh_psql_db_shell $db_name <<< "UPDATE admin_settings SET value = '[${language}]' WHERE name = 'instance_languages';"
-    fi
+        # restart the service
+        ynh_systemctl --service="$app" --action="restart"
+   fi
 }
 
 #=================================================
