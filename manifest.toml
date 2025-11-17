@@ -7,7 +7,7 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "5.1.5~ynh4"
+version = "5.1.5~ynh5"
 
 maintainers = ["rodinux"]
 
@@ -65,6 +65,7 @@ ram.runtime = "400M"
     [resources.system_user]
 
     [resources.install_dir]
+    owner = "__APP__:rwx"
     group = "www-data:r-x"
 
     [resources.data_dir]
