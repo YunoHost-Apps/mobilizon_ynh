@@ -65,7 +65,6 @@ ram.runtime = "400M"
     [resources.system_user]
 
     [resources.install_dir]
-    subdirs = ["live"]
     owner = "__APP__:rwx"
     group = "www-data:r-x"
 
