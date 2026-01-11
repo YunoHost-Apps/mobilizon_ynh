@@ -44,6 +44,7 @@ ynh_psql_db_shell < ./db.sql
 ynh_script_progression "Restoring system configurations related to $app..."
 
 ynh_restore "/var/lib/${app}/sitemap"
+chown -R "$app:$app" "/var/lib/${app}/sitemap"
 
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
