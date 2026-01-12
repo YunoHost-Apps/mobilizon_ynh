@@ -7,7 +7,7 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "5.1.5~ynh2"
+version = "5.2.0~ynh1"
 
 maintainers = ["rodinux"]
 
@@ -22,7 +22,7 @@ fund = "https://soutenir.framasoft.org/"
 [integration]
 yunohost = ">= 12.0.9"
 helpers_version = "2.1"
-architectures = ["amd64", "arm64"]
+architectures = ["amd64"]
 multi_instance = false
 
 ldap = true
@@ -40,28 +40,23 @@ ram.runtime = "400M"
     type = "group"
     default = "visitors"
 
-    [install.language]
-    ask.en = "Choose the application language"
-    ask.fr = "Choisissez la langue de l'application"
-    type = "select"
-    choices = ["fr","en","de","es"]
-    default = "fr"
-
     [install.admin]
     type = "user"
 
 [resources]
     [resources.sources.main]
     prefetch = false
-    amd64.url = "https://packages.joinmobilizon.org/5.1.5/mobilizon_5.1.5_debian-bookworm_amd64.tar.gz"
-    amd64.sha256 = "f8072a5f7a94608f7293370403fe4fb62ba00d0d9bd177c5c10477c486e1f76f"
-    arm64.url = "https://packages.joinmobilizon.org/5.1.5/mobilizon_5.1.5_debian-bookworm_arm64.tar.gz"
-    arm64.sha256 = "e91eb99fac0a59c9b6578a37589f4b41d7bd069ea41c23dc11d44f96a1732832"
+    amd64.url = "https://packages.mobilizon.org/5.2.0/mobilizon_5.2.0_debian-bookworm_amd64.tar.gz"
+    amd64.sha256 = "318d70d913433478a8e98507c0fd680ca9d76821763c28bad96373ab935a1f88"
+#    arm64.url = "https://packages.joinmobilizon.org/5.1.5/mobilizon_5.1.5_debian-bookworm_arm64.tar.gz"
+#    arm64.sha256 = "e91eb99fac0a59c9b6578a37589f4b41d7bd069ea41c23dc11d44f96a1732832"
 
     [resources.system_user]
 
     [resources.install_dir]
+    owner = "__APP__:rwx"
     group = "www-data:r-x"
+
 
     [resources.data_dir]
     subdirs = ["uploads"]
