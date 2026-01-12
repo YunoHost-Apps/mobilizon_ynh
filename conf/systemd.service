@@ -13,7 +13,6 @@ ExecStart=__INSTALL_DIR__/live/bin/mobilizon start
 ExecStop=__INSTALL_DIR__/live/bin/mobilizon stop
 KillMode=process
 Restart=on-failure
-
 SyslogIdentifier=mobilizon
 
 ; Some security directives.
