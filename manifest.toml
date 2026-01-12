@@ -57,7 +57,6 @@ ram.runtime = "400M"
     owner = "__APP__:rwx"
     group = "www-data:r-x"
 
-
     [resources.data_dir]
     subdirs = ["uploads"]
     owner = "__APP__:rwx"
