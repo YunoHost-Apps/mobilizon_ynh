@@ -21,7 +21,7 @@ Decentralized and federated platform to organize events
 
 
 ## Screenshots
-![Screenshot of Mobilizon](./doc/screenshots/screenshot1.jpg)
+![Screenshot of Mobilizon](./doc/screenshots/screenshot.png)
 
 ## 📦 Developer info
 
