@@ -103,14 +103,14 @@ ynh_config_add_nginx
 
 ynh_config_add_systemd
 
-yunohost service add "$app" --description="$app daemon for Mobilizon"
+yunohost service add "$app" --description="Decentralized and federated platform to organize events"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl  --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT

@@ -20,7 +20,7 @@ code = "https://framagit.org/framasoft/mobilizon/"
 fund = "https://soutenir.framasoft.org/"
 
 [integration]
-yunohost = ">= 12.0.9"
+yunohost = ">= 12.1.38"
 helpers_version = "2.1"
 architectures = ["amd64", "arm64"]
 multi_instance = false
