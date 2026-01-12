@@ -19,7 +19,7 @@ fi
 
 ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemctl  --action="stop" --log_path=systemd
+ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
 ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value="false"
 
@@ -121,7 +121,7 @@ yunohost service add "$app" --description="Decentralized and federated platform 
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 #=================================================
 # END OF SCRIPT

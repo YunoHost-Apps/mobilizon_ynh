@@ -44,7 +44,7 @@ yunohost service add "$app" --description="Decentralized and federated platform 
 #=================================================
 ynh_script_progression "Reloading NGINX web server and $app's service..."
 
-ynh_systemctl --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 ynh_systemctl --service=nginx --action=reload
 
