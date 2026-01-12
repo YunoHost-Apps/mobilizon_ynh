@@ -3,8 +3,6 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-ynh_abort_if_errors
-
 instance_language_rows=$(ynh_psql_db_shell $db_name <<< "SELECT name, value FROM admin_settings WHERE name='instance_languages';")
 
 ynh_app_config_validate() {
