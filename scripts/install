@@ -98,6 +98,7 @@ ynh_script_progression "Finalizing installation..."
 # Need a folder /var/lib/mobilizon
 mkdir -p "/var/lib/${app}/sitemap"
 chown -R "$app:$app" "/var/lib/${app}/sitemap"
+chmod -R u+rwX,g+rwX "/var/lib/${app}"
 
 ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
