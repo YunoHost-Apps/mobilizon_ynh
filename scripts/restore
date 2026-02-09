@@ -31,6 +31,7 @@ ynh_script_progression "Restoring system configurations related to $app..."
 
 ynh_restore "/var/lib/${app}/sitemap"
 chown -R "$app:$app" "/var/lib/${app}/sitemap"
+chmod -R u+rwX,g+rwX /var/lib/mobilizon
 
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
