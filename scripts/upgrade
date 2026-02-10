@@ -4,16 +4,6 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# PREVENT IF ARM
-#=================================================
-
-YNH_ARCH=$(dpkg --print-architecture)
-
-if [ $YNH_ARCH = "arm64" ]; then
-    ynh_die "Sorry, the project have stop building releases images for arm64 architecture"
-fi
-
-#=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
 
