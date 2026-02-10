@@ -73,13 +73,6 @@ if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploa
     fi
 fi
 
-# Need a folder /var/lib/mobilizon
-if [ ! -e "/var/lib/$app/sitemap/" ]; then
-    mkdir -p "/var/lib/${app}/sitemap"
-    chown -R "$app:$app" "/var/lib/${app}/sitemap"
-fi
-chmod -R u+rwX,g+rwX "/var/lib/${app}"
-
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -98,6 +91,18 @@ ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Ad
 ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
 
 ynh_store_file_checksum "$install_dir/config.exs"
+
+#================================================
+# Fix folder sitemap
+=================================================
+ynh_script_progression "adding a needed folder sitemap or fix premissions..."
+
+# Need a folder /var/lib/mobilizon
+if [ ! -e "/var/lib/$app/sitemap/" ]; then
+    mkdir -p "/var/lib/${app}/sitemap"
+    chown -R "$app:$app" "/var/lib/${app}/sitemap"
+fi
+chmod -R u+rwX,g+rwX "/var/lib/${app}"
 
 #=================================================
 # MAKE SETUP
