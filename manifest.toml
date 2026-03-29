@@ -46,7 +46,7 @@ ram.runtime = "400M"
 [resources]
     [resources.sources.main]
     prefetch = false
-    amd64.url = "https://framagit.org/kaihuri/mobilizon/-/archive/5.2.2/mobilizon-5.2.2.tar.gz"
+    amd64.url = "https://packages.mobilizon.org/5.2.2/mobilizon_5.2.2_debian-bookworm_amd64.tar.gz"
     amd64.sha256 = "8562ae1f8d9405b4c9b442333fb817db4b31ebc096be572fd2081e981d0f857a"
 
     [resources.system_user]
