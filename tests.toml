@@ -10,3 +10,5 @@ test_format = 1.0
     args.admin="john"
 
     test_upgrade_from.06134f48fe688f151242a08e0a33563441a70759.name = "5.1.5~ynh4"
+    test_upgrade_from.a457bd82dbf976f772a21a1482e15e5831db99b3.name = "5.2.0~ynh1"
+
