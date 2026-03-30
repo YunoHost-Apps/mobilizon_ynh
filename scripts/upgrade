@@ -129,16 +129,12 @@ ynh_script_progression "Starting $app's systemd service..."
 ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
 
 # Fix admin user provider for LDAP authentication (previously created without --provider ldap ?? )
-
-role=$(ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" \
-users.show "" | grep Role | cut -d':' -f2 | tr -d ' ')
-
-if [[ "$role" == "administrator" ]]; then
-    ynh_print_info "${admin_email} is already administrator of the instance"
-else
-    ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" \
-        users.new "$admin_email" --admin --provider ldap
-fi
+#role=$(ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" users.show "" | grep Role | cut -d':' -f2 | tr -d ' ')
+#if [[ "$role" == "administrator" ]]; then
+#ynh_print_info "${admin_email} is already administrator of the instance"
+#else
+#ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" users.new "$admin_email" --admin --provider ldap
+#fi
 
 #=================================================
 # END OF SCRIPT
