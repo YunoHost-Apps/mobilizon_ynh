@@ -15,8 +15,6 @@ ynh_app_setting_set --key="ynh_user_password" --value="$ynh_user_password"
 
 ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value="false"
 
-ynh_app_setting_set_default --key="language" --value='"fr"'
-
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
