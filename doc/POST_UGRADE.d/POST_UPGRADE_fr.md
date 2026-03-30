@@ -1,0 +1,1 @@
+Remarque : pour vous connecter à Mobilizon, tous les utilisateurs (y compris l'administrateur) doivent d'abord se déconnecter du portail utilisateur (SSO). Connectez-vous avec votre adresse email et votre mot de passe, lors de votre première connexion, vous serez invité à créer un nouveau profil. 
