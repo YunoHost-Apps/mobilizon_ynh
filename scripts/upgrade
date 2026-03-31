@@ -114,8 +114,8 @@ if [ ! -e "/var/lib/$app/sitemap/" ]; then
     mkdir -p "/var/lib/${app}/sitemap"
     chown -R "$app:$app" "/var/lib/${app}/sitemap"
 fi
+chmod -R u+rwX,g+rwX "/var/lib/${app}"
 
-chmod -R o-rwx "$install_dir"
 chown -R "$app:www-data" "$install_dir"
 
 ynh_config_add_nginx
