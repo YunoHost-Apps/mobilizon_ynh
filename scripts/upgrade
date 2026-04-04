@@ -19,9 +19,13 @@ fi
 
 ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemctl --service=$app --action="stop" --log_path=systemd
+ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
 ynh_app_setting_set --key=protect_against_basic_auth_spoofing --value="false"
+
+if [ -n "${language:-}" ]; then
+    ynh_app_setting_delete --key="language"
+fi
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -73,21 +77,13 @@ if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploa
     fi
 fi
 
-# Need a folder /var/lib/mobilizon
-if [ ! -e "/var/lib/$app/sitemap/" ]; then
-    mkdir -p "/var/lib/${app}/sitemap"
-    chown -R "$app:$app" "/var/lib/${app}/sitemap"
-fi
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Upgrading source files..."
 
-ynh_setup_source --dest_dir="$install_dir/live" --full_replace
-
-chmod -R o-rwx "$install_dir"
-chown -R "$app:www-data" "$install_dir"
+ynh_setup_source --dest_dir="$install_dir/live" --full_replace --keep="config.exs"
 
 #=================================================
 # UPDATE A CONFIG FILE
@@ -95,12 +91,11 @@ chown -R "$app:www-data" "$install_dir"
 ynh_script_progression "Updating configuration..."
 
 ynh_backup_if_checksum_is_different "$install_dir/config.exs"
+
 ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
 ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
-ynh_store_file_checksum "$install_dir/config.exs"
 
-chmod 400 "$install_dir/config.exs"
-chown "$app:$app" "$install_dir/config.exs"
+ynh_store_file_checksum "$install_dir/config.exs"
 
 #=================================================
 # MAKE SETUP
@@ -114,10 +109,20 @@ ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/li
 #=================================================
 ynh_script_progression "Upgrading system configurations related to $app..."
 
+# Need a folder /var/lib/mobilizon
+if [ ! -e "/var/lib/$app/sitemap/" ]; then
+    mkdir -p "/var/lib/${app}/sitemap"
+    chown -R "$app:$app" "/var/lib/${app}/sitemap"
+fi
+chmod -R u+rwX,g+rwX "/var/lib/${app}"
+
+chown -R "$app:www-data" "$install_dir"
+
 ynh_config_add_nginx
 
 ynh_config_add_systemd
-yunohost service add "$app" --description="$app daemon for Mobilizon"
+
+yunohost service add "$app" --description="Decentralized and federated platform to organize events"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -125,6 +130,14 @@ yunohost service add "$app" --description="$app daemon for Mobilizon"
 ynh_script_progression "Starting $app's systemd service..."
 
 ynh_systemctl --service="$app" --action="start" --log_path=systemd --wait_until="Access Mobilizon.Web.Endpoint at"
+
+# Fix admin user provider for LDAP authentication (previously created without --provider ldap ?? )
+#role=$(ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" users.show "" | grep Role | cut -d':' -f2 | tr -d ' ')
+#if [[ "$role" == "administrator" ]]; then
+#ynh_print_info "${admin_email} is already administrator of the instance"
+#else
+#ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" users.new "$admin_email" --admin --provider ldap
+#fi
 
 #=================================================
 # END OF SCRIPT
