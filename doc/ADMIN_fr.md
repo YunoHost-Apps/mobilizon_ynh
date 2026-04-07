@@ -1,4 +1,4 @@
 * Pour se connecter à **Mobilizon**, tous les utilisateurs (y compris l'administrateur) doivent d'abord être déconnectés du portail utilisateur, ou SSO. 
-* Pour se connecter avec l'administrateur **Mobilizon**, utilisez l'adresse e-mail de l'administrateur choisi lors de l'installation __ADMIN_EMAIL__ et son mot de passe Yunohost, vous serez invité à créer un nouveau profil dès la première connexion.
+* Pour se connecter avec l'administrateur **Mobilizon**, utilisez l'adresse e-mail de l'administrateur choisi lors de l'installation __ADMIN_EMAIL__ et son mot de passe YunoHost, vous serez invité à créer un nouveau profil dès la première connexion.
 * Par défaut, les inscriptions sont fermées. 
 * Tous les utilisateurs de YunoHost sont autorisés à se connecter avec leur adresse e-mail et mot de passe et seront invités à créer un nouveau profil dès leur première connexion.
