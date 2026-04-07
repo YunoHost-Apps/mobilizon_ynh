@@ -1,0 +1,1 @@
+Note: To log in to Mobilizon, all users (including the administrator) must first log out of the user portal (SSO). Log in with your admin email address __ADMIN_EMAIL__ and his Yunohost password; the first time you log in, you will be prompted to create a new profile.
