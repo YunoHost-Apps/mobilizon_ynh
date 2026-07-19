@@ -7,11 +7,11 @@ source /usr/share/yunohost/helpers
 # PREVENT IF ARM
 #=================================================
 
-YNH_ARCH=$(dpkg --print-architecture)
+# YNH_ARCH=$(dpkg --print-architecture)
 
-if [ $YNH_ARCH = "arm64" ]; then
-    ynh_die "Sorry, the project have stop building releases images for arm64 architecture"
-fi
+#if [ $YNH_ARCH = "arm64" ]; then
+#    ynh_die "Sorry, the project have stop building releases images for arm64 architecture"
+#fi
 
 #=================================================
 # STOP SYSTEMD SERVICE
@@ -95,7 +95,7 @@ ynh_backup_if_checksum_is_different "$install_dir/config.exs"
 ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
 ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
 
-if ynh_app_upgrading_from_version_before 5.2.3~ynh2; then
+if ynh_app_upgrading_from_version_before_or_equal_to 5.2.3~ynh2; then
    ynh_config_add --template="httpsecurity.exs" --destination="$install_dir/httpsecurity.exs"
    cat "$install_dir/httpsecurity.exs">> "$install_dir/config.exs"
    ynh_safe_rm "$install_dir/httpsecurity.exs"
