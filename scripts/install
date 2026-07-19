@@ -67,13 +67,15 @@ popd
 ynh_config_add --template="ldap.exs" --destination="$install_dir/ldap.exs"
 ynh_config_add --template="mail.exs" --destination="$install_dir/mail.exs"
 ynh_config_add --template="uploads.exs" --destination="$install_dir/uploads.exs"
+ynh_config_add --template="httpsecurity.exs" --destination="$install_dir/httpsecurity.exs"
 
-cat "$install_dir/ldap.exs" "$install_dir/mail.exs" "$install_dir/uploads.exs" >> "$install_dir/config.exs"
+cat "$install_dir/ldap.exs" "$install_dir/mail.exs" "$install_dir/uploads.exs" "$install_dir/httpsecurity.exs">> "$install_dir/config.exs"
 ynh_store_file_checksum "$install_dir/config.exs"
 
 ynh_safe_rm "$install_dir/ldap.exs"
 ynh_safe_rm "$install_dir/mail.exs"
 ynh_safe_rm "$install_dir/uploads.exs"
+ynh_safe_rm "$install_dir/httpsecurity.exs"
 
 ynh_exec_as_app MOBILIZON_CONFIG_PATH="$install_dir/config.exs" "$install_dir/live/bin/mobilizon_ctl" migrate
 
