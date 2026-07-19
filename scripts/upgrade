@@ -92,8 +92,6 @@ ynh_script_progression "Updating configuration..."
 
 ynh_backup_if_checksum_is_different "$install_dir/config.exs"
 
-
-
 ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
 ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
 

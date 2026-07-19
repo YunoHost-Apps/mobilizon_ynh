@@ -49,7 +49,7 @@ ram.runtime = "400M"
     amd64.url = "https://packages.mobilizon.org/5.2.4/mobilizon_5.2.4_debian-bookworm_amd64.tar.gz"
     amd64.sha256 = "c77b276e18fb3d79f35c4ca6d976e9c6fed5548d98e60b6dfd5c1aada8a107e7"
     arm64.url = "https://packages.mobilizon.org/5.2.4/mobilizon_5.2.4_debian-bookworm_arm64.tar.gz"
-    amd64.sha256 = "83eec284b510b3aa662fd07f3c152887cf1f4847807a688d7537aee2f748051a"
+    arm64.sha256 = "83eec284b510b3aa662fd07f3c152887cf1f4847807a688d7537aee2f748051a"
 
     [resources.system_user]
 
