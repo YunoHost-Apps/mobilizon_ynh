@@ -7,7 +7,7 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "5.2.4~ynh1"
+version = "5.2.4~ynh2"
 
 maintainers = ["rodinux"]
 
@@ -65,7 +65,7 @@ ram.runtime = "400M"
     [resources.permissions]
     main.url = "/"
 	main.auth_header = false
-    
+
     [resources.ports]
     main.default = 8095
 
