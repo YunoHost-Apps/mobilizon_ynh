@@ -7,17 +7,16 @@ name = "Mobilizon"
 description.en = "Decentralized and federated platform to organize events"
 description.fr = "Plateforme décentralisée et fédérée pour organiser des événements"
 
-version = "5.2.4~ynh1"
+version = "5.2.4~ynh2"
 
 maintainers = ["rodinux"]
 
 [upstream]
 license = "AGPL-3.0-or-later"
-website = "https://joinmobilizon.org/"
-demo = "https://demo.mobilizon.org"
+website = "https://mobilizon.org/"
 userdoc = "https://docs.joinmobilizon.org"
 code = "https://framagit.org/kaihuri/mobilizon/"
-fund = "https://soutenir.framasoft.org/"
+fund = "https://mobilizon.org/support_fr.html"
 
 [integration]
 yunohost = ">= 12.1.38"
@@ -26,7 +25,7 @@ architectures = ["amd64", "arm64"]
 multi_instance = false
 
 ldap = true
-sso = true
+sso = false
 
 disk = "200M"
 ram.build = "700M"
@@ -64,6 +63,7 @@ ram.runtime = "400M"
 
     [resources.permissions]
     main.url = "/"
+	main.auth_header = false
 
     [resources.ports]
     main.default = 8095
