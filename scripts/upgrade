@@ -21,7 +21,7 @@ ynh_script_progression "Stopping $app's systemd service..."
 
 ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
-if ynh_app_upgrading_from_version_before 5.2.4~ynh2; then
+if [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "true" ] || [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "" ]  ; then
     ynh_app_setting_delete  --key=protect_against_basic_auth_spoofing
 fi
 
@@ -59,6 +59,24 @@ fi
 # Check if previous "if block" did the job
 if [ ! -f "$install_dir/config.exs" ]; then
     ynh_die "Could not find a previous configuration file. Please contact maintainers on the forum."
+fi
+
+# Migrate data to data_dir
+# FIXME: could be old, might be nice to remove
+if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploads/")" ]; then
+    ynh_script_progression "Moving data directory..."
+    rsync -a "$install_dir/$app/uploads/" "$data_dir/uploads/"
+    ynh_safe_rm "$install_dir/$app/uploads"
+
+    if grep "Mobilizon.Web.Upload.Uploader.Local" "$install_dir/config.exs" >/dev/null; then
+        ynh_replace --file="$install_dir/config.exs" \
+            --match="uploads: \".*/uploads\"" \
+            --replace="$data_dir/uploads"
+    else
+        ynh_config_add --template="uploads.exs" --destination="$install_dir/uploads.exs"
+        cat "$install_dir/uploads.exs" >> "$install_dir/config.exs"
+        ynh_safe_rm "$install_dir/uploads.exs"
+    fi
 fi
 
 #=================================================
