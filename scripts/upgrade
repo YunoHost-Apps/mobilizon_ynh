@@ -21,7 +21,7 @@ ynh_script_progression "Stopping $app's systemd service..."
 
 ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
-if [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "true" ] || [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "" ]  ; then
+if [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "true" ] || [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "false" ]  ; then
     ynh_app_setting_delete  --key=protect_against_basic_auth_spoofing
 fi
 
