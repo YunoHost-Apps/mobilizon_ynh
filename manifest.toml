@@ -14,7 +14,7 @@ maintainers = ["rodinux"]
 [upstream]
 license = "AGPL-3.0-or-later"
 website = "https://mobilizon.org/"
-userdoc = "https://docs.joinmobilizon.org"
+userdoc = "https://docs.mobilizon.org"
 code = "https://framagit.org/kaihuri/mobilizon/"
 fund = "https://mobilizon.org/support_fr.html"
 
