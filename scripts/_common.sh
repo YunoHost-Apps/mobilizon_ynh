@@ -7,7 +7,7 @@
 ynh_user="${app}_notifs"
 
 
-get__basic_auth() {
+get__basic_auth_false() {
     # Maintenance mode status
 
     if [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "" ]
@@ -22,13 +22,13 @@ get__basic_auth() {
     fi
 }
 
-set__basic_auth(){
+set__basic_auth_false(){
     #=================================================
     # COPY FOLDER TO DESTINATION
     #=================================================
-    if [ $protect_against_basic_auth_spoofing -eq 0 ]; then
+    if [ $basic_auth_false -eq 0 ]; then
         ynh_app_setting_delete  --key=protect_against_basic_auth_spoofing
-    elif [ $protect_against_basic_auth_spoofing -eq 1 ]; then
+    elif [ $basic_auth_false -eq 1 ]; then
     	ynh_app_setting_set_default key=set__protect_against_basic_auth_spoofing --value="false"
     fi
 }

@@ -5,10 +5,10 @@ name.en = "Mobilizon configuration"
 name.fr = "Configuration de Mobilizon"
 
     [main.protect]
-    name = "main.protect_against_basic_auth.protect_against_basic_auth_spoofing"
+    name = "protect_against_basic_auth_spoofing = false"
 
-        [main.protect.basic_auth]
-        ask.en = "Enable protect against basic auth"
-        ask.fr = "Activer la protection contre basic auth"
+        [main.protect.basic_auth_false]
+        ask.en = "Enable protect_against_basic_auth_spoofing = false"
+        ask.fr = "Activer le paramètre protect_against_basic_auth_spoofing = false"
         type = "boolean"
         default = false
