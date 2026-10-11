@@ -21,7 +21,7 @@ ynh_script_progression "Stopping $app's systemd service..."
 
 ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
-if ynh_app_upgrading_from_version_before 5.2.4~ynh3  ; then
+if ynh_app_upgrading_from_version_before_or_equal_to 5.2.4~ynh3  ; then
     ynh_app_setting_delete  --key=protect_against_basic_auth_spoofing
 fi
 
