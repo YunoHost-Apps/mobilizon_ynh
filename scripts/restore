@@ -29,6 +29,10 @@ ynh_psql_db_shell < ./db.sql
 #=================================================
 ynh_script_progression "Restoring system configurations related to $app..."
 
+if [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "true" ] || [ "$(ynh_app_setting_get --key=protect_against_basic_auth_spoofing)" = "" ]  ; then
+    ynh_app_setting_delete  --key=protect_against_basic_auth_spoofing
+fi
+
 ynh_restore "/var/lib/${app}/sitemap"
 chown -R "$app:$app" "/var/lib/${app}/sitemap"
 chmod -R u+rwX,g+rwX /var/lib/mobilizon
