@@ -21,13 +21,6 @@ ynh_script_progression "Stopping $app's systemd service..."
 
 ynh_systemctl --service="$app" --action="stop" --log_path=systemd
 
-if ynh_app_upgrading_from_version_before_or_equal_to 5.2.4~ynh3  ; then
-    ynh_app_setting_delete  --key=protect_against_basic_auth_spoofing
-fi
-
-if [ -n "${language:-}" ]; then
-    ynh_app_setting_delete --key="language"
-fi
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -35,6 +28,10 @@ fi
 ynh_script_progression "Ensuring downward compatibility..."
 
 # Cleanup
+if [ -n "${language:-}" ]; then
+    ynh_app_setting_delete --key="language"
+fi
+
 ynh_safe_rm "$install_dir/$app/priv/data/GeoLite2-City.mmdb"
 ynh_safe_rm "/usr/share/GeoIP"
 
@@ -79,12 +76,22 @@ if [ -e "$install_dir/$app/uploads/" ] && [ -n "$(ls -A "$install_dir/$app/uploa
     fi
 fi
 
+if ynh_app_upgrading_from_version_before_or_equal_to 5.2.4~ynh3  ; then
+    ynh_app_setting_delete  --key=protect_against_basic_auth_spoofing
+fi
+
+if ynh_app_upgrading_from_version_before 5.2.4~ynh4  ; then
+    ynh_config_add --template="config_admin.exs" --destination="$install_dir/config_admin.exs"
+    chmod -R o-rwx "$install_dir/config_admin.exs"
+    chown -R "$app:www-data" "$install_dir/config_admin.exs"
+fi
+
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Upgrading source files..."
 
-ynh_setup_source --dest_dir="$install_dir/live" --full_replace --keep="config.exs"
+ynh_setup_source --dest_dir="$install_dir/live" --full_replace --keep="config.exs config_admin.exs"
 
 #=================================================
 # UPDATE A CONFIG FILE
@@ -93,6 +100,7 @@ ynh_script_progression "Updating configuration..."
 
 ynh_backup_if_checksum_is_different "$install_dir/config.exs"
 
+## old code may be removed ?
 ynh_replace --match="adapter: Bamboo.SMTPAdapter," --replace="adapter: Swoosh.Adapters.SMTP," --file="$install_dir/config.exs"
 ynh_replace --match="server: \"127.0.0.1\"," --replace="relay: \"127.0.0.1\"," --file="$install_dir/config.exs"
 
