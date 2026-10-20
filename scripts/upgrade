@@ -81,9 +81,14 @@ if ynh_app_upgrading_from_version_before_or_equal_to 5.2.4~ynh3  ; then
 fi
 
 if ynh_app_upgrading_from_version_before 5.2.4~ynh4  ; then
-    ynh_config_add --template="config_admin.exs" --destination="$install_dir/config_admin.exs"
-    chmod -R o-rwx "$install_dir/config_admin.exs"
-    chown -R "$app:www-data" "$install_dir/config_admin.exs"
+ynh_config_add --template="config_admin.exs" --destination="$install_dir/config_admin.exs"
+chmod -R o-rwx "$install_dir/config_admin.exs"
+chown -R "$app:www-data" "$install_dir/config_admin.exs"
+cat >> "$install_dir/config.exs" <<'EOF'
+
+# place any package overrides on this file $install_dir/config_admin.exs
+import_config "config_admin.exs"
+EOF
 fi
 
 #=================================================
